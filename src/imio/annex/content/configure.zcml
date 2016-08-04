@@ -9,4 +9,21 @@
     name="schema_policy_annex"
     />
 
+  <!-- subscribers -->
+
+  <subscriber
+    for="zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".events.annex_content_created"
+    />
+
+  <subscriber
+    for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".events.annex_content_updated"
+    />
+
+  <subscriber
+    for="imio.annex.interfaces.IAnnexFileChangedEvent"
+    handler=".events.annex_file_changed"
+    />
+
 </configure>

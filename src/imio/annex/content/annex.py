@@ -8,7 +8,7 @@ Created by mpeeters
 """
 
 from plone.app.contenttypes.interfaces import IFile
-from plone.dexterity.content import Item
+from plone.app.contenttypes.content import File
 from plone.dexterity.schema import DexteritySchemaPolicy
 from plone.namedfile.field import NamedBlobFile
 from plone.supermodel import model
@@ -32,7 +32,7 @@ class IAnnex(model.Schema, IFile):
     )
 
 
-class Annex(Item):
+class Annex(File):
     """Annex content type"""
     implements(IAnnex)
 
