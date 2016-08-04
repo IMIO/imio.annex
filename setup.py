@@ -47,6 +47,7 @@ setup(
         'setuptools',
         'collective.iconifiedcategory',
         'collective.dms.basecontent',
+        'collective.dms.scanbehavior',
         'collective.documentviewer',
     ],
     extras_require={
