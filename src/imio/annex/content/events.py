@@ -8,6 +8,9 @@ Created by mpeeters
 """
 
 from collective.documentviewer.async import queueJob
+from collective.documentviewer.settings import GlobalSettings
+from collective.documentviewer.utils import allowedDocumentType
+from plone import api
 from zope.event import notify
 
 from imio.annex.events import AnnexFileChangedEvent
@@ -30,4 +33,9 @@ def annex_content_updated(event):
 
 
 def annex_file_changed(event):
-    queueJob(event.object)
+    obj = event.object
+    settings = GlobalSettings(api.portal.get())
+    if not allowedDocumentType(obj, settings.auto_layout_file_types):
+        return
+    if obj.getLayout() == 'documentviewer':
+        queueJob(obj)
