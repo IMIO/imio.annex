@@ -46,7 +46,6 @@ setup(
         'plone.api',
         'setuptools',
         'collective.iconifiedcategory',
-        'collective.dms.basecontent',
         'collective.dms.scanbehavior',
         'collective.documentviewer',
     ],
