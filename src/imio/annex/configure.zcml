@@ -12,6 +12,11 @@
   <include package=".browser" />
   <include package=".content" />
 
+  <!-- IPrettyLink -->
+  <adapter for="imio.annex.content.annex.IAnnex"
+           factory=".adapters.AnnexPrettyLinkAdapter"
+           provides="imio.prettylink.interfaces.IPrettyLink" />
+
   <genericsetup:registerProfile
       name="default"
       title="imio.annex"
