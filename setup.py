@@ -48,6 +48,7 @@ setup(
         'collective.iconifiedcategory',
         'collective.dms.scanbehavior',
         'collective.documentviewer',
+        'plone.app.lockingbehavior',
     ],
     extras_require={
         'test': [

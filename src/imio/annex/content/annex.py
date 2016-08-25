@@ -12,7 +12,6 @@ from plone.app.contenttypes.content import File
 from plone.dexterity.schema import DexteritySchemaPolicy
 from plone.namedfile.field import NamedBlobFile
 from plone.supermodel import model
-from zope import schema
 from zope.interface import implements
 
 from imio.annex import _
@@ -20,10 +19,6 @@ from imio.annex import _
 
 class IAnnex(model.Schema, IFile):
     """Schema for Annex content type"""
-    title = schema.TextLine(
-        title=_(u'Title'),
-        required=False
-    )
 
     model.primary('file')
     file = NamedBlobFile(

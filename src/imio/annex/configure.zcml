@@ -8,6 +8,7 @@
   <i18n:registerTranslations directory="locales" />
 
   <include package="collective.documentviewer" />
+  <include package="collective.iconifiedcategory"/>
 
   <include package=".browser" />
   <include package=".content" />

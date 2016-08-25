@@ -6,7 +6,7 @@ from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 class ActionsColumn(DashboardActionsColumn):
     header = u'Actions'
     weight = 100
-    params = {'showHistory': False, 'showActions': True}
+    params = {'showHistory': False, 'showActions': True, 'showArrows': True}
 
 
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
