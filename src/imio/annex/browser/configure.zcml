@@ -4,4 +4,29 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="imio.annex">
 
+    <!-- Use the imio.helpers container view for annex -->
+    <configure package="imio.helpers">
+        <browser:page
+            for="collective.iconifiedcategory.content.categorygroup.ICategoryGroup"
+            name="view"
+            class="plone.dexterity.browser.view.DefaultView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+        <browser:page
+            for="collective.iconifiedcategory.content.category.ICategory"
+            name="view"
+            class="plone.dexterity.browser.view.DefaultView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+        <browser:page
+            for="collective.iconifiedcategory.content.subcategory.ISubcategory"
+            name="view"
+            class="plone.dexterity.browser.view.DefaultView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+    </configure>
+
 </configure>
