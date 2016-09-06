@@ -7,10 +7,10 @@
     <!-- Use the imio.helpers container view for annex -->
     <configure package="imio.helpers">
         <browser:page
-            for="collective.iconifiedcategory.content.categorygroup.ICategoryGroup"
+            for="collective.iconifiedcategory.content.subcategory.ISubcategory"
             name="view"
             class="plone.dexterity.browser.view.DefaultView"
-            template="browser/container.pt"
+            template="browser/content.pt"
             permission="zope2.View"
             />
         <browser:page
@@ -21,7 +21,7 @@
             permission="zope2.View"
             />
         <browser:page
-            for="collective.iconifiedcategory.content.subcategory.ISubcategory"
+            for="collective.iconifiedcategory.content.categorygroup.ICategoryGroup"
             name="view"
             class="plone.dexterity.browser.view.DefaultView"
             template="browser/container.pt"
