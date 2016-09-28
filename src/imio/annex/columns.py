@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
 from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 
@@ -14,7 +15,7 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
     weight = 20
 
     def renderCell(self, obj):
-        if obj.preview_status.converted is True:
+        if IIconifiedPreview(obj.getObject()).converted is True:
             self.params['target'] = '_blank'
             self.params['appendToUrl'] = '/documentviewer#document/p1'
         return super(PrettyLinkColumn, self).renderCell(obj)
