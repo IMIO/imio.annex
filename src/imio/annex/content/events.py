@@ -7,7 +7,6 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.documentviewer.async import queueJob
 from collective.documentviewer.settings import GlobalSettings
 from collective.documentviewer.utils import allowedDocumentType
 from plone import api
@@ -37,5 +36,4 @@ def annex_file_changed(event):
     settings = GlobalSettings(api.portal.get())
     if not allowedDocumentType(obj, settings.auto_layout_file_types):
         return
-    if obj.getLayout() == 'documentviewer':
-        queueJob(obj)
+    # do something?
