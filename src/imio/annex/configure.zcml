@@ -7,8 +7,11 @@
 
   <i18n:registerTranslations directory="locales" />
 
+  <include package="imio.helpers" />
+  <include package="imio.dashboard" />
+  <include package="imio.actionspanel" />
   <include package="collective.documentviewer" />
-  <include package="collective.iconifiedcategory"/>
+  <include package="collective.iconifiedcategory" />
 
   <include package=".browser" />
   <include package=".content" />

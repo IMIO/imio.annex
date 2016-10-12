@@ -43,12 +43,16 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'plone.api',
-        'setuptools',
-        'collective.iconifiedcategory',
         'collective.dms.scanbehavior',
         'collective.documentviewer',
+        'collective.iconifiedcategory',
+        'imio.dashboard',
+        'imios.actionspanel',
+        'imio.helpers',
+        'imio.prettylink',
+        'plone.api',
         'plone.app.lockingbehavior',
+        'setuptools',
     ],
     extras_require={
         'test': [
