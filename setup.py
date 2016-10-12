@@ -47,7 +47,7 @@ setup(
         'collective.documentviewer',
         'collective.iconifiedcategory',
         'imio.dashboard',
-        'imios.actionspanel',
+        'imio.actionspanel',
         'imio.helpers',
         'imio.prettylink',
         'plone.api',
