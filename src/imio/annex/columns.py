@@ -12,3 +12,9 @@ class ActionsColumn(DashboardActionsColumn):
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
     header = u'Title'
     weight = 20
+
+    def renderCell(self, item):
+        """Display the description just under the pretty link."""
+        pl = self.getPrettyLink(self._getObject(item))
+        description = '<p class="discreet">{0}</p>'.format(item.Description)
+        return pl + description
