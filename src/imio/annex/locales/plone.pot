@@ -15,13 +15,8 @@ msgstr ""
 "Language-Code: en\n"
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
-"Domain: imio.annex\n"
+"Domain: plone\n"
 
-#: ../profiles/default/types/annex.xml
-msgid "Annex"
-msgstr ""
-
-#: ../content/annex.py:25
-msgid "File"
+msgid "View element"
 msgstr ""
 
