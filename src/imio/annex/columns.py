@@ -6,12 +6,6 @@ from plone import api
 from zope.i18n import translate
 
 
-class ActionsColumn(DashboardActionsColumn):
-    header = u'Actions'
-    weight = 100
-    params = {'showHistory': False, 'showActions': True, 'showArrows': True}
-
-
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
     header = u'Title'
     weight = 20
@@ -41,3 +35,9 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
                                  domain='collective.iconifiedcategory',
                                  context=obj.REQUEST),
                        portal.absolute_url() + '/file_icon.png')
+
+
+class ActionsColumn(DashboardActionsColumn):
+    header = u'Actions'
+    weight = 100
+    params = {'showHistory': False, 'showActions': True, 'showArrows': True}

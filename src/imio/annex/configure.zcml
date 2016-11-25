@@ -36,4 +36,14 @@
       handler=".setuphandlers.post_install">
   </genericsetup:importStep>
 
+  <!-- Columns -->
+  <adapter
+    name="number-column"
+    for="zope.interface.Interface
+         zope.interface.Interface
+         collective.iconifiedcategory.interfaces.ICategorizedTable"
+    provides="z3c.table.interfaces.IColumn"
+    factory="collective.eeafaceted.z3ctable.columns.ElementNumberColumn"
+    />
+
 </configure>
