@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+
+from collective.eeafaceted.z3ctable.columns import MemberIdColumn
 from collective.iconifiedcategory.interfaces import IIconifiedPreview
+from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
 from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
 from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
@@ -35,6 +38,12 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
                                  domain='collective.iconifiedcategory',
                                  context=obj.REQUEST),
                        portal.absolute_url() + '/file_icon.png')
+
+
+class AuthorColumn(MemberIdColumn):
+    """ """
+    weight = IconifiedAuthorColumn.weight
+    header = IconifiedAuthorColumn.header
 
 
 class ActionsColumn(DashboardActionsColumn):

@@ -15,6 +15,15 @@
     />
 
   <adapter
+    name="author-column"
+    for="zope.interface.Interface
+         zope.interface.Interface
+         collective.iconifiedcategory.interfaces.ICategorizedTable"
+    provides="z3c.table.interfaces.IColumn"
+    factory=".columns.AuthorColumn"
+    />
+
+  <adapter
     name="action-column"
     for="zope.interface.Interface
          zope.interface.Interface
