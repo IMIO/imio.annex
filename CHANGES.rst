@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1 (unreleased)
+1.1 (2016-12-08)
 ----------------
 
 - Do not fail to display annex description in prettyLink column if it contains
