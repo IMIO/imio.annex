@@ -5,7 +5,9 @@ Changelog
 1.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Do not fail to display annex description in prettyLink column if it contains
+  special characters.
+  [gbastien]
 
 
 1.0 (2016-12-02)

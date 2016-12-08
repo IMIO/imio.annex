@@ -6,6 +6,7 @@ from collective.iconifiedcategory.browser.tabview import AuthorColumn as Iconifi
 from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
 from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
+from Products.CMFPlone.utils import safe_unicode
 from zope.i18n import translate
 
 
@@ -23,7 +24,8 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         if tool.auto_convert_annexes() and IIconifiedPreview(obj).converted:
             preview = self._preview_html(obj)
         # display description if any
-        description = u'<p class="discreet">{0}</p>'.format(item.Description)
+        description = u'<p class="discreet">{0}</p>'.format(
+            safe_unicode(item.Description))
         return pl + preview + description
 
     def _preview_html(self, obj):
