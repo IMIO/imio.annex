@@ -39,3 +39,15 @@ PloneQuickUpload.sendDataAndUpload = function(uploader, domelement, typeupload) 
         else missing++;
     }
 };
+
+PloneQuickUpload.extendCategories = function() {
+  var container = $(this).closest('div.uploaderContainer');
+  var first_element = container.find('select#form_widgets_content_category:first');
+  var category = first_element.val();
+
+  container.find('select#form_widgets_content_category').each(function() {
+    $(this).val(category);
+    $(this).trigger('change');
+  });
+  return false;
+};

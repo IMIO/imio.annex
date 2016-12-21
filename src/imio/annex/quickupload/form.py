@@ -7,7 +7,6 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from plone import api
 from plone.z3cform.layout import FormWrapper
 from z3c.form import field
 from z3c.form.form import Form
@@ -17,6 +16,8 @@ from zope.interface import Interface
 from collective.iconifiedcategory import _ as ICMF
 from collective.z3cform.select2.widget.widget import SingleSelect2FieldWidget
 from collective.iconifiedcategory.widget.widget import CategoryTitleFieldWidget
+
+from imio.annex.quickupload import utils
 
 
 class IQuickUpload(Interface):
@@ -57,13 +58,7 @@ class QuickUploadForm(Form):
 
     @property
     def is_iconified_categorized(self):
-        portal_types = api.portal.get_tool('portal_types')
-        pt = portal_types.get(self.typeupload)
-        if not pt:
-            return False
-        behavior = ('collective.iconifiedcategory.behaviors.'
-                    'iconifiedcategorization.IIconifiedCategorization')
-        return behavior in pt.behaviors
+        return utils.is_iconified_categorized(self.typeupload)
 
     def update(self):
         super(QuickUploadForm, self).update()

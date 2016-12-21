@@ -1,0 +1,28 @@
+div.quick-uploader {
+    position: relative;
+}
+
+a#copy_categories {
+    display: block;
+    padding: 7px;
+    border-radius: 5px;
+    border: none;
+    background-color: #205c90;
+    text-decoration: none;
+    color: #FFF;
+    position: absolute;
+    top: 4.85em;
+    cursor: pointer;
+}
+
+a#copy_categories:hover {
+    color: #FFF!important;
+    background-color: #518abc;
+}
+
+a#copy_categories::before {
+    font-family: 'FontAwesome';
+    font-size: 100%;
+    cursor: pointer;
+    content: "\f24d";
+}

@@ -7,17 +7,16 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.quickupload.browser.quick_upload import QuickUploadFile
-from collective.quickupload.browser.quick_upload import QuickUploadView
-from collective.quickupload.browser.quick_upload import getDataFromAllRequests
-from collective.quickupload.browser.quick_upload import get_content_type
-
 from Acquisition import aq_inner
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ZODB.POSException import ConflictError
 from collective.quickupload import logger
+from collective.quickupload.browser.quick_upload import QuickUploadFile
+from collective.quickupload.browser.quick_upload import QuickUploadView
+from collective.quickupload.browser.quick_upload import getDataFromAllRequests
+from collective.quickupload.browser.quick_upload import get_content_type
 from collective.quickupload.browser.uploadcapable import MissingExtension
 from collective.quickupload.browser.uploadcapable import get_id_from_filename
 from collective.quickupload.interfaces import IQuickUploadFileFactory
@@ -27,7 +26,6 @@ from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 import json
 import urllib
 
-
 import pkg_resources
 try:
     pkg_resources.get_distribution('plone.uuid')
@@ -35,6 +33,8 @@ try:
     HAS_UUID = True
 except pkg_resources.DistributionNotFound:
     HAS_UUID = False
+
+from imio.annex.quickupload import utils
 
 
 class QuickUploadPortletView(QuickUploadView):
@@ -46,6 +46,17 @@ class QuickUploadPortletView(QuickUploadView):
         config = context.restrictedTraverse('@@quick_upload_init')
         config.uploader_id = self.uploader_id
         return config.upload_settings().get('typeupload')
+
+    @property
+    def is_iconified_categorized(self):
+        return utils.is_iconified_categorized(self.typeupload)
+
+    def script_content(self):
+        result = super(QuickUploadPortletView, self).script_content()
+        return u"""
+{0}
+jQuery('a#copy_categories').click(PloneQuickUpload.extendCategories);
+        """.format(result)
 
 
 class QuickUploadFileView(QuickUploadFile):
