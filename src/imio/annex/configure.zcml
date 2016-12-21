@@ -12,9 +12,11 @@
   <include package="imio.actionspanel" />
   <include package="collective.documentviewer" />
   <include package="collective.iconifiedcategory" />
+  <include package="collective.quickupload" />
 
   <include package=".browser" />
   <include package=".content" />
+  <include package=".quickupload" />
 
   <!-- IPrettyLink -->
   <adapter for="imio.annex.content.annex.IAnnex"

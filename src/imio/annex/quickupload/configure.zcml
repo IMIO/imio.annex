@@ -1,0 +1,37 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="imio.annex">
+
+  <!-- Publish static files -->
+  <browser:resourceDirectory
+    name="imio.annex.quickupload"
+    directory="static" />
+
+  <browser:page
+    for="*"
+    name="quickupload-form"
+    class=".form.QuickUploadFormView"
+    template="templates/form.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    for="collective.quickupload.interfaces.IQuickUploadCapable"
+    name="quick_upload"
+    class=".quickupload.QuickUploadPortletView"
+    permission="cmf.AddPortalContent"
+    layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
+    />
+
+  <browser:page
+    for="*"
+    name="quick_upload_file"
+    attribute="quick_upload_file"
+    class=".quickupload.QuickUploadFileView"
+    permission="cmf.AddPortalContent"
+    layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
+    />
+
+</configure>

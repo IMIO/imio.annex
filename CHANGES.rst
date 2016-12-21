@@ -5,7 +5,8 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Extend collective.quickupload portlet to add content categories : #12556
+  [mpeeters]
 
 
 1.1 (2016-12-08)
