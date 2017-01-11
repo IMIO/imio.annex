@@ -7,6 +7,9 @@ Changelog
 
 - Extend collective.quickupload portlet to add content categories : #12556
   [mpeeters]
+- Remove 'description' of portal_type 'annex' or it is displayed
+  when adding/editing an annex
+  [gbastien]
 
 
 1.1 (2016-12-08)
