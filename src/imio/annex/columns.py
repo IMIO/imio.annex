@@ -2,6 +2,7 @@
 
 from collective.eeafaceted.z3ctable.columns import MemberIdColumn
 from collective.iconifiedcategory.interfaces import IIconifiedPreview
+from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
 from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
 from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
@@ -52,3 +53,15 @@ class ActionsColumn(DashboardActionsColumn):
     header = u'Actions'
     weight = 100
     params = {'showHistory': False, 'showActions': True, 'showArrows': True}
+
+    def _showArrows(self):
+        sort_categorized_tab = api.portal.get_registry_record(
+            'sort_categorized_tab',
+            interface=IIconifiedCategorySettings,
+        )
+        return not(bool(sort_categorized_tab))
+
+    def renderCell(self, item):
+        """ """
+        self.params['showArrows'] = self._showArrows()
+        return super(ActionsColumn, self).renderCell(item)

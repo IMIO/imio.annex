@@ -10,6 +10,9 @@ Changelog
 - Remove 'description' of portal_type 'annex' or it is displayed
   when adding/editing an annex
   [gbastien]
+- Take parameter sort_categorized_tab into account for the showArrows parameter :
+  only show arrows if sort_categorized_tab is False
+  [gbastien]
 
 
 1.1 (2016-12-08)
