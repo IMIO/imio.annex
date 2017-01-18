@@ -26,4 +26,16 @@
     handler=".events.annex_file_changed"
     />
 
+  <subscriber
+    for="imio.annex.content.annex.IAnnex
+         imio.annex.interfaces.IConversionStartedEvent"
+    handler=".events.annex_conversion_started"
+    />
+
+  <subscriber
+    for="imio.annex.content.annex.IAnnex
+         collective.documentviewer.interfaces.IConversionFinishedEvent"
+    handler=".events.annex_conversion_finished"
+    />
+
 </configure>

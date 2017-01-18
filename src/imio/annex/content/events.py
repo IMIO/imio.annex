@@ -11,6 +11,7 @@ from collective.documentviewer.settings import GlobalSettings
 from collective.documentviewer.utils import allowedDocumentType
 from plone import api
 from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 from imio.annex.events import AnnexFileChangedEvent
 from imio.annex.content.annex import IAnnex
@@ -37,3 +38,19 @@ def annex_file_changed(event):
     if not allowedDocumentType(obj, settings.auto_layout_file_types):
         return
     # do something?
+
+
+def annex_conversion_started(obj, event):
+    container = obj.aq_parent
+    if obj.UID() not in getattr(container, 'categorized_elements', {}):
+        return
+    notify(ObjectModifiedEvent(obj))
+
+
+def annex_conversion_finished(obj, event):
+    if not event.status:
+        return
+    container = obj.aq_parent
+    if obj.UID() not in getattr(container, 'categorized_elements', {}):
+        return
+    notify(ObjectModifiedEvent(obj))
