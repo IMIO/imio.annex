@@ -7,7 +7,6 @@ from imio.prettylink.adapters import PrettyLinkAdapter
 
 class AnnexPrettyLinkAdapter(PrettyLinkAdapter):
     """
-      Override to take into account PloneMeeting use cases...
     """
 
     def _leadingIcons(self):

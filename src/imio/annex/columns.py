@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.documentviewer.settings import GlobalSettings
 from collective.eeafaceted.z3ctable.columns import MemberIdColumn
 from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
@@ -21,8 +22,9 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         pl = self.getPrettyLink(obj)
         # if preview is enabled, display a specific icon if element is converted
         preview = ''
-        tool = api.portal.get_tool('portal_plonemeeting')
-        if tool.auto_convert_annexes() and IIconifiedPreview(obj).converted:
+        portal = api.portal.get()
+        gsettings = GlobalSettings(portal)
+        if gsettings.auto_convert and IIconifiedPreview(obj).converted:
             preview = self._preview_html(obj)
         # display description if any
         description = u'<p class="discreet">{0}</p>'.format(
