@@ -46,6 +46,7 @@ setup(
         'collective.dms.scanbehavior',
         'collective.documentviewer',
         'collective.iconifiedcategory',
+        'collective.monkeypatcher',
         'collective.quickupload',
         'imio.dashboard',
         'imio.actionspanel',

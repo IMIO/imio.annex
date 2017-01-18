@@ -17,3 +17,7 @@ class IImioAnnexLayer(IDefaultBrowserLayer):
 
 class IAnnexFileChangedEvent(Interface):
     pass
+
+
+class IConversionStartedEvent(Interface):
+    pass
