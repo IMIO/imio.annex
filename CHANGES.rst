@@ -5,7 +5,12 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- In `annex_conversion_started`/`annex_conversion_finished`, do not trigger
+  `ObjectModifiedEvent` to avoid circular calls when another
+  `ObjectModifiedEvent` event handler is managing conversion too.  Just call
+  `update_categorized_elements` that will update relevant informations in
+  `categorized_elements` dict
+  [gbastien]
 
 
 1.2 (2017-01-12)
