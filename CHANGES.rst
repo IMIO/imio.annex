@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.3 (unreleased)
+1.3 (2017-01-25)
 ----------------
 
 - In `annex_conversion_started`/`annex_conversion_finished`, do not trigger
