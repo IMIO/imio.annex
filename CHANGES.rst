@@ -5,8 +5,9 @@ Changelog
 1.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Added helper method `utils.get_annexes_to_print` to ease printings of annexes
+  set `to_print`.
+  [gbastien]
 
 1.3 (2017-01-25)
 ----------------
