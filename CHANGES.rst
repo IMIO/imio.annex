@@ -8,6 +8,8 @@ Changelog
 - Added helper method `utils.get_annexes_to_print` to ease printings of annexes
   set `to_print`.
   [gbastien]
+- Make the title optional and get the filename if no title is specified
+  [mpeeters]
 
 1.3 (2017-01-25)
 ----------------
