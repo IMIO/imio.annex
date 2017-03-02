@@ -19,9 +19,8 @@
  <property name="add_permission">cmf.AddPortalContent</property>
  <property name="klass">imio.annex.content.annex.Annex</property>
  <property name="behaviors">
-  <element value="plone.app.content.interfaces.INameFromTitle"/>
+  <element value="plone.app.dexterity.behaviors.filename.INameFromFileName"/>
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
-  <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
   <element value="collective.iconifiedcategory.behaviors.iconifiedcategorization.IIconifiedCategorization"/>
  </property>
  <property name="schema" />
