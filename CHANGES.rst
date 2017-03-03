@@ -10,6 +10,10 @@ Changelog
   [gbastien]
 - Make the title optional and get the filename if no title is specified
   [mpeeters]
+- As `view` is already overrided in `collective.iconifiedcategory`, we need to
+  override it in `overrides.zcml` and override the one from
+  `collective.iconifiedcategory` not the one from `plone.dexterity`.
+  [gbastien]
 
 1.3 (2017-01-25)
 ----------------

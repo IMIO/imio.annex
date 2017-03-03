@@ -1,5 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n"
@@ -31,5 +32,35 @@
     provides="z3c.table.interfaces.IColumn"
     factory=".columns.ActionsColumn"
     />
+
+    <!-- Use the imio.helpers container view for annex, overrided here because
+         already overrided in collective.iconifiedcategory except for ICategoryGroup
+         but we do this here to group overrides even if ICategoryGroup could be
+         overrided in a configure.zcml -->
+    <configure package="imio.helpers">
+        <browser:page
+            name="view"
+            for="collective.iconifiedcategory.content.category.ICategory"
+            layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
+            class="collective.iconifiedcategory.browser.contentview.BaseView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+        <browser:page
+            name="view"
+            for="collective.iconifiedcategory.content.subcategory.ISubcategory"
+            layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
+            class="collective.iconifiedcategory.browser.contentview.BaseView"
+            permission="zope2.View"
+            template="browser/content.pt"
+            />
+        <browser:page
+            for="collective.iconifiedcategory.content.categorygroup.ICategoryGroup"
+            name="view"
+            class="plone.dexterity.browser.view.DefaultView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+    </configure>
 
 </configure>
