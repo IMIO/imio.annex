@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.4 (unreleased)
+1.4 (2017-03-08)
 ----------------
 
 - Added helper method `utils.get_annexes_to_print` to ease printings of annexes
