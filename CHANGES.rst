@@ -5,7 +5,10 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Enable `Scan metadata` behavior from `collective.dms.scanbehavior` for the
+  `annex` type.  We use it together with the `Signed?` functionnality available
+  in `collective.iconifiedcategory`.
+  [gbastien]
 
 
 1.4 (2017-03-08)
@@ -20,6 +23,7 @@ Changelog
   override it in `overrides.zcml` and override the one from
   `collective.iconifiedcategory` not the one from `plone.dexterity`.
   [gbastien]
+
 
 1.3 (2017-01-25)
 ----------------
