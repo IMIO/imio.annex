@@ -31,7 +31,9 @@ def get_annexes_to_print(container, portal_type=None, caching=True):
                 continue
 
             # every annex seems right, manage this annex build path to images
-            annexObj = portal.restrictedTraverse(annex_infos['relative_url'])
+            # use unrestrictedTraverse to avoid failing if a folder is private
+            # like it is the case for 'Members'
+            annexObj = portal.unrestrictedTraverse(annex_infos['relative_url'])
             annex_annotations = IAnnotations(annexObj)
             data = {}
             data['title'] = annexObj.Title()

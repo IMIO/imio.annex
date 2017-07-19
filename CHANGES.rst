@@ -5,7 +5,9 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- In `utils.get_annexes_to_print` do not fail to get annex if a folder in the
+  path to the annex is private.
+  [gbastien]
 
 
 1.4 (2017-03-08)
