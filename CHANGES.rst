@@ -5,8 +5,10 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Enable `Scan metadata` behavior from `collective.dms.scanbehavior` for the
+  `annex` type.  We use it together with the `Signed?` functionnality available
+  in `collective.iconifiedcategory`.
+  [gbastien]
 
 1.5 (2017-07-19)
 ----------------
