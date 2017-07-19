@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.5 (unreleased)
+1.5 (2017-07-19)
 ----------------
 
 - In `utils.get_annexes_to_print` do not fail to get annex if a folder in the
