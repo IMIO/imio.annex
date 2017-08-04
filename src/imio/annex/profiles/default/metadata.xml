@@ -2,6 +2,7 @@
 <metadata>
   <version>1000</version>
   <dependencies>
+    <dependency>profile-collective.dms.scanbehavior:default</dependency>
     <dependency>profile-collective.iconifiedcategory:default</dependency>
     <dependency>profile-collective.documentviewer:default</dependency>
     <dependency>profile-imio.actionspanel:default</dependency>
