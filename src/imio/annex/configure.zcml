@@ -32,6 +32,14 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:registerProfile
+      name="zamqp"
+      title="imio.annex"
+      directory="profiles/zamqp"
+      description="Installs the zamqp part for imio.annex."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <genericsetup:importStep
       name="imio.annex-postInstall"
       title="imio.annex post_install import step"
