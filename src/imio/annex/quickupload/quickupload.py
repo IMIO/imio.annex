@@ -198,7 +198,7 @@ class QuickUploadFileView(QuickUploadFile):
                     f = factory(file_name, title, description, content_type,
                                 file_data, portal_type)
                     # Add an extra parameter
-                    if f['success']:
+                    if f['success'] and category:
                         f['success'].content_category = category
                 except ConflictError:
                     # Allow Zope to retry up to three times, and if that still

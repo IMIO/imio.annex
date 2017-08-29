@@ -7,8 +7,13 @@ Changelog
 
 - Enable `Scan metadata` behavior from `collective.dms.scanbehavior` for the
   `annex` type.  We use it together with the `Signed?` functionnality available
-  in `collective.iconifiedcategory`.
+  in `collective.iconifiedcategory` if `[zamqp]` is enabled.
   [gbastien]
+- Make sure an `undefined` `content_category` is not added when uploading
+  elements using the quickupload portlet and content_category is not enabled
+  on the portlet.
+  [gbastien]
+
 
 1.5 (2017-07-19)
 ----------------

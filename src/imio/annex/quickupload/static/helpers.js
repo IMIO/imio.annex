@@ -12,9 +12,11 @@ PloneQuickUpload.addUploadFields = function(uploader, domelement, file, id, fill
       {'typeupload': typeupload},
       function(){
         var select = $(this).find('select#form_widgets_content_category');
-        select.width('100%');
-        IconifiedCategory.initializeCategoryWidget(select);
-        initializeSelect2SingleWidget(select);
+        if (select.length) {
+            select.width('100%');
+            IconifiedCategory.initializeCategoryWidget(select);
+            initializeSelect2SingleWidget(select);
+        }
       }
     );
 
@@ -31,7 +33,11 @@ PloneQuickUpload.sendDataAndUpload = function(uploader, domelement, typeupload) 
             var fileContainer = jQuery('.qq-upload-list li', domelement)[id-missing];
             var title = jQuery('input[name="form.widgets.title"]', fileContainer).val();
             var description = jQuery('textarea[name="form.widgets.description"]', fileContainer).val();
-            var category = jQuery('select[name="form.widgets.content_category:list"]', fileContainer).val();
+            var category = '';
+            category_element = jQuery('select[name="form.widgets.content_category:list"]', fileContainer);
+            if (category_element.length) {
+                category = category_element.val();
+            }
             uploader._queueUpload(id, {'title': title, 'description': description, 'content_category': category, 'typeupload': typeupload});
 
         }
