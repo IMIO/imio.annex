@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.6 (unreleased)
+1.6 (2017-08-29)
 ----------------
 
 - Enable `Scan metadata` behavior from `collective.dms.scanbehavior` for the
