@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.7 (unreleased)
+1.7 (2017-09-15)
 ----------------
 
 - Removed `collective.dms.scanbehavior` from behaviors added by the default
