@@ -5,7 +5,9 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Removed `collective.dms.scanbehavior` from behaviors added by the default
+  profile.
+  [gbastien]
 
 
 1.6 (2017-08-29)
