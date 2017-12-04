@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-12-21 16:29+0000\n"
+"POT-Creation-Date: 2017-12-04 14:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,6 +14,10 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
+#: ../columns.py:56
+msgid "Actions"
+msgstr "Actions"
+
 #: ../profiles/default/types/annex.xml
 msgid "Annex"
 msgstr "Annexe"
@@ -22,7 +26,22 @@ msgstr "Annexe"
 msgid "Apply the first category on all elements"
 msgstr "Appliquer la première catégorie à l'ensemble des éléments"
 
-#: ../content/annex.py:25
+#: ../content/annex.py:51
 msgid "File"
 msgstr "Fichier"
 
+#: ../configure.zcml:35
+msgid "Installs the imio.annex add-on."
+msgstr ""
+
+#: ../configure.zcml:43
+msgid "Installs the zamqp part for imio.annex."
+msgstr ""
+
+#: ../columns.py:17
+msgid "Title"
+msgstr "Titre"
+
+#: ../configure.zcml:35
+msgid "imio.annex"
+msgstr ""

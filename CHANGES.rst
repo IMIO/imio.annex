@@ -5,7 +5,8 @@ Changelog
 1.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Translate columns `Title` and `Actions`.
+  [gbastien]
 
 
 1.7 (2017-09-15)

@@ -5,6 +5,7 @@ from collective.eeafaceted.z3ctable.columns import MemberIdColumn
 from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
+from imio.annex import _
 from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
 from imio.dashboard.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
@@ -13,7 +14,7 @@ from zope.i18n import translate
 
 
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
-    header = u'Title'
+    header = _(u'Title')
     weight = 20
 
     def renderCell(self, item):
@@ -52,7 +53,7 @@ class AuthorColumn(MemberIdColumn):
 
 
 class ActionsColumn(DashboardActionsColumn):
-    header = u'Actions'
+    header = _(u'Actions')
     weight = 100
     params = {'showHistory': False, 'showActions': True, 'showArrows': True}
 
