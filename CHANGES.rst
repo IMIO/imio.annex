@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.8 (unreleased)
+1.8 (2017-12-07)
 ----------------
 
 - Translate columns `Title` and `Actions`.
