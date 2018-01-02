@@ -55,7 +55,7 @@ class AuthorColumn(MemberIdColumn):
 class ActionsColumn(DashboardActionsColumn):
     header = _(u'Actions')
     weight = 100
-    params = {'showHistory': False, 'showActions': True, 'showArrows': True}
+    params = {'showHistory': True, 'showActions': True, 'showArrows': True}
 
     def _showArrows(self):
         sort_categorized_tab = api.portal.get_registry_record(

@@ -5,8 +5,12 @@ Changelog
 1.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Display icon of the `@@historyview` in the `ActionsColumn`.
+  [gbastien]
+- Added parameter `called_by` to the `AnnexFileChangedEvent` so it can be used
+  to specify where it was called from and so the registered event handler may
+  use it if necessary.
+  [gbastien]
 
 1.8 (2017-12-07)
 ----------------
