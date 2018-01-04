@@ -4,6 +4,7 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:monkey="http://namespaces.plone.org/monkey"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="imio.annex">
 
@@ -31,16 +32,14 @@
       title="imio.annex"
       directory="profiles/default"
       description="Installs the imio.annex add-on."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile
       name="zamqp"
       title="imio.annex"
       directory="profiles/zamqp"
       description="Installs the zamqp part for imio.annex."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:importStep
       name="imio.annex-postInstall"
@@ -67,7 +66,12 @@
     class="collective.documentviewer.convert.Converter"
     original="__call__"
     replacement=".patch.converter_call"
-    preserveOriginal="true"
-    />
+    preserveOriginal="true" />
+
+  <!-- behaviors -->
+  <plone:behavior
+       title="Scan metadata (fields to_sign/signed hidden)"
+       description="Adds scan information fields but hides fields to_sign/signed"
+       provides=".behaviors.IScanFieldsHiddenToSignAndSigned" />
 
 </configure>

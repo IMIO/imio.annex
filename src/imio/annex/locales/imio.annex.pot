@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-12-04 14:53+0000\n"
+"POT-Creation-Date: 2018-01-04 10:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,10 @@ msgstr ""
 
 #: ../columns.py:56
 msgid "Actions"
+msgstr ""
+
+#: ../configure.zcml:75
+msgid "Adds scan information fields but hides fields to_sign/signed"
 msgstr ""
 
 #: ../profiles/default/types/annex.xml
@@ -37,8 +41,12 @@ msgstr ""
 msgid "Installs the imio.annex add-on."
 msgstr ""
 
-#: ../configure.zcml:43
+#: ../configure.zcml:42
 msgid "Installs the zamqp part for imio.annex."
+msgstr ""
+
+#: ../configure.zcml:75
+msgid "Scan metadata (fields to_sign/signed hidden)"
 msgstr ""
 
 #: ../columns.py:17

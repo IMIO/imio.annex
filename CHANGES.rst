@@ -11,6 +11,13 @@ Changelog
   to specify where it was called from and so the registered event handler may
   use it if necessary.
   [gbastien]
+- Added `Scan metadata (fields to_sign/signed hidden)` behavior that inherits
+  from `collective.dms.scanbehavior.behaviors.behaviors.IScanFields` behavior
+  and hides fields `to_sign` and `signed`.
+  [gbastien]
+- Apply relevant behaviors using `purge=True` so we are sure what behaviors
+  are enabled.
+  [gbastien]
 
 1.8 (2017-12-07)
 ----------------

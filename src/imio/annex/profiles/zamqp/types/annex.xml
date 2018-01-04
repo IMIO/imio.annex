@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <object name="annex" meta_type="Dexterity FTI" i18n:domain="imio.annex"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="behaviors" purge="False">
-  <element value="collective.dms.scanbehavior.behaviors.behaviors.IScanFields"/> 
+ <property name="behaviors" purge="True">
+  <element value="plone.app.dexterity.behaviors.filename.INameFromFileName"/>
+  <element value="plone.app.lockingbehavior.behaviors.ILocking"/>
+  <element value="collective.iconifiedcategory.behaviors.iconifiedcategorization.IIconifiedCategorization"/>
+  <element value="imio.annex.behaviors.IScanFieldsHiddenToSignAndSigned"/>
  </property>
 </object>
