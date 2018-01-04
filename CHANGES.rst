@@ -18,6 +18,10 @@ Changelog
 - Apply relevant behaviors using `purge=True` so we are sure what behaviors
   are enabled.
   [gbastien]
+- Profile `zamqp` does not depend on `imio.annex:default` profile anymore so it
+  is possible to reapply it without reapplying every `imio.annex:default`
+  dependencies.
+  [gbastien]
 
 1.8 (2017-12-07)
 ----------------

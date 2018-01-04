@@ -2,7 +2,6 @@
 <metadata>
   <version>1000</version>
   <dependencies>
-    <dependency>profile-imio.annex:default</dependency>
     <dependency>profile-collective.dms.scanbehavior:default</dependency>
   </dependencies>
 </metadata>
