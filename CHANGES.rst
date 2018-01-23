@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.9 (unreleased)
+1.9 (2018-01-23)
 ----------------
 
 - Display icon of the `@@historyview` in the `ActionsColumn`.
