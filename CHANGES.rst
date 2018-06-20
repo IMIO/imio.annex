@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-2.0 (unreleased)
------------------
+2.0 (2018-06-20)
+----------------
 
 - Rely on `collective.eeafaceted.dashboard`.
   [gbastien]
