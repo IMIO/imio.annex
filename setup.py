@@ -19,7 +19,7 @@ long_description = (
 
 setup(
     name='imio.annex',
-    version='1.10.dev0',
+    version='2.0.dev0',
     description="An add-on for Plone",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -48,9 +48,6 @@ setup(
         'collective.monkeypatcher',
         'collective.quickupload',
         'imio.dashboard',
-        'imio.actionspanel',
-        'imio.helpers',
-        'imio.prettylink',
         'plone.api',
         'plone.app.lockingbehavior',
         'setuptools',

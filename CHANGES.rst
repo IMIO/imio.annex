@@ -2,11 +2,11 @@ Changelog
 =========
 
 
-1.10 (unreleased)
+2.0 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Rely on `collective.eeafaceted.dashboard`.
+  [gbastien]
 
 1.9 (2018-01-23)
 ----------------
