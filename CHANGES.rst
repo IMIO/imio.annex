@@ -5,8 +5,9 @@ Changelog
 2.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- `PrettyLinkColumn` was moved from `collective.eeafaceted.dashboard`
+  to `collective.eeafaceted.z3ctable.columns`.
+  [gbastien]
 
 2.0 (2018-06-20)
 ----------------
