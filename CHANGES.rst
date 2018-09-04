@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.1 (unreleased)
+2.1 (2018-09-04)
 ----------------
 
 - `PrettyLinkColumn` was moved from `collective.eeafaceted.dashboard`
