@@ -5,8 +5,9 @@ Changelog
 2.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- `ActionsColumn` was moved from `imio.dashboard`
+  to `collective.eeafaceted.z3ctable.columns`.
+  [gbastien]
 
 2.1 (2018-09-04)
 ----------------

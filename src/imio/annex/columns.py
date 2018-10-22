@@ -6,7 +6,7 @@ from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
 from imio.annex import _
-from imio.dashboard.columns import ActionsColumn as DashboardActionsColumn
+from collective.eeafaceted.z3ctable.columns import ActionsColumn as DashboardActionsColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
