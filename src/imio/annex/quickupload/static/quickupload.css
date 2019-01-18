@@ -19,10 +19,3 @@ a#copy_categories:hover {
     color: #FFF!important;
     background-color: #518abc;
 }
-
-a#copy_categories::before {
-    font-family: 'FontAwesome';
-    font-size: 100%;
-    cursor: pointer;
-    content: "\f24d";
-}

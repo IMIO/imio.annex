@@ -22,6 +22,8 @@ from collective.quickupload.browser.uploadcapable import get_id_from_filename
 from collective.quickupload.interfaces import IQuickUploadFileFactory
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
+from zope.event import notify
+from zope.lifecycleevent import ObjectAddedEvent
 
 import json
 import urllib
@@ -60,6 +62,16 @@ jQuery('a#copy_categories').click(PloneQuickUpload.extendCategories);
 
 
 class QuickUploadFileView(QuickUploadFile):
+
+    def _manage_extra_parameters(self, request, f):
+        """Manage extra parameters, particularly content_category."""
+        # Extra parameters
+        content_category = getDataFromAllRequests(request, 'content_category') or ''
+        # Add an extra parameter
+        if f['success'] and content_category:
+            f['success'].content_category = content_category
+            # elements using content_category are initialized in the object created event
+            notify(ObjectAddedEvent(f['success']))
 
     def quick_upload_file(self):
         """Copied from collective.quickupload"""
@@ -152,8 +164,6 @@ class QuickUploadFileView(QuickUploadFile):
         portal_type = getDataFromAllRequests(request, 'typeupload') or ''
         title = getDataFromAllRequests(request, 'title') or ''
         description = getDataFromAllRequests(request, 'description') or ''
-        # Extrat parameters
-        category = getDataFromAllRequests(request, 'content_category') or ''
         if not title.strip() and self.qup_prefs.id_as_title:
             title = newid
 
@@ -174,9 +184,8 @@ class QuickUploadFileView(QuickUploadFile):
                 try:
                     f = updater(overwritten_file, file_name, title,
                                 description, content_type, file_data)
-                    # Add an extra parameter
-                    if f['success'] and category:
-                        f['success'].content_category = category
+                    # manage extra parameters
+                    self._manage_extra_parameters(request, f)
                 except ConflictError:
                     # Allow Zope to retry up to three times, and if that still
                     # fails, handle ConflictErrors on client side if necessary
@@ -197,9 +206,8 @@ class QuickUploadFileView(QuickUploadFile):
                 try:
                     f = factory(file_name, title, description, content_type,
                                 file_data, portal_type)
-                    # Add an extra parameter
-                    if f['success'] and category:
-                        f['success'].content_category = category
+                    # manage extra parameters
+                    self._manage_extra_parameters(request, f)
                 except ConflictError:
                     # Allow Zope to retry up to three times, and if that still
                     # fails, handle ConflictErrors on client side if necessary

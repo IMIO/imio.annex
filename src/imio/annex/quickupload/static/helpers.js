@@ -4,8 +4,7 @@ PloneQuickUpload.addUploadFields = function(uploader, domelement, file, id, fill
         blocFile = uploader._getItemByFileId(id);
         if (typeof id == 'string') id = parseInt(id.replace('qq-upload-handler-iframe',''));
     }
-    var container = $(blocFile).closest('.uploaderContainer');
-    var typeupload = container.find('input.uploadify_typeupload').val();
+    var typeupload = $('input.uploadify_typeupload').val();
     jQuery('.qq-upload-cancel', blocFile).after('<div class="content"></div>');
     jQuery(blocFile).find('div.content').load(
       '@@quickupload-form',
@@ -47,11 +46,10 @@ PloneQuickUpload.sendDataAndUpload = function(uploader, domelement, typeupload) 
 };
 
 PloneQuickUpload.extendCategories = function() {
-  var container = $(this).closest('div.uploaderContainer');
-  var first_element = container.find('select#form_widgets_content_category:first');
+  var first_element = $('select#form_widgets_content_category:first');
   var category = first_element.val();
 
-  container.find('select#form_widgets_content_category').each(function() {
+  $('select#form_widgets_content_category').each(function() {
     $(this).val(category);
     $(this).trigger('change');
   });

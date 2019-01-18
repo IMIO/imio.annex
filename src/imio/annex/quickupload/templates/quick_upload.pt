@@ -25,7 +25,7 @@
            class="main-uploader"
            tal:attributes="id uploader_id"></div>
       <tal:block i18n:domain="imio.annex">
-      <a href="" id="copy_categories" tal:condition="view/is_iconified_categorized"
+      <a href="" class="fas fa-copy" id="copy_categories" tal:condition="view/is_iconified_categorized"
          title="Apply the first category on all elements"
          i18n:attributes="title">
       </a>
