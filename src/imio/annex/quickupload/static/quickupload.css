@@ -24,15 +24,14 @@ a#copy_categories:hover {
    - display files to upload next to each other;
    - clear display.
 */
-div.overlay div.qq-uploader ul {
-    margin-left: 3em;
-}
 div.overlay div.qq-uploader li {
     display: inline-block;
+    margin-left: 3em;
     margin-right: 1em;
     margin-top: -1em;
     margin-bottom: 2em;
     width: 275px;
+    border-radius: 5px;
 }
 div.overlay div.qq-uploader li input[type="text"] {
     width: 93%;
