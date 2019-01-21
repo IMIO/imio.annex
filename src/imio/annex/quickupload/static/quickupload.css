@@ -11,11 +11,36 @@ a#copy_categories {
     text-decoration: none;
     color: #FFF;
     position: absolute;
-    top: 4.85em;
+    top: 72px;
     cursor: pointer;
 }
 
 a#copy_categories:hover {
     color: #FFF!important;
     background-color: #518abc;
+}
+
+/* quickupload displayed in an overlay :
+   - display files to upload next to each other;
+   - clear display.
+*/
+div.overlay div.qq-uploader ul {
+    margin-left: 3em;
+}
+div.overlay div.qq-uploader li {
+    display: inline-block;
+    margin-right: 1em;
+    margin-top: -1em;
+    margin-bottom: 2em;
+    width: 275px;
+}
+div.overlay div.qq-uploader li input[type="text"] {
+    width: 93%;
+}
+div.overlay div.qq-uploader .select2-container {
+    font-size: 125%;
+}
+div.overlay div.qq-upload-infos {
+    font-size: 140%;
+    color: #333333;
 }

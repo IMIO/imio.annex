@@ -5,9 +5,10 @@ Changelog
 2.3 (unreleased)
 ----------------
 
-- Adapted collective.quickupload override so it work both with portlet
-  and viewlet, manage content_category correctly and updated styles using
-  FontAwesome to be compatible with FontAwesome 5 Free.
+- Adapted `collective.quickupload` override so it work both with portlet
+  and viewlet, manage `content_category` correctly and updated styles using
+  `FontAwesome` to be compatible with `FontAwesome 5 Free`.
+  `Quickupload` is displayed in an overlay.
   [gbastien]
 
 2.2 (2018-11-20)
