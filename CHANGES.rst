@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.3 (unreleased)
+2.3 (2019-01-31)
 ----------------
 
 - Adapted `collective.quickupload` override so it work both with portlet
