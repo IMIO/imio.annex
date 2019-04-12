@@ -5,8 +5,10 @@ Changelog
 2.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Use `imio.helpers` default dexterity container view override on
+  `ContentCategoryConfiguration` elements so contained `ContentCategoryGroup`
+  objects are displayed on the view.
+  [gbastien]
 
 2.3 (2019-01-31)
 ----------------

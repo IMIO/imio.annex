@@ -40,6 +40,14 @@
     <configure package="imio.helpers">
         <browser:page
             name="view"
+            for="collective.iconifiedcategory.content.categoryconfiguration.ICategoryConfiguration"
+            layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
+            class="plone.dexterity.browser.view.DefaultView"
+            template="browser/container.pt"
+            permission="zope2.View"
+            />
+        <browser:page
+            name="view"
             for="collective.iconifiedcategory.content.category.ICategory"
             layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
             class="collective.iconifiedcategory.browser.contentview.BaseView"
