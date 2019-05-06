@@ -9,6 +9,12 @@ Changelog
   `ContentCategoryConfiguration` elements so contained `ContentCategoryGroup`
   objects are displayed on the view.
   [gbastien]
+- Fixed bug when adding an annex after CKeditor was used to add an image, the
+  mediaupload type is stored in the SESSION and reused when another
+  quick_upload is displayed (bug in collective.ckeditor?).
+  When displaying the quick_upload to add annexes, we make sure
+  mediaupload/typeupload attributes are removed from SESSION.
+  [gbastien]
 
 2.3 (2019-01-31)
 ----------------

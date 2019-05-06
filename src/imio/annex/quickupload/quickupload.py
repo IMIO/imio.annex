@@ -8,27 +8,30 @@ Created by mpeeters
 """
 
 from Acquisition import aq_inner
+from collective.quickupload import logger
+from collective.quickupload.browser.quick_upload import get_content_type
+from collective.quickupload.browser.quick_upload import getDataFromAllRequests
+from collective.quickupload.browser.quick_upload import QuickUploadFile
+from collective.quickupload.browser.quick_upload import QuickUploadInit
+from collective.quickupload.browser.quick_upload import QuickUploadView
+from collective.quickupload.browser.uploadcapable import get_id_from_filename
+from collective.quickupload.browser.uploadcapable import MissingExtension
+from collective.quickupload.interfaces import IQuickUploadFileFactory
+from collective.quickupload.interfaces import IQuickUploadFileUpdater
+from imio.annex.quickupload import utils
+from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ZODB.POSException import ConflictError
-from collective.quickupload import logger
-from collective.quickupload.browser.quick_upload import QuickUploadFile
-from collective.quickupload.browser.quick_upload import QuickUploadView
-from collective.quickupload.browser.quick_upload import getDataFromAllRequests
-from collective.quickupload.browser.quick_upload import get_content_type
-from collective.quickupload.browser.uploadcapable import MissingExtension
-from collective.quickupload.browser.uploadcapable import get_id_from_filename
-from collective.quickupload.interfaces import IQuickUploadFileFactory
-from collective.quickupload.interfaces import IQuickUploadFileUpdater
-from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from zope.event import notify
 from zope.lifecycleevent import ObjectAddedEvent
 
 import json
+import pkg_resources
 import urllib
 
-import pkg_resources
+
 try:
     pkg_resources.get_distribution('plone.uuid')
     from plone.uuid.interfaces import IUUID
@@ -36,7 +39,6 @@ try:
 except pkg_resources.DistributionNotFound:
     HAS_UUID = False
 
-from imio.annex.quickupload import utils
 
 
 class QuickUploadPortletView(QuickUploadView):
@@ -59,6 +61,21 @@ class QuickUploadPortletView(QuickUploadView):
 {0}
 jQuery('a#copy_categories').click(PloneQuickUpload.extendCategories);
         """.format(result)
+
+
+class QuickUploadFileInit(QuickUploadInit):
+
+    def upload_settings(self):
+        # if not in @@finder_upload (adding an image in CKeditor for example)
+        # make sure we do not have a mediaupload in the SESSION or it is used
+        # to determinate media format (image) and it keeps media if adding an image
+        # using CKeditor then adding an annex
+        if self.request.get('PUBLISHED').__name__ == 'quick_upload':
+            session = self.request.get('SESSION', '')
+            for session_key in ('mediaupload', 'typeupload'):
+                if session_key in session.keys():
+                    del session[session_key]
+        return super(QuickUploadFileInit, self).upload_settings()
 
 
 class QuickUploadFileView(QuickUploadFile):
