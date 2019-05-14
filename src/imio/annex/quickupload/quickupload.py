@@ -40,7 +40,6 @@ except pkg_resources.DistributionNotFound:
     HAS_UUID = False
 
 
-
 class QuickUploadPortletView(QuickUploadView):
     template = ViewPageTemplateFile("templates/quick_upload.pt")
 
