@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.4 (unreleased)
+2.4 (2019-05-16)
 ----------------
 
 - Use `imio.helpers` default dexterity container view override on
