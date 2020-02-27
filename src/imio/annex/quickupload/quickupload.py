@@ -7,6 +7,7 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
+from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from collective.quickupload import logger
 from collective.quickupload.browser.quick_upload import get_content_type
@@ -15,13 +16,18 @@ from collective.quickupload.browser.quick_upload import QuickUploadFile
 from collective.quickupload.browser.quick_upload import QuickUploadInit
 from collective.quickupload.browser.quick_upload import QuickUploadView
 from collective.quickupload.browser.uploadcapable import get_id_from_filename
+from collective.quickupload.browser.uploadcapable import INameChooser
 from collective.quickupload.browser.uploadcapable import MissingExtension
+from collective.quickupload.browser.uploadcapable import QuickUploadCapableFileFactory
+from collective.quickupload.browser.uploadcapable import upload_lock
 from collective.quickupload.interfaces import IQuickUploadFileFactory
+from collective.quickupload.interfaces import IQuickUploadFileSetter
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
 from imio.annex.quickupload import utils
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import base_hasattr
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ZODB.POSException import ConflictError
 from zope.event import notify
@@ -29,6 +35,7 @@ from zope.lifecycleevent import ObjectAddedEvent
 
 import json
 import pkg_resources
+import transaction
 import urllib
 
 
@@ -198,8 +205,10 @@ class QuickUploadFileView(QuickUploadFile):
                     % (overwritten_file.absolute_url(), upload_with, title,
                        description, content_type))
                 try:
+                    self.request.set('defer_categorized_content_created_event', True)
                     f = updater(overwritten_file, file_name, title,
                                 description, content_type, file_data)
+                    self.request.set('defer_categorized_content_created_event', False)
                     # manage extra parameters
                     self._manage_extra_parameters(request, f)
                 except ConflictError:
@@ -220,8 +229,10 @@ class QuickUploadFileView(QuickUploadFile):
                     % (upload_with, file_name, title,
                        description, content_type, portal_type))
                 try:
+                    self.request.set('defer_categorized_content_created_event', True)
                     f = factory(file_name, title, description, content_type,
                                 file_data, portal_type)
+                    self.request.set('defer_categorized_content_created_event', False)
                     # manage extra parameters
                     self._manage_extra_parameters(request, f)
                 except ConflictError:
@@ -254,3 +265,77 @@ class QuickUploadFileView(QuickUploadFile):
             msg = {u'error': u'emptyError'}
 
         return json.dumps(msg)
+
+
+class ImioAnnexQuickUploadCapableFileFactory(QuickUploadCapableFileFactory):
+
+    def __call__(self, filename, title, description, content_type, data,
+                 portal_type):
+        context = aq_inner(self.context)
+        error = ''
+        result = {}
+        result['success'] = None
+        newid = get_id_from_filename(filename, context)
+        chooser = INameChooser(context)
+        newid = chooser.chooseName(newid, context)
+        # consolidation because it's different upon Plone versions
+        if not title:
+            # try to split filenames because we don't want
+            # big titles without spaces
+            title = filename.rsplit('.', 1)[0]\
+                .replace('_', ' ')\
+                .replace('-', ' ')
+
+        if newid in context:
+            # only here for flashupload method since a check_id is done
+            # in standard uploader - see also XXX in quick_upload.py
+            raise NameError('Object id %s already exists' % newid)
+        else:
+            upload_lock.acquire()
+            try:
+                transaction.begin()
+                try:
+                    context.invokeFactory(type_name=portal_type, id=newid,
+                                          title=title, description=description)
+                except Unauthorized:
+                    error = u'serverErrorNoPermission'
+                except ValueError:
+                    error = u'serverErrorDisallowedType'
+                except Exception as e:
+                    error = u'serverError'
+                    logger.exception(e)
+
+                if error:
+                    if error == u'serverError':
+                        logger.info(
+                            "An error happens with setId from filename, "
+                            "the file has been created with a bad id, "
+                            "can't find %s", newid)
+                else:
+                    obj = getattr(context, newid)
+                    if obj:
+                        error = IQuickUploadFileSetter(obj).set(
+                            data, filename, content_type
+                        )
+                        obj._at_rename_after_creation = False
+                        # XXX begin change by imio.annex
+                        if base_hasattr(obj, 'processForm'):
+                            # Archetypes
+                            obj.processForm()
+                            del obj._at_rename_after_creation
+                        else:
+                            # Dexterity
+                            if obj.REQUEST.get('defer_update_categorized_elements', False):
+                                notify(ObjectAddedEvent(obj))
+                        # XXX end change by imio.annex
+
+                # TODO : rollback if there has been an error
+                transaction.commit()
+            finally:
+                upload_lock.release()
+
+        result['error'] = error
+        if not error:
+            result['success'] = obj
+
+        return result

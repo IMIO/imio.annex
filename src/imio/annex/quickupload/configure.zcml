@@ -16,27 +16,4 @@
     template="templates/form.pt"
     permission="zope2.View" />
 
-  <!-- Quick Upload javascript Init -->
-  <browser:page
-    for="collective.quickupload.interfaces.IQuickUploadCapable"
-    name="quick_upload_init"
-    class=".quickupload.QuickUploadFileInit"
-    permission="cmf.AddPortalContent"
-    layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
-
-  <browser:page
-    for="collective.quickupload.interfaces.IQuickUploadCapable"
-    name="quick_upload"
-    class=".quickupload.QuickUploadPortletView"
-    permission="cmf.AddPortalContent"
-    layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
-
-  <browser:page
-    for="*"
-    name="quick_upload_file"
-    attribute="quick_upload_file"
-    class=".quickupload.QuickUploadFileView"
-    permission="cmf.AddPortalContent"
-    layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
-
 </configure>

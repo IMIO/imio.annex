@@ -5,8 +5,9 @@ Changelog
 2.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Override `collective.quickupload` `QuickUploadCapableFileFactory` to avoid
+  calling object added/created/modified events more than one time.
+  [gbastien]
 
 2.4 (2019-05-16)
 ----------------

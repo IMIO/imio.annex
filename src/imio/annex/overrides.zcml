@@ -6,32 +6,32 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="imio.annex">
 
-  <adapter
-    name="title-column"
-    for="zope.interface.Interface
-         zope.interface.Interface
-         collective.iconifiedcategory.interfaces.ICategorizedTable"
-    provides="z3c.table.interfaces.IColumn"
-    factory=".columns.PrettyLinkColumn"
-    />
+    <adapter
+      name="title-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.PrettyLinkColumn"
+      />
 
-  <adapter
-    name="author-column"
-    for="zope.interface.Interface
-         zope.interface.Interface
-         collective.iconifiedcategory.interfaces.ICategorizedTable"
-    provides="z3c.table.interfaces.IColumn"
-    factory=".columns.AuthorColumn"
-    />
+    <adapter
+      name="author-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.AuthorColumn"
+      />
 
-  <adapter
-    name="action-column"
-    for="zope.interface.Interface
-         zope.interface.Interface
-         collective.iconifiedcategory.interfaces.ICategorizedTable"
-    provides="z3c.table.interfaces.IColumn"
-    factory=".columns.ActionsColumn"
-    />
+    <adapter
+      name="action-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.ActionsColumn"
+      />
 
     <!-- Use the imio.helpers container view for annex, overrided here because
          already overrided in collective.iconifiedcategory except for ICategoryGroup
@@ -69,6 +69,35 @@
             template="browser/container.pt"
             permission="zope2.View"
             />
+    </configure>
+
+    <!-- Quick Upload -->
+    <configure package="collective.quickupload">
+
+      <adapter factory="imio.annex.quickupload.quickupload.ImioAnnexQuickUploadCapableFileFactory" />
+
+      <browser:page
+        for="collective.quickupload.interfaces.IQuickUploadCapable"
+        name="quick_upload_init"
+        class="imio.annex.quickupload.quickupload.QuickUploadFileInit"
+        permission="cmf.AddPortalContent"
+        layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
+
+      <browser:page
+        for="collective.quickupload.interfaces.IQuickUploadCapable"
+        name="quick_upload"
+        class="imio.annex.quickupload.quickupload.QuickUploadPortletView"
+        permission="cmf.AddPortalContent"
+        layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
+
+      <browser:page
+        for="*"
+        name="quick_upload_file"
+        attribute="quick_upload_file"
+        class="imio.annex.quickupload.quickupload.QuickUploadFileView"
+        permission="cmf.AddPortalContent"
+        layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer" />
+
     </configure>
 
 </configure>
