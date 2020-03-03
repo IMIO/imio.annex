@@ -7,6 +7,7 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
+from imio.annex import _
 from plone.app.contenttypes.content import File
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.dexterity import PloneMessageFactory as _PMF
@@ -14,11 +15,10 @@ from plone.autoform import directives as form
 from plone.dexterity.schema import DexteritySchemaPolicy
 from plone.namedfile.field import NamedBlobFile
 from plone.supermodel import model
-from z3c.form.interfaces import IEditForm, IAddForm
+from z3c.form.interfaces import IAddForm
+from z3c.form.interfaces import IEditForm
 from zope import schema
 from zope.interface import implements
-
-from imio.annex import _
 
 
 class IAnnex(model.Schema, IFile):

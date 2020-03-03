@@ -9,6 +9,8 @@ Created by mpeeters
 
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
+from collective.iconifiedcategory.behaviors.iconifiedcategorization import IIconifiedCategorization
+from collective.iconifiedcategory.utils import validateFileIsPDF
 from collective.quickupload import logger
 from collective.quickupload.browser.quick_upload import get_content_type
 from collective.quickupload.browser.quick_upload import getDataFromAllRequests
@@ -30,6 +32,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import base_hasattr
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ZODB.POSException import ConflictError
+from z3c.form.validator import Data
 from zope.event import notify
 from zope.lifecycleevent import ObjectAddedEvent
 
@@ -92,9 +95,15 @@ class QuickUploadFileView(QuickUploadFile):
         content_category = getDataFromAllRequests(request, 'content_category') or ''
         # Add an extra parameter
         if f['success'] and content_category:
-            f['success'].content_category = content_category
+            obj = f['success']
+            obj.content_category = content_category
+            if IIconifiedCategorization.providedBy(obj) and obj.file.contentType != 'application/pdf':
+                data = Data([], [], [])
+                data.__context__ = obj
+                data.content_category = content_category
+                validateFileIsPDF(data)
             # elements using content_category are initialized in the object created event
-            notify(ObjectAddedEvent(f['success']))
+            notify(ObjectAddedEvent(obj))
 
     def quick_upload_file(self):
         """Copied from collective.quickupload"""
@@ -317,10 +326,10 @@ class ImioAnnexQuickUploadCapableFileFactory(QuickUploadCapableFileFactory):
                         error = IQuickUploadFileSetter(obj).set(
                             data, filename, content_type
                         )
-                        obj._at_rename_after_creation = False
                         # XXX begin change by imio.annex
                         if base_hasattr(obj, 'processForm'):
                             # Archetypes
+                            obj._at_rename_after_creation = False
                             obj.processForm()
                             del obj._at_rename_after_creation
                         else:

@@ -8,6 +8,9 @@ Changelog
 - Override `collective.quickupload` `QuickUploadCapableFileFactory` to avoid
   calling object added/created/modified events more than one time.
   [gbastien]
+- While adding an annex, call `validateFileIsPDF` to manage the `pdf_only`
+  parameter as `invariants` are not called by default.
+  [gbastien]
 
 2.4 (2019-05-16)
 ----------------
