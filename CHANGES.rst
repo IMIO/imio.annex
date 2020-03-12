@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.5 (unreleased)
+2.5 (2020-03-12)
 ----------------
 
 - Override `collective.quickupload` `QuickUploadCapableFileFactory` to avoid
