@@ -1,0 +1,10 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+
+#. Default: "Server error, please contact support and/or try again."
+msgid "Server error, please contact support and/or try again."
+msgstr ""
+

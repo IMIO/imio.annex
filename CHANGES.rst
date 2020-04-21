@@ -5,8 +5,9 @@ Changelog
 2.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Avoid orphan annex left without a content_category when a `ConflictError`
+  occurs during file upload because upload is done by a separate `XHR request`.
+  [gbastien]
 
 2.5 (2020-03-12)
 ----------------
