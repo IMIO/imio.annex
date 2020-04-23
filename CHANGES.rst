@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.6 (unreleased)
+2.6 (2020-04-23)
 ----------------
 
 - Avoid orphan annex left without a content_category when a `ConflictError`
