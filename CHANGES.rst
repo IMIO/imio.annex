@@ -5,8 +5,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Test if current obj provides `IAnnex` instead `IIconifiedCategorization` as
+  it is no longer provided to fix a bug in `collective.iconifiedcategory`.
+  [gbastien]
 
 2.6 (2020-04-23)
 ----------------

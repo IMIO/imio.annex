@@ -9,7 +9,6 @@ Created by mpeeters
 
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
-from collective.iconifiedcategory.behaviors.iconifiedcategorization import IIconifiedCategorization
 from collective.iconifiedcategory.utils import validateFileIsPDF
 from collective.quickupload import logger
 from collective.quickupload.browser.quick_upload import get_content_type
@@ -25,6 +24,7 @@ from collective.quickupload.browser.uploadcapable import upload_lock
 from collective.quickupload.interfaces import IQuickUploadFileFactory
 from collective.quickupload.interfaces import IQuickUploadFileSetter
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
+from imio.annex.content.annex import IAnnex
 from imio.annex.quickupload import utils
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
@@ -96,7 +96,7 @@ class QuickUploadFileView(QuickUploadFile):
         if f['success'] and content_category:
             obj = f['success']
             obj.content_category = content_category
-            if IIconifiedCategorization.providedBy(obj) and obj.file.contentType != 'application/pdf':
+            if IAnnex.providedBy(obj) and obj.file.contentType != 'application/pdf':
                 data = Data([], [], [])
                 data.__context__ = obj
                 data.content_category = content_category
