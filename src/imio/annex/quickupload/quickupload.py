@@ -307,7 +307,6 @@ class ImioAnnexQuickUploadCapableFileFactory(QuickUploadCapableFileFactory):
                 # transaction.begin()
                 # XXX end change by imio.annex
                 try:
-                    raise TypeError
                     context.invokeFactory(type_name=portal_type, id=newid,
                                           title=title, description=description)
                 except Unauthorized:
