@@ -300,53 +300,54 @@ class ImioAnnexQuickUploadCapableFileFactory(QuickUploadCapableFileFactory):
             raise NameError('Object id %s already exists' % newid)
         else:
             upload_lock.acquire()
-            # XXX begin change by imio.annex
-            # this will lead to annex without a content_category because
-            # this annex is created by a separated XHR request
-            # transaction.begin()
-            # XXX end change by imio.annex
-
             try:
-                context.invokeFactory(type_name=portal_type, id=newid,
-                                      title=title, description=description)
-            except Unauthorized:
-                error = u'serverErrorNoPermission'
-            except ValueError:
-                error = u'serverErrorDisallowedType'
-            except Exception as e:
-                error = u'serverError'
-                logger.exception(e)
+                # XXX begin change by imio.annex
+                # this will lead to annex without a content_category because
+                # this annex is created by a separated XHR request
+                # transaction.begin()
+                # XXX end change by imio.annex
+                try:
+                    raise TypeError
+                    context.invokeFactory(type_name=portal_type, id=newid,
+                                          title=title, description=description)
+                except Unauthorized:
+                    error = u'serverErrorNoPermission'
+                except ValueError:
+                    error = u'serverErrorDisallowedType'
+                except Exception as e:
+                    error = u'serverError'
+                    logger.exception(e)
 
-            if error:
-                if error == u'serverError':
-                    logger.info(
-                        "An error happens with setId from filename, "
-                        "the file has been created with a bad id, "
-                        "can't find %s", newid)
-            else:
-                obj = getattr(context, newid)
-                if obj:
-                    error = IQuickUploadFileSetter(obj).set(
-                        data, filename, content_type
-                    )
-                    # XXX begin change by imio.annex
-                    if base_hasattr(obj, 'processForm'):
-                        # Archetypes
-                        obj._at_rename_after_creation = False
-                        obj.processForm()
-                        del obj._at_rename_after_creation
-                    else:
-                        # Dexterity
-                        if obj.REQUEST.get('defer_update_categorized_elements', False):
-                            notify(ObjectAddedEvent(obj))
-                    # XXX end change by imio.annex
+                if error:
+                    if error == u'serverError':
+                        logger.info(
+                            "An error happens with setId from filename, "
+                            "the file has been created with a bad id, "
+                            "can't find %s", newid)
+                else:
+                    obj = getattr(context, newid)
+                    if obj:
+                        error = IQuickUploadFileSetter(obj).set(
+                            data, filename, content_type
+                        )
+                        # XXX begin change by imio.annex
+                        if base_hasattr(obj, 'processForm'):
+                            # Archetypes
+                            obj._at_rename_after_creation = False
+                            obj.processForm()
+                            del obj._at_rename_after_creation
+                        else:
+                            # Dexterity
+                            if obj.REQUEST.get('defer_update_categorized_elements', False):
+                                notify(ObjectAddedEvent(obj))
+                        # XXX end change by imio.annex
 
-            # XXX begin change by imio.annex
-            # TODO : rollback if there has been an error
-            # transaction.commit()
-            # XXX end change by imio.annex
-
-            upload_lock.release()
+                # XXX begin change by imio.annex
+                # TODO : rollback if there has been an error
+                # transaction.commit()
+                # XXX end change by imio.annex
+            finally:
+                upload_lock.release()
 
         result['error'] = error
         if not error:

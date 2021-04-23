@@ -5,8 +5,11 @@ Changelog
 2.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Fixed `quickupload.ImioAnnexQuickUploadCapableFileFactory` to make sure that
+  thread lock is released like it is the case by default in
+  `uploadcapable.QuickUploadCapableFileFactory`.
+  This should avoid rare cases where instance is stuck while adding an annex.
+  [gbastien]
 
 2.7 (2020-05-08)
 ----------------
