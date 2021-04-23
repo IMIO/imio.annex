@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.8 (unreleased)
+2.8 (2021-04-23)
 ----------------
 
 - Fixed `quickupload.ImioAnnexQuickUploadCapableFileFactory` to make sure that
