@@ -5,8 +5,10 @@ Changelog
 2.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Override `collective.iconifiedcategory` `category-column` to use a
+  `collective.eeafaceted.z3ctable` column instead the original `z3c.table`
+  column so we have CSS classes to skin the column.
+  [gbastien]
 
 2.8 (2021-04-23)
 ----------------

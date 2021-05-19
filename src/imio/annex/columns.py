@@ -5,7 +5,9 @@ from collective.eeafaceted.z3ctable.columns import MemberIdColumn
 from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
+from collective.iconifiedcategory.browser.tabview import CategoryColumn as IconifiedCategoryColumn
 from imio.annex import _
+from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import ActionsColumn as DashboardActionsColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
@@ -50,6 +52,10 @@ class AuthorColumn(MemberIdColumn):
     """ """
     weight = IconifiedAuthorColumn.weight
     header = IconifiedAuthorColumn.header
+
+
+class CategoryColumn(IconifiedCategoryColumn, BaseColumn):
+    """ """
 
 
 class ActionsColumn(DashboardActionsColumn):

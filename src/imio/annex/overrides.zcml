@@ -12,8 +12,7 @@
            zope.interface.Interface
            collective.iconifiedcategory.interfaces.ICategorizedTable"
       provides="z3c.table.interfaces.IColumn"
-      factory=".columns.PrettyLinkColumn"
-      />
+      factory=".columns.PrettyLinkColumn" />
 
     <adapter
       name="author-column"
@@ -21,8 +20,15 @@
            zope.interface.Interface
            collective.iconifiedcategory.interfaces.ICategorizedTable"
       provides="z3c.table.interfaces.IColumn"
-      factory=".columns.AuthorColumn"
-      />
+      factory=".columns.AuthorColumn" />
+
+    <adapter
+      name="category-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.CategoryColumn" />
 
     <adapter
       name="action-column"
@@ -30,8 +36,7 @@
            zope.interface.Interface
            collective.iconifiedcategory.interfaces.ICategorizedTable"
       provides="z3c.table.interfaces.IColumn"
-      factory=".columns.ActionsColumn"
-      />
+      factory=".columns.ActionsColumn" />
 
     <!-- Use the imio.helpers container view for annex, overrided here because
          already overrided in collective.iconifiedcategory except for ICategoryGroup
