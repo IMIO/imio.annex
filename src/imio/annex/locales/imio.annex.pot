@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-04-21 12:18+0000\n"
+"POT-Creation-Date: 2021-05-20 15:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.annex\n"
 
-#: ../columns.py:56
+#: ../columns.py:62
 msgid "Actions"
 msgstr ""
 
@@ -49,8 +49,12 @@ msgstr ""
 msgid "Scan metadata (fields to_sign/signed hidden)"
 msgstr ""
 
-#: ../columns.py:17
+#: ../columns.py:19
 msgid "Title"
+msgstr ""
+
+#: ../browser/views.py:48
+msgid "Too much annexes to zip, try selecting fewer annexes..."
 msgstr ""
 
 #: ../configure.zcml:35

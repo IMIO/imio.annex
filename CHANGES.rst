@@ -9,6 +9,9 @@ Changelog
   `collective.eeafaceted.z3ctable` column instead the original `z3c.table`
   column so we have CSS classes to skin the column.
   [gbastien]
+- Added `DownloadAnnexesBatchActionForm`, a batch action to download several
+  annexes as a Zip file.
+  [gbastien]
 
 2.8 (2021-04-23)
 ----------------
