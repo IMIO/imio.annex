@@ -21,8 +21,10 @@ for lang in $(find . -mindepth 1 -maxdepth 1 -type d); do
 				touch $lang/LC_MESSAGES/$domain.po
 				touch $lang/LC_MESSAGES/plone.po
 				touch $lang/LC_MESSAGES/collective.quickupload.po
+				touch $lang/LC_MESSAGES/collective.eeafaceted.batchactions.po
 				i18ndude sync --pot $domain.pot $lang/LC_MESSAGES/$domain.po
 				i18ndude sync --pot plone.pot $lang/LC_MESSAGES/plone.po
 				i18ndude sync --pot collective.quickupload.pot $lang/LC_MESSAGES/collective.quickupload.po
+				i18ndude sync --pot collective.eeafaceted.batchactions.pot $lang/LC_MESSAGES/collective.eeafaceted.batchactions.po
 		fi
 done

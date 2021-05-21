@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-05-20 15:05+0000\n"
+"POT-Creation-Date: 2021-05-21 14:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,10 +49,6 @@ msgstr "Métadonnées de numérisation (champs \"à signer?/signé?\" cachés)"
 #: ../columns.py:19
 msgid "Title"
 msgstr "Titre"
-
-#: ../browser/views.py:48
-msgid "Too much annexes to zip, try selecting fewer annexes..."
-msgstr "Trop d'annexes à compressez en .zip, essayez de sélectionner moins d'annexes..."
 
 #: ../configure.zcml:35
 msgid "imio.annex"
