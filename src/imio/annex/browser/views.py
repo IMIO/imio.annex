@@ -4,6 +4,7 @@ from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
 from collective.iconifiedcategory.utils import calculate_filesize
 from imio.annex.content.annex import IAnnex
+from imio.annex import _
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
@@ -63,6 +64,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         self.total_size = self._total_size()
         if self.total_size > MAX_TOTAL_SIZE:
             self.do_apply = False
+        # change "Apply" button title to "Download"
+        self.buttons['apply'].title = _('Download')
 
     def available(self):
         """ """
