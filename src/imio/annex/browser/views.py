@@ -11,7 +11,8 @@ from zope.i18n import translate
 
 import zipfile
 
-MAX_TOTAL_SIZE = 50000000
+# gives a human readable size of "50.0 Mb"
+MAX_TOTAL_SIZE = 52400000
 
 
 class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
