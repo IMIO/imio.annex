@@ -20,6 +20,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
     label = _CEBA("Download annexes")
     button_with_icon = True
+    apply_button_title = _('download-annexes-batch-action-but')
     section = "annexes"
 
     @property
@@ -64,8 +65,6 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         self.total_size = self._total_size()
         if self.total_size > MAX_TOTAL_SIZE:
             self.do_apply = False
-        # change "Apply" button title to "Download"
-        self.buttons['apply'].title = _('Download')
 
     def available(self):
         """ """
