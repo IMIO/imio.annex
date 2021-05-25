@@ -4,7 +4,6 @@ from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
 from collective.iconifiedcategory.utils import calculate_filesize
 from imio.annex.content.annex import IAnnex
-from imio.annex import _
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
@@ -20,7 +19,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
     label = _CEBA("Download annexes")
     button_with_icon = True
-    apply_button_title = _('download-annexes-batch-action-but')
+    apply_button_title = _CEBA('download-annexes-batch-action-but')
     section = "annexes"
 
     @property
@@ -80,6 +79,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             primary_field = IPrimaryFieldInfo(obj)
             data = primary_field.value.data
             filename = primary_field.value.filename
+            # can not do without a filename...
+            if not filename:
+                continue
             zipper.writestr(filename, data)
             created = obj.created()
             zipper.NameToInfo[filename].date_time = (
