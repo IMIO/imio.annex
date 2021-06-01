@@ -61,6 +61,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         return total
 
     def _update(self):
+        """Can not apply action if total size exceeded."""
         self.total_size = self._total_size()
         if self.total_size > MAX_TOTAL_SIZE:
             self.do_apply = False
@@ -70,7 +71,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         return True
 
     def zipfiles(self, content):
-        """Return the path and file stream of all content we find here"""
+        """Return zipped content."""
         fstream = BytesIO()
         zipper = zipfile.ZipFile(fstream, 'w', zipfile.ZIP_DEFLATED)
         for obj in content:
