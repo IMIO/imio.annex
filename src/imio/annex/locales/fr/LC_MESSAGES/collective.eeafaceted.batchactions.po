@@ -19,8 +19,8 @@ msgid "<p class=\"warn_filesize\">The maximum size you may download at one time 
 msgstr "<p class=\"warn_filesize\">La taille maximum que peut atteindre le fichier à télécharger est ${max_size}, vous êtes actuellement à ${total_size}. Veuillez désélectionner certains éléments, notamment les éléments dont la taille est affichée en rouge et télécharger ceux-ci séparément.</p>"
 
 #: ../browser/views.py:43
-msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"Apply\", you will have a spinner, wait until the Zip file is available.</p>"
-msgstr "<p>Ces éléments seront téléchargés sous la forme d'un fichier Zip.</p><p>La taille du fichier est de <b>${total_size}</b>, lorsque vous cliquez sur \"Télécharger\", veuillez patienter quelques secondes pour que le fichier Zip soit disponible.</p>"
+msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
+msgstr "<p>Ces éléments seront téléchargés sous la forme d'un fichier Zip.</p><p>La taille du fichier est de <b>${total_size}</b>, lorsque vous cliquez sur \"${button_title}\", veuillez patienter quelques secondes pour que le fichier Zip soit disponible.</p>"
 
 #. Default: "Download annexes as batch"
 msgid "Download annexes"

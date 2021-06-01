@@ -43,9 +43,15 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         else:
             descr += translate(
                 '<p>This will download the selected elements as a Zip file.</p>'
-                '<p>The total file size is <b>${total_size}</b>, when clicking on "Apply", '
-                'you will have a spinner, wait until the Zip file is available.</p>',
-                mapping={'total_size': readable_total_size},
+                '<p>The total file size is <b>${total_size}</b>, when clicking on '
+                '"${button_title}", you will have a spinner, wait until the Zip file '
+                'is available.</p>',
+                mapping={
+                    'total_size': readable_total_size,
+                    'button_title': translate(
+                        'download-annexes-batch-action-but',
+                        domain="collective.eeafaceted.batchactions",
+                        context=self.request)},
                 domain="collective.eeafaceted.batchactions",
                 context=self.request)
         return descr

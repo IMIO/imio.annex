@@ -22,7 +22,7 @@ msgid "<p class=\"warn_filesize\">The maximum size you may download at one time 
 msgstr ""
 
 #: ../browser/views.py:43
-msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"Apply\", you will have a spinner, wait until the Zip file is available.</p>"
+msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
 msgstr ""
 
 #. Default: "Download as Zip file"
