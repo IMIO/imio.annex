@@ -9,4 +9,11 @@
         name="imio.annex"
         directory="static" />
 
+    <!-- Download annexes as Zip batch action -->
+    <!--browser:page
+        for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"
+        name="download-annexes-batch-action"
+        class="imio.annex.browser.views.DownloadAnnexesBatchActionForm"
+        permission="zope2.View" /-->
+
 </configure>

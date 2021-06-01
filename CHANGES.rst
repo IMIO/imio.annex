@@ -9,6 +9,11 @@ Changelog
   `collective.eeafaceted.z3ctable` column instead the original `z3c.table`
   column so we have CSS classes to skin the column.
   [gbastien]
+- Added `DownloadAnnexesBatchActionForm`, a batch action to download several
+  annexes as a Zip file :
+  - download is handled by an ajax request;
+  - max download size is 50Mb by default.
+  [gbastien]
 
 2.8 (2021-04-23)
 ----------------
