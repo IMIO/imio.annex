@@ -31,6 +31,30 @@
       factory=".columns.CategoryColumn" />
 
     <adapter
+      name="creation-date-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.CreationDateColumn" />
+
+    <adapter
+      name="last-modification-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.LastModificationColumn" />
+
+    <adapter
+      name="filesize-column"
+      for="zope.interface.Interface
+           zope.interface.Interface
+           collective.iconifiedcategory.interfaces.ICategorizedTable"
+      provides="z3c.table.interfaces.IColumn"
+      factory=".columns.FilesizeColumn" />
+
+    <adapter
       name="action-column"
       for="zope.interface.Interface
            zope.interface.Interface

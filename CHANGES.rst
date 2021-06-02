@@ -5,9 +5,10 @@ Changelog
 2.9 (unreleased)
 ----------------
 
-- Override `collective.iconifiedcategory` `category-column` to use a
-  `collective.eeafaceted.z3ctable` column instead the original `z3c.table`
-  column so we have CSS classes to skin the column.
+- Override `collective.iconifiedcategory` columns `category-column`,
+  `creation-date-column`, `last-modification-column` and `filesize-column` to
+  use `collective.eeafaceted.z3ctable` based columns instead the original
+  `z3c.table` columns so we have custom CSS classes.
   [gbastien]
 - Added `DownloadAnnexesBatchActionForm`, a batch action to download several
   annexes as a Zip file :

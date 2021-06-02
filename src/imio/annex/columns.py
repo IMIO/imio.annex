@@ -6,8 +6,12 @@ from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
 from collective.iconifiedcategory.browser.tabview import CategoryColumn as IconifiedCategoryColumn
+from collective.iconifiedcategory.browser.tabview import CreationDateColumn as IconifiedCreationDateColumn
+from collective.iconifiedcategory.browser.tabview import FilesizeColumn as IconifiedFilesizeColumn
+from collective.iconifiedcategory.browser.tabview import LastModificationColumn as IconifiedLastModificationColumn
 from imio.annex import _
 from collective.eeafaceted.z3ctable.columns import BaseColumn
+from collective.eeafaceted.z3ctable.columns import DateColumn
 from collective.eeafaceted.z3ctable.columns import ActionsColumn as DashboardActionsColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
@@ -55,6 +59,18 @@ class AuthorColumn(MemberIdColumn):
 
 
 class CategoryColumn(IconifiedCategoryColumn, BaseColumn):
+    """ """
+
+
+class CreationDateColumn(IconifiedCreationDateColumn, DateColumn):
+    """ """
+
+
+class LastModificationColumn(IconifiedLastModificationColumn, DateColumn):
+    """ """
+
+
+class FilesizeColumn(IconifiedFilesizeColumn, BaseColumn):
     """ """
 
 
