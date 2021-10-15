@@ -23,20 +23,31 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
     header = _(u'Title')
     weight = 20
 
-    def renderCell(self, item):
+    def getPrettyLink(self, obj):
         """Display the description just under the pretty link."""
-        obj = self._getObject(item)
-        pl = self.getPrettyLink(obj)
+        pl = super(PrettyLinkColumn, self).getPrettyLink(obj)
         # if preview is enabled, display a specific icon if element is converted
         preview = ''
         portal = api.portal.get()
         gsettings = GlobalSettings(portal)
         if gsettings.auto_convert and IIconifiedPreview(obj).converted:
             preview = self._preview_html(obj)
+
         # display description if any
         description = u'<p class="discreet">{0}</p>'.format(
-            safe_unicode(item.Description))
-        return pl + preview + description
+            safe_unicode(obj.Description() or u'').replace('\n', '<br/>'))
+
+        # display scan_id if any
+        scan_id = getattr(obj, "scan_id", '') or ''
+        if scan_id:
+            field_name = translate(
+                'scan_id',
+                domain='collective.dms.scanbehavior',
+                context=obj.REQUEST)
+            scan_id = u'<div class="discreet"><label class="horizontal">{0}</label>' \
+                '<div class="type-textarea-widget">{1}</div></div>'.format(
+                    field_name, scan_id)
+        return pl + preview + description + scan_id
 
     def _preview_html(self, obj):
         """ """
