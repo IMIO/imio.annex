@@ -33,9 +33,23 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         if gsettings.auto_convert and IIconifiedPreview(obj).converted:
             preview = self._preview_html(obj)
 
+        # simple blank space
+        blank = u'<p class="discreet"></p>'
+
         # display description if any
-        description = u'<p class="discreet">{0}</p>'.format(
-            safe_unicode(obj.Description() or u'').replace('\n', '<br/>'))
+        description = safe_unicode(obj.Description() or u'').replace('\n', '<br/>')
+        if description:
+            description = u'<p class="discreet">{0}</p>'.format(description)
+
+        # display filename if any
+        filename = obj.file.filename
+        field_name = translate(
+            'File',
+            domain='imio.annex',
+            context=obj.REQUEST)
+        filename = u'<div class="discreet"><label class="horizontal">{0}</label>' \
+            '<div class="type-text-widget">{1}</div></div>'.format(
+                field_name, filename)
 
         # display scan_id if any
         scan_id = getattr(obj, "scan_id", '') or ''
@@ -47,7 +61,7 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
             scan_id = u'<div class="discreet"><label class="horizontal">{0}</label>' \
                 '<div class="type-textarea-widget">{1}</div></div>'.format(
                     field_name, scan_id)
-        return pl + preview + description + scan_id
+        return pl + preview + blank + description + filename + scan_id
 
     def _preview_html(self, obj):
         """ """

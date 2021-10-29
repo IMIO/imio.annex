@@ -5,7 +5,8 @@ Changelog
 2.10 (unreleased)
 -----------------
 
-- Display the annex `scan_id` in the categorized elemens table under the description.
+- Display the annex `filename` and `scan_id` in the categorized elemens table
+  under the description.
   [gbastien]
 
 2.9 (2021-07-16)
