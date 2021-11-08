@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.10 (unreleased)
+2.10 (2021-11-08)
 -----------------
 
 - Display the annex `filename` and `scan_id` in the categorized elemens table
