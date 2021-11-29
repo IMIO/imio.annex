@@ -5,7 +5,8 @@ Changelog
 2.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed ImportError, use `plone.app.dexterity._` instead of `plone.app.dexterity.PloneMessageFactory`
+  [fngaha]
 
 
 2.10 (2021-11-08)
