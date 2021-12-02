@@ -18,7 +18,7 @@ from plone.supermodel import model
 from z3c.form.interfaces import IAddForm
 from z3c.form.interfaces import IEditForm
 from zope import schema
-from zope.interface import implements
+from zope.interface import implementer
 
 
 class IAnnex(model.Schema, IFile):
@@ -53,9 +53,9 @@ class IAnnex(model.Schema, IFile):
     )
 
 
+@implementer(IAnnex)
 class Annex(File):
     """Annex content type"""
-    implements(IAnnex)
 
 
 class AnnexSchemaPolicy(DexteritySchemaPolicy):

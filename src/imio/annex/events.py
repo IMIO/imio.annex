@@ -7,15 +7,14 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from zope.component.interfaces import ObjectEvent
-from zope.interface import implements
-
 from imio.annex.interfaces import IAnnexFileChangedEvent
 from imio.annex.interfaces import IConversionStartedEvent
+from zope.component.interfaces import ObjectEvent
+from zope.interface import implementer
 
 
+@implementer(IAnnexFileChangedEvent)
 class AnnexFileChangedEvent(ObjectEvent):
-    implements(IAnnexFileChangedEvent)
 
     def __init__(self, object, file, called_by=None):
         """p_called_by can be used by notifier to specify where it was notified
@@ -25,5 +24,6 @@ class AnnexFileChangedEvent(ObjectEvent):
         self.called_by = called_by
 
 
+@implementer(IConversionStartedEvent)
 class ConversionStartedEvent(ObjectEvent):
-    implements(IConversionStartedEvent)
+    """"""
