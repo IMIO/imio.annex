@@ -5,8 +5,8 @@ Changelog
 2.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `annex.UID` method to speed up getting the UID.
+  [gbastien]
 
 2.10 (2021-11-08)
 -----------------

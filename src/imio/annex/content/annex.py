@@ -15,6 +15,7 @@ from plone.autoform import directives as form
 from plone.dexterity.schema import DexteritySchemaPolicy
 from plone.namedfile.field import NamedBlobFile
 from plone.supermodel import model
+from plone.uuid.interfaces import ATTRIBUTE_NAME
 from z3c.form.interfaces import IAddForm
 from z3c.form.interfaces import IEditForm
 from zope import schema
@@ -56,6 +57,10 @@ class IAnnex(model.Schema, IFile):
 class Annex(File):
     """Annex content type"""
     implements(IAnnex)
+
+    def UID(self):
+        """Speedup getting UID."""
+        return getattr(self, ATTRIBUTE_NAME)
 
 
 class AnnexSchemaPolicy(DexteritySchemaPolicy):
