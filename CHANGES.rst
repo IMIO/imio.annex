@@ -5,8 +5,10 @@ Changelog
 2.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `utils.get_annexes_to_print`, use image format (`.png`, `.jpg`, ...)
+  stored in annex collective.documentviewer annotation to know the path to
+  traverse, this is useful in case image format changed in the global settings.
+  [gbastien]
 
 2.11 (2022-01-03)
 -----------------

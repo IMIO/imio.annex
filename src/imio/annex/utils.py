@@ -20,7 +20,8 @@ def get_annexes_to_print(container, portal_type=None, caching=True):
         global_settings = GlobalSettings(portal)
         annexes = get_categorized_elements(container,
                                            result_type='dict',
-                                           portal_type=portal_type)
+                                           portal_type=portal_type,
+                                           filters={"to_print": True})
         i = 1
         for annex_infos in annexes:
             # first check if annex needs to be printed
@@ -42,7 +43,9 @@ def get_annexes_to_print(container, portal_type=None, caching=True):
             data['number'] = i
             data['images'] = []
             data['number_of_images'] = annex_annotations['collective.documentviewer']['num_pages']
-            # we need to traverse to something like : @@dvpdffiles/c/7/c7e2e8b5597c4dc28cf2dee9447dcf9a/large/dump_1.png
+            image_format = annex_annotations['collective.documentviewer']['pdf_image_format']
+            # we need to traverse to something like :
+            # @@dvpdffiles/c/7/c7e2e8b5597c4dc28cf2dee9447dcf9a/large/dump_1.png
             dvpdffiles = portal.unrestrictedTraverse('@@dvpdffiles')
             filetraverser = dvpdffiles.publishTraverse(container.REQUEST, annexUID[0])
             filetraverser = dvpdffiles.publishTraverse(container.REQUEST, annexUID[1])
@@ -50,7 +53,8 @@ def get_annexes_to_print(container, portal_type=None, caching=True):
             large = filetraverser.publishTraverse(container.REQUEST, 'large')
             for image_number in range(data['number_of_images']):
                 realImageNumber = image_number + 1
-                large_image_dump = large.publishTraverse(container.REQUEST, 'dump_%d.png' % realImageNumber)
+                large_image_dump = large.publishTraverse(
+                    container.REQUEST, 'dump_%d.%s' % (realImageNumber, image_format))
                 # depending on the fact that we are using 'Blob' or 'File' as storage_type,
                 # the 'large' object is different.  Either a Blob ('Blob') or a DirectoryResource ('File')
                 if global_settings.storage_type == 'Blob':
