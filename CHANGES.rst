@@ -9,6 +9,10 @@ Changelog
   [gbastien]
 - Explain in Zip download message that browser may ask to accept popup window.
   [gbastien]
+- Open file in new window when clicking on file title in annexes table.
+  [gbastien]
+- Added a `Download` object_buttons displayed in annex actions_panel.
+  [gbastien]
 
 2.12 (2022-01-21)
 -----------------

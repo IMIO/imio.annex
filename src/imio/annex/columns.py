@@ -23,6 +23,9 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
     header = _(u'Title')
     weight = 20
 
+    # link to a file, open in new tab
+    params = {'target': '_blank'}
+
     def getPrettyLink(self, obj):
         """Display the description just under the pretty link."""
         pl = super(PrettyLinkColumn, self).getPrettyLink(obj)
