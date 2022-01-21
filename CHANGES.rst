@@ -5,8 +5,10 @@ Changelog
 2.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Set `DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE` to 25Mb.
+  [gbastien]
+- Explain in Zip download message that browser may ask to accept popup window.
+  [gbastien]
 
 2.12 (2022-01-21)
 -----------------

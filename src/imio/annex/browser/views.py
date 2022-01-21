@@ -11,9 +11,6 @@ from zope.i18n import translate
 
 import zipfile
 
-# gives a human readable size of "50.0 Mb"
-MAX_TOTAL_SIZE = 52400000
-
 
 class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
@@ -21,6 +18,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     button_with_icon = True
     apply_button_title = _CEBA('download-annexes-batch-action-but')
     section = "annexes"
+    # gives a human readable size of "25.0 Mb"
+    MAX_TOTAL_SIZE = 26214400
 
     @property
     def description(self):
@@ -28,8 +27,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         descr = super(DownloadAnnexesBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
         readable_total_size = calculate_filesize(self.total_size)
-        readable_max_size = calculate_filesize(MAX_TOTAL_SIZE)
-        if self.total_size > MAX_TOTAL_SIZE:
+        readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
+        if self.total_size > self.MAX_TOTAL_SIZE:
             descr += translate(
                 '<p class="warn_filesize">The maximum size you may download at one '
                 'time is ${max_size}, here your download size is ${total_size}. '
@@ -69,7 +68,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     def _update(self):
         """Can not apply action if total size exceeded."""
         self.total_size = self._total_size()
-        if self.total_size > MAX_TOTAL_SIZE:
+        if self.total_size > self.MAX_TOTAL_SIZE:
             self.do_apply = False
 
     def available(self):

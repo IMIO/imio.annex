@@ -20,7 +20,7 @@ msgstr "<p class=\"warn_filesize\">La taille maximum que peut atteindre le fichi
 
 #: ../browser/views.py:43
 msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
-msgstr "<p>Ces éléments seront téléchargés sous la forme d'un fichier Zip.</p><p>La taille du fichier est de <b>${total_size}</b>, lorsque vous cliquez sur \"${button_title}\", veuillez patienter quelques secondes pour que le fichier Zip soit disponible.</p>"
+msgstr "<p>La taille du fichier Zip est de <b>${total_size}</b>, lorsque vous cliquez sur \"${button_title}\", <b>veuillez patienter quelques secondes pour que le fichier Zip soit disponible</b>, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.</p>"""
 
 #. Default: "Download annexes as batch"
 msgid "Download annexes"
