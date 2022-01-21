@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.12 (unreleased)
+2.12 (2022-01-21)
 -----------------
 
 - Fixed `utils.get_annexes_to_print`, use image format (`.png`, `.jpg`, ...)
