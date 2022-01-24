@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.13 (unreleased)
+2.13 (2022-01-24)
 -----------------
 
 - Set `DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE` to 25Mb.
