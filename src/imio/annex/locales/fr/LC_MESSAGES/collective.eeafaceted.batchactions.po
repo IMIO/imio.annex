@@ -28,4 +28,4 @@ msgstr "Télécharger les annexes par lot"
 
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"
-msgstr "Télécharger fichier Zip"
+msgstr "Télécharger les fichiers en Zip"

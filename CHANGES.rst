@@ -5,8 +5,8 @@ Changelog
 2.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Accurate french translation for `download-annexes-batch-action-but`.
+  [gbastien]
 
 2.13 (2022-01-24)
 -----------------
