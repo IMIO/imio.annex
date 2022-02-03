@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.14 (unreleased)
+2.14 (2022-02-03)
 -----------------
 
 - Accurate french translation for `download-annexes-batch-action-but`.
