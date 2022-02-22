@@ -12,12 +12,14 @@
   <!-- subscribers -->
 
   <subscriber
-    for="zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    for="imio.annex.content.annex.IAnnex
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler=".events.annex_content_created"
     />
 
   <subscriber
-    for="zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    for="imio.annex.content.annex.IAnnex
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     handler=".events.annex_content_updated"
     />
 

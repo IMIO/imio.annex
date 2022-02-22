@@ -5,8 +5,9 @@ Changelog
 2.15 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Register the `ObjectAddedEvent` and `ObjectModifiedEvent` for `IAnnex`
+  so it is not called for other interface.
+  [gbastien]
 
 2.14 (2022-02-03)
 -----------------
