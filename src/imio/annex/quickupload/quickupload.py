@@ -31,8 +31,8 @@ from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import base_hasattr
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from ZODB.POSException import ConflictError
 from z3c.form.validator import Data
+from ZODB.POSException import ConflictError
 from zope.event import notify
 from zope.lifecycleevent import ObjectAddedEvent
 

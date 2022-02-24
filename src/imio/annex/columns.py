@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from collective.documentviewer.settings import GlobalSettings
+from collective.eeafaceted.z3ctable.columns import ActionsColumn as DashboardActionsColumn
+from collective.eeafaceted.z3ctable.columns import BaseColumn
+from collective.eeafaceted.z3ctable.columns import DateColumn
 from collective.eeafaceted.z3ctable.columns import MemberIdColumn
-from collective.iconifiedcategory.interfaces import IIconifiedPreview
-from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
+from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from collective.iconifiedcategory.browser.tabview import AuthorColumn as IconifiedAuthorColumn
 from collective.iconifiedcategory.browser.tabview import CategoryColumn as IconifiedCategoryColumn
 from collective.iconifiedcategory.browser.tabview import CreationDateColumn as IconifiedCreationDateColumn
 from collective.iconifiedcategory.browser.tabview import FilesizeColumn as IconifiedFilesizeColumn
 from collective.iconifiedcategory.browser.tabview import LastModificationColumn as IconifiedLastModificationColumn
+from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
+from collective.iconifiedcategory.interfaces import IIconifiedPreview
 from imio.annex import _
-from collective.eeafaceted.z3ctable.columns import BaseColumn
-from collective.eeafaceted.z3ctable.columns import DateColumn
-from collective.eeafaceted.z3ctable.columns import ActionsColumn as DashboardActionsColumn
-from collective.eeafaceted.z3ctable.columns import PrettyLinkColumn as DashboardPrettyLinkColumn
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from zope.i18n import translate

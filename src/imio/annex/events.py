@@ -7,11 +7,10 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from zope.component.interfaces import ObjectEvent
-from zope.interface import implements
-
 from imio.annex.interfaces import IAnnexFileChangedEvent
 from imio.annex.interfaces import IConversionStartedEvent
+from zope.component.interfaces import ObjectEvent
+from zope.interface import implements
 
 
 class AnnexFileChangedEvent(ObjectEvent):

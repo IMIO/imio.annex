@@ -7,17 +7,16 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
+from collective.iconifiedcategory import _ as ICMF
+from collective.iconifiedcategory.widget.widget import CategoryTitleFieldWidget
+from collective.z3cform.select2.widget.widget import SingleSelect2FieldWidget
+from imio.annex.quickupload import utils
 from plone.z3cform.layout import FormWrapper
 from z3c.form import field
 from z3c.form.form import Form
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.interface import Interface
-from collective.iconifiedcategory import _ as ICMF
-from collective.z3cform.select2.widget.widget import SingleSelect2FieldWidget
-from collective.iconifiedcategory.widget.widget import CategoryTitleFieldWidget
-
-from imio.annex.quickupload import utils
 
 
 class IQuickUpload(Interface):

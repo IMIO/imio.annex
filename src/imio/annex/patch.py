@@ -8,8 +8,8 @@ Created by mpeeters
 """
 
 from collective.documentviewer.convert import Converter
-from zope.event import notify
 from imio.annex.events import ConversionStartedEvent
+from zope.event import notify
 
 
 def converter_call(self, *args, **kwargs):

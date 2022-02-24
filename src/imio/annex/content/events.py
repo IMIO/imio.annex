@@ -11,11 +11,9 @@ from collective.documentviewer.settings import GlobalSettings
 from collective.documentviewer.utils import allowedDocumentType
 from collective.iconifiedcategory.utils import get_category_object
 from collective.iconifiedcategory.utils import update_categorized_elements
+from imio.annex.events import AnnexFileChangedEvent
 from plone import api
 from zope.event import notify
-
-from imio.annex.events import AnnexFileChangedEvent
-from imio.annex.content.annex import IAnnex
 
 
 def annex_content_created(obj, event):
