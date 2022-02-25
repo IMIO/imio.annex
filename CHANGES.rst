@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.15 (unreleased)
+2.15 (2022-02-25)
 -----------------
 
 - Register the `ObjectAddedEvent` and `ObjectModifiedEvent` for `IAnnex`
