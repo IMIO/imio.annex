@@ -5,8 +5,8 @@ Changelog
 2.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Check `validateFileIsPDF` before creating the annex to avoid orpahn objects.
+  [gbastien]
 
 2.15 (2022-02-25)
 -----------------

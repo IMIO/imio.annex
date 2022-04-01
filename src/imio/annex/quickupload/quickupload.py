@@ -24,8 +24,8 @@ from collective.quickupload.browser.uploadcapable import upload_lock
 from collective.quickupload.interfaces import IQuickUploadFileFactory
 from collective.quickupload.interfaces import IQuickUploadFileSetter
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
-from imio.annex.content.annex import IAnnex
 from imio.annex.quickupload import utils
+from plone import api
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
@@ -86,6 +86,18 @@ class QuickUploadFileInit(QuickUploadInit):
         return super(QuickUploadFileInit, self).upload_settings()
 
 
+def _check_validateFileIsPDF(obj, request, portal_type, content_type):
+    """Check if used content_category requires a PDF file only if adding an
+       annex and p_content_type is not already a PDF."""
+    if portal_type in ['annex', 'annexDecision'] and content_type != 'application/pdf':
+        data = Data([], [], [])
+        data.__context__ = obj
+        content_category = getDataFromAllRequests(request, 'content_category') or ''
+        data.content_category = content_category
+        data.contentType = content_type
+        validateFileIsPDF(data)
+
+
 class QuickUploadFileView(QuickUploadFile):
 
     def _manage_extra_parameters(self, request, f):
@@ -96,11 +108,6 @@ class QuickUploadFileView(QuickUploadFile):
         if f['success'] and content_category:
             obj = f['success']
             obj.content_category = content_category
-            if IAnnex.providedBy(obj) and obj.file.contentType != 'application/pdf':
-                data = Data([], [], [])
-                data.__context__ = obj
-                data.content_category = content_category
-                validateFileIsPDF(data)
             # elements using content_category are initialized in the object created event
             notify(ObjectAddedEvent(obj))
 
@@ -214,6 +221,8 @@ class QuickUploadFileView(QuickUploadFile):
                        description, content_type))
                 try:
                     self.request.set('defer_categorized_content_created_event', True)
+                    # check if PDF before new object is created
+                    _check_validateFileIsPDF(self.context, self.request, portal_type, content_type)
                     f = updater(overwritten_file, file_name, title,
                                 description, content_type, file_data)
                     self.request.set('defer_categorized_content_created_event', False)
@@ -238,6 +247,8 @@ class QuickUploadFileView(QuickUploadFile):
                        description, content_type, portal_type))
                 try:
                     self.request.set('defer_categorized_content_created_event', True)
+                    # check if PDF before new object is created
+                    _check_validateFileIsPDF(self.context, self.request, portal_type, content_type)
                     f = factory(file_name, title, description, content_type,
                                 file_data, portal_type)
                     self.request.set('defer_categorized_content_created_event', False)
