@@ -5,7 +5,7 @@ Changelog
 2.16 (unreleased)
 -----------------
 
-- Check `validateFileIsPDF` before creating the annex to avoid orpahn objects.
+- Check `validateFileIsPDF` before creating the annex to avoid orphan objects.
   [gbastien]
 
 2.15 (2022-02-25)
