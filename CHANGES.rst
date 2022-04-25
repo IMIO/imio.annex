@@ -5,8 +5,9 @@ Changelog
 2.17 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed bug when adding an `annexDecision` because the `content_category`
+  could not be retrieved.
+  [gbastien]
 
 2.16 (2022-04-22)
 -----------------

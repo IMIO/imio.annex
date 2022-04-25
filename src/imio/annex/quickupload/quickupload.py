@@ -25,7 +25,6 @@ from collective.quickupload.interfaces import IQuickUploadFileFactory
 from collective.quickupload.interfaces import IQuickUploadFileSetter
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
 from imio.annex.quickupload import utils
-from plone import api
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
@@ -95,7 +94,11 @@ def _check_validateFileIsPDF(obj, request, portal_type, content_type):
         content_category = getDataFromAllRequests(request, 'content_category') or ''
         data.content_category = content_category
         data.contentType = content_type
+        if portal_type == 'annexDecision':
+            request.set('force_use_item_decision_annexes_group', True)
         validateFileIsPDF(data)
+        if portal_type == 'annexDecision':
+            request.set('force_use_item_decision_annexes_group', False)
 
 
 class QuickUploadFileView(QuickUploadFile):
