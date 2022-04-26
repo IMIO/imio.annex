@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.17 (unreleased)
+2.17 (2022-04-26)
 -----------------
 
 - Fixed bug when adding an `annexDecision` because the `content_category`
