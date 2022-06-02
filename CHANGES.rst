@@ -5,8 +5,8 @@ Changelog
 2.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `safe_utils.py` that will only include safe utils.
+  [gbastien]
 
 2.17 (2022-04-26)
 -----------------
