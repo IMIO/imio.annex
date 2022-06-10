@@ -23,38 +23,6 @@
       factory=".columns.AuthorColumn" />
 
     <adapter
-      name="category-column"
-      for="zope.interface.Interface
-           zope.interface.Interface
-           collective.iconifiedcategory.interfaces.ICategorizedTable"
-      provides="z3c.table.interfaces.IColumn"
-      factory=".columns.CategoryColumn" />
-
-    <adapter
-      name="creation-date-column"
-      for="zope.interface.Interface
-           zope.interface.Interface
-           collective.iconifiedcategory.interfaces.ICategorizedTable"
-      provides="z3c.table.interfaces.IColumn"
-      factory=".columns.CreationDateColumn" />
-
-    <adapter
-      name="last-modification-column"
-      for="zope.interface.Interface
-           zope.interface.Interface
-           collective.iconifiedcategory.interfaces.ICategorizedTable"
-      provides="z3c.table.interfaces.IColumn"
-      factory=".columns.LastModificationColumn" />
-
-    <adapter
-      name="filesize-column"
-      for="zope.interface.Interface
-           zope.interface.Interface
-           collective.iconifiedcategory.interfaces.ICategorizedTable"
-      provides="z3c.table.interfaces.IColumn"
-      factory=".columns.FilesizeColumn" />
-
-    <adapter
       name="action-column"
       for="zope.interface.Interface
            zope.interface.Interface
@@ -73,31 +41,27 @@
             layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
             class="plone.dexterity.browser.view.DefaultView"
             template="browser/container.pt"
-            permission="zope2.View"
-            />
+            permission="zope2.View" />
         <browser:page
             name="view"
             for="collective.iconifiedcategory.content.category.ICategory"
             layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
             class="collective.iconifiedcategory.browser.contentview.BaseView"
             template="browser/container.pt"
-            permission="zope2.View"
-            />
+            permission="zope2.View" />
         <browser:page
             name="view"
             for="collective.iconifiedcategory.content.subcategory.ISubcategory"
             layer="collective.iconifiedcategory.interfaces.ICollectiveIconifiedCategoryLayer"
             class="collective.iconifiedcategory.browser.contentview.BaseView"
             permission="zope2.View"
-            template="browser/content.pt"
-            />
+            template="browser/content.pt" />
         <browser:page
             for="collective.iconifiedcategory.content.categorygroup.ICategoryGroup"
             name="view"
             class="plone.dexterity.browser.view.DefaultView"
             template="browser/container.pt"
-            permission="zope2.View"
-            />
+            permission="zope2.View" />
     </configure>
 
     <!-- Quick Upload -->

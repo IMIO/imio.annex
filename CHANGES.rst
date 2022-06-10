@@ -7,6 +7,9 @@ Changelog
 
 - Added `safe_utils.py` that will only include safe utils.
   [gbastien]
+- Removed override of columns that was done to use `collective.eeafaceted.z3ctable`
+  as now at is already the case.
+  [gbastien]
 
 2.17 (2022-04-26)
 -----------------
