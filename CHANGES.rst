@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.18 (unreleased)
+2.18 (2022-06-14)
 -----------------
 
 - Added `safe_utils.py` that will only include safe utils.
