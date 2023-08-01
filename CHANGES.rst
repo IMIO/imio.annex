@@ -5,8 +5,9 @@ Changelog
 2.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Adapted code to new parameter `Category.show_preview`
+  in `collective.iconifiedcategory`.
+  [gbastien]
 
 2.18 (2022-06-14)
 -----------------
