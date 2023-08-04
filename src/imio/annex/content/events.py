@@ -37,8 +37,8 @@ def annex_conversion_started(obj, event):
     container = obj.aq_parent
     if obj.UID() not in getattr(container, 'categorized_elements', {}):
         return
-    target = get_category_object(obj, obj.content_category)
-    update_categorized_elements(container, obj, target)
+    category = get_category_object(obj, obj.content_category)
+    update_categorized_elements(container, obj, category)
 
 
 def annex_conversion_finished(obj, event):
@@ -47,5 +47,5 @@ def annex_conversion_finished(obj, event):
     container = obj.aq_parent
     if obj.UID() not in getattr(container, 'categorized_elements', {}):
         return
-    target = get_category_object(obj, obj.content_category)
-    update_categorized_elements(container, obj, target)
+    category = get_category_object(obj, obj.content_category)
+    update_categorized_elements(container, obj, category)

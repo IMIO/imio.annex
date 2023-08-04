@@ -62,6 +62,13 @@ class Annex(File):
         """Speedup getting UID."""
         return getattr(self, ATTRIBUTE_NAME)
 
+    def show_download(self):
+        """Condition to show the "Download" action."""
+        parent = self.aq_parent
+        element = parent.categorized_elements[self.UID()]
+        infos = parent.unrestrictedTraverse('@@categorized-childs-infos')
+        return infos.show_download(element)
+
 
 class AnnexSchemaPolicy(DexteritySchemaPolicy):
     """Schema Policy for Annex"""
