@@ -64,10 +64,14 @@ class Annex(File):
 
     def show_download(self):
         """Condition to show the "Download" action."""
+        res = True
         parent = self.aq_parent
         element = parent.categorized_elements[self.UID()]
-        infos = parent.unrestrictedTraverse('@@categorized-childs-infos')
-        return infos.show_download(element)
+        # preview with protected download
+        if element['show_preview'] == 2:
+            infos = parent.unrestrictedTraverse('@@categorized-childs-infos')
+            res = infos.show_download(element)
+        return res
 
 
 class AnnexSchemaPolicy(DexteritySchemaPolicy):
