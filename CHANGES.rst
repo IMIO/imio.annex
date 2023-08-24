@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.19 (unreleased)
+2.19 (2023-08-24)
 -----------------
 
 - Adapted code to new parameter `Category.show_preview`
