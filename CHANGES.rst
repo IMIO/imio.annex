@@ -8,7 +8,7 @@ Changelog
 - Fixed conversion status update that was not working when using async conversion
   with `collective.documentviewer`.
   [gbastien]
-- Display a action the `View preview` when a preview is available.
+- Display action `View preview` when a preview is available.
   [gbastien]
 
 2.19 (2023-08-24)
