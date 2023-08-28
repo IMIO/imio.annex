@@ -35,7 +35,7 @@
       destination="1001"
       profile="imio.annex:default">
     <genericsetup:upgradeDepends
-        title="Adapt annex portal_type condition_expr"
+        title="Adapt annex portal_type condition_expr and new action 'View preview'"
         import_steps="typeinfo" />
   </genericsetup:upgradeSteps>
 

@@ -5,8 +5,11 @@ Changelog
 2.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed conversion status update that was not working when using async conversion
+  with `collective.documentviewer`.
+  [gbastien]
+- Display action `View preview` when a preview is available.
+  [gbastien]
 
 2.19 (2023-08-24)
 -----------------

@@ -73,6 +73,10 @@ class Annex(File):
             res = infos.show_download(element)
         return res
 
+    def show_preview(self):
+        """Condition to show the "Preview" action."""
+        return self.aq_parent.categorized_elements[self.UID()]['preview_status'] == 'converted'
+
 
 class AnnexSchemaPolicy(DexteritySchemaPolicy):
     """Schema Policy for Annex"""
