@@ -3,10 +3,14 @@
 from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
 from collective.iconifiedcategory.utils import calculate_filesize
+from collective.iconifiedcategory.utils import get_categorized_elements
+from imio.annex import _
 from imio.annex.content.annex import IAnnex
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
+from z3c.form.field import Fields
+from zope import schema
 from zope.i18n import translate
 
 import zipfile
@@ -121,3 +125,54 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             return self.request['zip_file_content']
         else:
             return super(DownloadAnnexesBatchActionForm, self).render()
+
+
+class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
+
+    label = _CEBA("Concatenate annexes for selected elements")
+    button_with_icon = True
+    button_with_icon = True
+    apply_button_title = _CEBA('concatenate-annexes-batch-action-but')
+    # gives a human readable size of "50.0 Mb"
+    MAX_TOTAL_SIZE = 52428800
+
+    @property
+    def description(self):
+        """ """
+        descr = super(ConcatenateAnnexesBatchActionForm, self).description
+        descr = translate(descr, domain=descr.domain, context=self.request)
+        readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
+        descr += translate(
+            '<p>Warning, this will concatenate PDF annexes into one single PDF '
+            'file with a limit of ${max_size}.  If your PDF file is not complete '
+            'you will have a message, in this case select less elements and '
+            'download it separately.<p>',
+            mapping={'max_size': readable_max_size, },
+            domain="collective.eeafaceted.batchactions",
+            context=self.request)
+        return descr
+
+    def available(self):
+        """ """
+        return True
+
+    def _update(self):
+        self.fields += Fields(schema.Choice(
+            __name__='annex_type',
+            title=_(u'Annex type'),
+            vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary',
+            required=False),)
+
+    def _apply(self, **data):
+        """ """
+        annex_type = data['annex_type']
+        plone_utils = api.portal.get_tool('plone_utils')
+        plone_utils.addPortalMessage(annex_type)
+        # get annexes
+        annexes = []
+        for brain in self.brains:
+            item = brain.getObject()
+            filters = {'contentType': 'application/pdf'}
+            if annex_type:
+                filters['category_uid'] = annex_type
+            annexes += get_categorized_elements(item, result_type='objects', filters=filters)

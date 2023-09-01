@@ -10,6 +10,8 @@ Changelog
   [gbastien]
 - Display action `View preview` when a preview is available.
   [gbastien]
+- Added batchaction to concatenate PDF annexes and download it.
+  [gbastien]
 
 2.19 (2023-08-24)
 -----------------
