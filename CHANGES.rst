@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-2.20 (unreleased)
+2.21 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
+2.20 (2023-09-04)
 -----------------
 
 - Fixed conversion status update that was not working when using async conversion
