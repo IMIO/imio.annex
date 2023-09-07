@@ -6,6 +6,7 @@ from collective.iconifiedcategory.utils import calculate_filesize
 from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
 from imio.annex.content.annex import IAnnex
+from imio.helpers.content import uuidToCatalogBrain
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
@@ -165,14 +166,19 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
     def _apply(self, **data):
         """ """
-        annex_type = data['annex_type']
+        annex_type_uid = data['annex_type']
         plone_utils = api.portal.get_tool('plone_utils')
-        plone_utils.addPortalMessage(annex_type)
+        plone_utils.addPortalMessage(annex_type_uid)
         # get annexes
         annexes = []
         for brain in self.brains:
             item = brain.getObject()
             filters = {'contentType': 'application/pdf'}
-            if annex_type:
-                filters['category_uid'] = annex_type
+            if annex_type_uid:
+                filters['category_uid'] = annex_type_uid
             annexes += get_categorized_elements(item, result_type='objects', filters=filters)
+        filename = annex_type_uid and uuidToCatalogBrain(annex_type_uid).id or "annexes"
+        self.request.response.setHeader('Content-Type', 'application/pdf')
+        self.request.response.setHeader('Content-disposition', 'attachment;filename=%s.pdf'
+                                        % filename)
+        return annexes[0].file.data
