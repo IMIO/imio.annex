@@ -9,6 +9,7 @@ Created by mpeeters
 
 from imio.annex.interfaces import IAnnexFileChangedEvent
 from imio.annex.interfaces import IConversionStartedEvent
+from imio.annex.interfaces import IConversionReallyFinishedEvent
 from zope.component.interfaces import ObjectEvent
 from zope.interface import implements
 
@@ -26,3 +27,7 @@ class AnnexFileChangedEvent(ObjectEvent):
 
 class ConversionStartedEvent(ObjectEvent):
     implements(IConversionStartedEvent)
+
+
+class ConversionReallyFinishedEvent(ObjectEvent):
+    implements(IConversionReallyFinishedEvent)

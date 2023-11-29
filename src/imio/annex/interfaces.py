@@ -21,3 +21,7 @@ class IAnnexFileChangedEvent(Interface):
 
 class IConversionStartedEvent(Interface):
     pass
+
+
+class IConversionReallyFinishedEvent(Interface):
+    pass
