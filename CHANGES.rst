@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.21 (unreleased)
+2.21 (2023-12-11)
 -----------------
 
 - Use our own event `ConversionReallyFinishedEvent` instead
