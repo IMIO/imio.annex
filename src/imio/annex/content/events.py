@@ -41,9 +41,7 @@ def annex_conversion_started(obj, event):
     update_categorized_elements(container, obj, category)
 
 
-def annex_conversion_finished(obj, event):
-    if not event.status:
-        return
+def annex_conversion_really_finished(obj, event):
     container = obj.aq_parent
     if obj.UID() not in getattr(container, 'categorized_elements', {}):
         return

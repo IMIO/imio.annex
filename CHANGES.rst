@@ -2,11 +2,21 @@ Changelog
 =========
 
 
-2.21 (unreleased)
+2.22 (unreleased)
 -----------------
 
 - Nothing changed yet.
 
+
+2.21 (2023-12-11)
+-----------------
+
+- Use our own event `ConversionReallyFinishedEvent` instead
+  collective.documentviewer's `ConversionFinishedEvent` because it is called
+  when `converting` information is still not set back to `False` and we need
+  to have this information when an annex is updated and conversion is run again
+  because in this case, `successfully_converted` is still `True`.
+  [gbastien]
 
 2.20 (2023-09-04)
 -----------------

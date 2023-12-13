@@ -36,8 +36,8 @@
 
   <subscriber
     for="imio.annex.content.annex.IAnnex
-         collective.documentviewer.interfaces.IConversionFinishedEvent"
-    handler=".events.annex_conversion_finished"
+         imio.annex.interfaces.IConversionReallyFinishedEvent"
+    handler=".events.annex_conversion_really_finished"
     />
 
 </configure>
