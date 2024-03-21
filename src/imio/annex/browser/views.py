@@ -2,14 +2,16 @@
 
 from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
+from collective.iconifiedcategory.config import get_sort_categorized_tab
 from collective.iconifiedcategory.utils import calculate_filesize
 from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
 from imio.annex.content.annex import IAnnex
-from imio.helpers.content import uuidToCatalogBrain
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
+from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfFileWriter
 from z3c.form.field import Fields
 from zope import schema
 from zope.i18n import translate
@@ -158,27 +160,55 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         return True
 
     def _update(self):
-        self.fields += Fields(schema.Choice(
-            __name__='annex_type',
-            title=_(u'Annex type'),
-            vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary',
-            required=False),)
+        self.fields += Fields(
+            schema.Choice(
+                __name__='annex_type',
+                title=_(u'Annex type'),
+                vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary',
+                required=False),
+            schema.Bool(__name__='two_sided',
+                        title=_(u'Two-sided?'),
+                        ),
+        )
 
     def _apply(self, **data):
         """ """
         annex_type_uid = data['annex_type']
-        plone_utils = api.portal.get_tool('plone_utils')
-        plone_utils.addPortalMessage(annex_type_uid)
         # get annexes
         annexes = []
+        sort_on = 'getObjPositionInParent' if \
+            get_sort_categorized_tab() is False else None
         for brain in self.brains:
             item = brain.getObject()
             filters = {'contentType': 'application/pdf'}
             if annex_type_uid:
                 filters['category_uid'] = annex_type_uid
-            annexes += get_categorized_elements(item, result_type='objects', filters=filters)
-        filename = annex_type_uid and uuidToCatalogBrain(annex_type_uid).id or "annexes"
-        self.request.response.setHeader('Content-Type', 'application/pdf')
-        self.request.response.setHeader('Content-disposition', 'attachment;filename=%s.pdf'
-                                        % filename)
-        return annexes[0].file.data
+            annexes += get_categorized_elements(
+                item,
+                result_type='objects',
+                sort_on=sort_on,
+                filters=filters)
+        # create unique PDF file
+        output_writer = PdfFileWriter()
+        for annex in annexes:
+            output_writer.appendPagesFromReader(
+                PdfFileReader(BytesIO(annex.file.data)))
+            if data['two_sided'] and \
+               output_writer.getNumPages() % 2 != 0 and \
+               annex != annexes[-1]:
+                output_writer.addBlankPage()
+        pdf_file_content = BytesIO()
+        output_writer.write(pdf_file_content)
+        self.request.set('pdf_file_content', pdf_file_content)
+        return pdf_file_content
+
+    def render(self):
+        if 'pdf_file_content' in self.request:
+            filename = "%s-annexes.pdf" % self.context.getId()
+            self.request.response.setHeader('Content-Type', 'application/pdf')
+            self.request.response.setHeader('Content-disposition', 'attachment; filename=%s'
+                                            % filename)
+            pdf_file_content = self.request['pdf_file_content']
+            pdf_file_content.seek(0)
+            return pdf_file_content.read()
+        return super(ConcatenateAnnexesBatchActionForm, self).render()
