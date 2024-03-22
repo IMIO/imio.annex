@@ -5,8 +5,9 @@ Changelog
 2.22 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `filters={"to_print": True}` to `utils.get_annexes_to_print`
+  so it is possible to filter annexes to print.
+  [gbastien]
 
 2.21 (2023-12-11)
 -----------------
