@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collective.iconifiedcategory import _
 from collective.iconifiedcategory.utils import get_category_icon_url
 from collective.iconifiedcategory.utils import get_category_object
 from imio.prettylink.adapters import PrettyLinkAdapter
@@ -32,10 +31,10 @@ class AnnexPrettyLinkAdapter(PrettyLinkAdapter):
         if element["preview_status"] == 'in_progress':
             res.append(
                 ('spinner_small.gif',
-                 translate(
-                     _("The document is currently under conversion, "
-                       "please refresh the page in a few minutes"),
-                     context=self.request)))
+                 translate("The document is currently under conversion, "
+                           "please refresh the page in a few minutes",
+                           domain="collective.iconifiedcategory",
+                           context=self.request)))
         # category icon
         category = get_category_object(self.context, self.context.content_category)
         category_url = get_category_icon_url(category)
@@ -46,5 +45,8 @@ class AnnexPrettyLinkAdapter(PrettyLinkAdapter):
         self.is_preview = self.infos.show_preview(element)
         if self.is_preview:
             res.append(('file_icon.png',
-                        translate(_("Preview"), context=self.request)))
+                        translate(
+                            "Preview",
+                            domain="collective.iconifiedcategory",
+                            context=self.request)))
         return res

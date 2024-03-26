@@ -6,12 +6,16 @@ from collective.iconifiedcategory.config import get_sort_categorized_tab
 from collective.iconifiedcategory.utils import calculate_filesize
 from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
+from imio.annex import logger
 from imio.annex.content.annex import IAnnex
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
+from Products.CMFPlone.utils import safe_unicode
+from Products.PloneMeeting.widgets.pm_checkbox import PMCheckBoxFieldWidget
 from PyPDF2 import PdfFileReader
 from PyPDF2 import PdfFileWriter
+from PyPDF2.utils import PdfReadError
 from z3c.form.field import Fields
 from zope import schema
 from zope.i18n import translate
@@ -134,7 +138,6 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
     label = _CEBA("Concatenate annexes for selected elements")
     button_with_icon = True
-    button_with_icon = True
     apply_button_title = _CEBA('concatenate-annexes-batch-action-but')
     # gives a human readable size of "50.0 Mb"
     MAX_TOTAL_SIZE = 52428800
@@ -147,9 +150,9 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
         descr += translate(
             '<p>Warning, this will concatenate PDF annexes into one single PDF '
-            'file with a limit of ${max_size}.  If your PDF file is not complete '
-            'you will have a message, in this case select less elements and '
-            'download it separately.<p>',
+            'file with a limit of <strong>${max_size}</strong>. '
+            'If your PDF file is too large you will have a message, '
+            'in this case select less elements and download it separately.<p>',
             mapping={'max_size': readable_max_size, },
             domain="collective.eeafaceted.batchactions",
             context=self.request)
@@ -161,19 +164,30 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
     def _update(self):
         self.fields += Fields(
-            schema.Choice(
-                __name__='annex_type',
-                title=_(u'Annex type'),
-                vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary',
+            schema.List(
+                __name__='annex_types',
+                title=_(u'Annex types'),
+                value_type=schema.Choice(
+                    vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary'),
                 required=False),
             schema.Bool(__name__='two_sided',
                         title=_(u'Two-sided?'),
                         ),
         )
+        self.fields["annex_types"].widgetFactory = PMCheckBoxFieldWidget
+
+    def _total_size(self, annexes):
+        """ """
+        total = 0
+        for annex in annexes:
+            primary_field = IPrimaryFieldInfo(annex)
+            size = primary_field.value.size
+            total += size
+        return total
 
     def _apply(self, **data):
         """ """
-        annex_type_uid = data['annex_type']
+        annex_type_uids = data['annex_types']
         # get annexes
         annexes = []
         sort_on = 'getObjPositionInParent' if \
@@ -181,18 +195,46 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for brain in self.brains:
             item = brain.getObject()
             filters = {'contentType': 'application/pdf'}
-            if annex_type_uid:
+            for annex_type_uid in annex_type_uids:
                 filters['category_uid'] = annex_type_uid
-            annexes += get_categorized_elements(
-                item,
-                result_type='objects',
-                sort_on=sort_on,
-                filters=filters)
+                annexes += get_categorized_elements(
+                    item,
+                    result_type='objects',
+                    sort_on=sort_on,
+                    filters=filters)
+        # return if nothing to produce
+        if not annexes:
+            api.portal.show_message(
+                _("Nothing to export."),
+                request=self.request)
+            return
+        # can not generate if total size too large
+        total_size = self._total_size(annexes)
+        if self._total_size(annexes) > self.MAX_TOTAL_SIZE:
+            api.portal.show_message(
+                _("concatenate_annexes_pdf_too_large_error",
+                  mapping={'total_size': calculate_filesize(total_size),
+                           'max_total_size': calculate_filesize(self.MAX_TOTAL_SIZE)}),
+                request=self.request,
+                type="error")
+            return
         # create unique PDF file
         output_writer = PdfFileWriter()
         for annex in annexes:
-            output_writer.appendPagesFromReader(
-                PdfFileReader(BytesIO(annex.file.data)))
+            try:
+                output_writer.appendPagesFromReader(
+                    PdfFileReader(BytesIO(annex.file.data)))
+            except PdfReadError, exc:
+                api.portal.show_message(
+                    _("concatenate_annexes_pdf_error",
+                      mapping={'annex_title': safe_unicode(annex.Title()),
+                               'item_title': safe_unicode(
+                          annex.aq_inner.aq_parent.Title(withItemNumber=True))}),
+                    request=self.request,
+                    type="error")
+                logger.exception(exc)
+                self.request.set('concatenate_annexes_item_pdf_error_url', item.absolute_url())
+                return
             if data['two_sided'] and \
                output_writer.getNumPages() % 2 != 0 and \
                annex != annexes[-1]:
@@ -211,4 +253,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             pdf_file_content = self.request['pdf_file_content']
             pdf_file_content.seek(0)
             return pdf_file_content.read()
+        elif self.request.RESPONSE.status == 204:
+            # return something so the faceted is refrehsed
+            return self.request.get('concatenate_annexes_item_pdf_error_url')
         return super(ConcatenateAnnexesBatchActionForm, self).render()

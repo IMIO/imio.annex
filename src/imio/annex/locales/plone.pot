@@ -20,3 +20,5 @@ msgstr ""
 msgid "View element"
 msgstr ""
 
+msgid "View preview"
+msgstr ""
