@@ -6,11 +6,14 @@ from plone import api
 from zope.annotation import IAnnotations
 
 
-def get_annexes_to_print(container, portal_type=None, caching=True):
+def get_annexes_to_print(container, portal_type=None, filters={"to_print": True}, caching=True):
     ''' '''
     res = None
     if caching:
-        key = "utils-get_annexes_to_print-%s-%s" % (container.UID(), portal_type)
+        key = "utils-get_annexes_to_print-%s-%s-%s" % (
+            container.UID(),
+            portal_type,
+            str(filters))
         cache = IAnnotations(container.REQUEST)
         res = cache.get(key, None)
 
@@ -21,12 +24,9 @@ def get_annexes_to_print(container, portal_type=None, caching=True):
         annexes = get_categorized_elements(container,
                                            result_type='dict',
                                            portal_type=portal_type,
-                                           filters={"to_print": True})
+                                           filters=filters)
         i = 1
         for annex_infos in annexes:
-            # first check if annex needs to be printed
-            if not annex_infos['to_print']:
-                continue
             # must have been converted successfully
             if not annex_infos['preview_status'] == 'converted':
                 continue
