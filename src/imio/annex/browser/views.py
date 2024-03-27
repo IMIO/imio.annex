@@ -16,6 +16,7 @@ from Products.PloneMeeting.widgets.pm_checkbox import PMCheckBoxFieldWidget
 from PyPDF2 import PdfFileReader
 from PyPDF2 import PdfFileWriter
 from PyPDF2.utils import PdfReadError
+from z3c.form.browser.radio import RadioFieldWidget
 from z3c.form.field import Fields
 from zope import schema
 from zope.i18n import translate
@@ -149,18 +150,24 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         descr = translate(descr, domain=descr.domain, context=self.request)
         readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
         descr += translate(
-            '<p>Warning, this will concatenate PDF annexes into one single PDF '
-            'file with a limit of <strong>${max_size}</strong>. '
-            'If your PDF file is too large you will have a message, '
-            'in this case select less elements and download it separately.<p>',
+            'concatenate_annexes_batch_action_descr',
             mapping={'max_size': readable_max_size, },
             domain="collective.eeafaceted.batchactions",
             context=self.request)
         return descr
 
+    def __init__(self, context, request):
+        super(ConcatenateAnnexesBatchActionForm, self).__init__(
+            context, request)
+        self.tool = api.portal.get_tool('portal_plonemeeting')
+        self.cfg = self.tool.getMeetingConfig(context)
+
     def available(self):
         """ """
-        return True
+        # super() will check for self.available_permission
+        if self.cfg.isManager(self.cfg) and \
+           super(ConcatenateAnnexesBatchActionForm, self).available():
+            return True
 
     def _update(self):
         self.fields += Fields(
@@ -172,9 +179,11 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 required=False),
             schema.Bool(__name__='two_sided',
                         title=_(u'Two-sided?'),
-                        ),
+                        description=_(u'descr_two_sided'),
+                        default=False),
         )
         self.fields["annex_types"].widgetFactory = PMCheckBoxFieldWidget
+        self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
     def _total_size(self, annexes):
         """ """

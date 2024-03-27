@@ -32,3 +32,15 @@ msgstr ""
 #. Default: "Download annexes as batch"
 msgid "Download annexes"
 msgstr ""
+
+#. Default: "Export PDF"
+msgid "concatenate-annexes-batch-action-but"
+msgstr ""
+
+#. Default: "Export single PDF for selected elements"
+msgid "Concatenate annexes for selected elements"
+msgstr ""
+
+#. Default: "<p>This will concatenate selected annex types PDF annexes of selected items into one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less elements and download it separately.<p>"
+msgid "concatenate_annexes_batch_action_descr"
+msgstr ""

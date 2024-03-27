@@ -22,9 +22,21 @@ msgstr "<p class=\"warn_filesize\">La taille maximum que peut atteindre le fichi
 msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
 msgstr "<p>La taille du fichier Zip est de <b>${total_size}</b>, lorsque vous cliquez sur \"${button_title}\", <b>veuillez patienter quelques secondes pour que le fichier Zip soit disponible</b>, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.</p>"""
 
+#. Default: "Export single PDF for selected elements"
+msgid "Concatenate annexes for selected elements"
+msgstr "Exporter en PDF"
+
 #. Default: "Download annexes as batch"
 msgid "Download annexes"
 msgstr "Télécharger les annexes par lot"
+
+#. Default: "Export PDF"
+msgid "concatenate-annexes-batch-action-but"
+msgstr "Exporter annexes des points en PDF"
+
+#. Default: "<p>This will concatenate selected annex types PDF annexes of selected items into one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less elements and download it separately.<p>"
+msgid "concatenate_annexes_batch_action_descr"
+msgstr "<p>Choisissez ci-dessous les types d'annexes à exporter dans un fichier PDF unique pour les points sélectionnés. La taille maximum du fichier exporté est de <strong>${max_size}</strong>. Si le PDF exporté est trop gros, vous aurez un message, sélectionnez alors moins de points à exporter.<p>"
 
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"

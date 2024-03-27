@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-03-26 15:28+0000\n"
+"POT-Creation-Date: 2024-03-27 15:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Ajoute les champs d'informations de numérisation mais en cachant les ch
 msgid "Annex"
 msgstr "Annexe"
 
-#: ../browser/views.py:169
+#: ../browser/views.py:167
 msgid "Annex types"
 msgstr "Types d'annexe"
 
@@ -58,7 +58,7 @@ msgstr "Métadonnées de numérisation (champs \"à signer?/signé?\" cachés)"
 msgid "Title"
 msgstr "Titre"
 
-#: ../browser/views.py:174
+#: ../browser/views.py:172
 msgid "Two-sided?"
 msgstr "Pour impression recto-verso?"
 
@@ -69,6 +69,10 @@ msgstr "Erreur lors de l'exportation du fichier PDF, format PDF incorrect pour l
 #: ../browser/views.py:215
 msgid "concatenate_annexes_pdf_too_large_error"
 msgstr "Erreur lors de l'exportation du fichier PDF, la taille des annexes sélectionnées est de ${total_size} mais la taille maximale est de ${max_total_size}!"
+
+#: ../browser/views.py:173
+msgid "descr_two_sided"
+msgstr "Si le document PDF généré est destiné à être imprimé, une page blanche sera insérée pour que le nombre de pages par annexe soit toujours pair."
 
 #: ../profiles.zcml:16
 msgid "imio.annex"
