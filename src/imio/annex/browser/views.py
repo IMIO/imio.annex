@@ -238,7 +238,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                     _("concatenate_annexes_pdf_error",
                       mapping={'annex_title': safe_unicode(annex.Title()),
                                'item_title': safe_unicode(
-                          annex.aq_inner.aq_parent.Title(withItemNumber=True))}),
+                          annex.aq_inner.aq_parent.Title(
+                              withItemNumber=True, withItemReference=True))}),
                     request=self.request,
                     type="error")
                 logger.exception(exc)
