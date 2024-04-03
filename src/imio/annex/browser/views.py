@@ -26,9 +26,9 @@ import zipfile
 
 class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
-    label = _CEBA("Download annexes")
+    label = _CEBA("download-annexes-batch-action-but")
     button_with_icon = True
-    apply_button_title = _CEBA('download-annexes-batch-action-but')
+    apply_button_title = _CEBA('Download')
     section = "annexes"
     # gives a human readable size of "50.0 Mb"
     MAX_TOTAL_SIZE = 52428800
@@ -60,7 +60,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
                 mapping={
                     'total_size': readable_total_size,
                     'button_title': translate(
-                        'download-annexes-batch-action-but',
+                        self.apply_button_title,
                         domain="collective.eeafaceted.batchactions",
                         context=self.request)},
                 domain="collective.eeafaceted.batchactions",
@@ -137,9 +137,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
 class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
-    label = _CEBA("Concatenate annexes for selected elements")
+    label = _CEBA("concatenate-annexes-batch-action-but")
     button_with_icon = True
-    apply_button_title = _CEBA('concatenate-annexes-batch-action-but')
+    apply_button_title = _CEBA('Download')
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
 
@@ -157,6 +157,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         return descr
 
     def _annex_types_vocabulary(self):
+        """The name of the vocabulary factory to use for annex_types field."""
         return "collective.iconifiedcategory.every_category_uids"
 
     def _update(self):
@@ -184,6 +185,10 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             total += size
         return total
 
+    def _error_obj_title(self, obj):
+        """ """
+        return obj.Title()
+
     def _apply(self, **data):
         """ """
         annex_type_uids = data['annex_types']
@@ -192,12 +197,12 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         sort_on = 'getObjPositionInParent' if \
             get_sort_categorized_tab() is False else None
         for brain in self.brains:
-            item = brain.getObject()
+            obj = brain.getObject()
             filters = {'contentType': 'application/pdf'}
             for annex_type_uid in annex_type_uids:
                 filters['category_uid'] = annex_type_uid
                 annexes += get_categorized_elements(
-                    item,
+                    obj,
                     result_type='objects',
                     sort_on=sort_on,
                     filters=filters)
@@ -222,18 +227,18 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data), strict=False))
+                    PdfFileReader(BytesIO(annex.file.data), strict=True))
             except PdfReadError, exc:
                 api.portal.show_message(
-                    _("concatenate_annexes_pdf_error",
+                    _("concatenate_annexes_pdf_read_error",
                       mapping={'annex_title': safe_unicode(annex.Title()),
-                               'item_title': safe_unicode(
-                          annex.aq_inner.aq_parent.Title(
-                              withItemNumber=True, withItemReference=True))}),
+                               'obj_title': safe_unicode(
+                          self._error_obj_title(annex.aq_inner.aq_parent))}),
                     request=self.request,
                     type="error")
                 logger.exception(exc)
-                self.request.set('concatenate_annexes_item_pdf_error_url', item.absolute_url())
+                self.request.set(
+                    'concatenate_annexes_item_pdf_error_url', obj.absolute_url())
                 return
             if data['two_sided'] and \
                output_writer.getNumPages() % 2 != 0 and \
@@ -255,5 +260,5 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             return pdf_file_content.read()
         elif self.request.RESPONSE.status == 204:
             # return something so the faceted is refrehsed
-            return self.request.get('concatenate_annexes_item_pdf_error_url')
+            return self.request.get('concatenate_annexes_pdf_error_url')
         return super(ConcatenateAnnexesBatchActionForm, self).render()

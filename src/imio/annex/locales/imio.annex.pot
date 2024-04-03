@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-03-27 15:50+0000\n"
+"POT-Creation-Date: 2024-04-03 11:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Installs the zamqp part for imio.annex."
 msgstr ""
 
-#: ../browser/views.py:208
+#: ../browser/views.py:212
 msgid "Nothing to export."
 msgstr ""
 
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Two-sided?"
 msgstr ""
 
-#: ../browser/views.py:229
-msgid "concatenate_annexes_pdf_error"
+#: ../browser/views.py:233
+msgid "concatenate_annexes_pdf_read_error"
 msgstr ""
 
-#: ../browser/views.py:215
+#: ../browser/views.py:219
 msgid "concatenate_annexes_pdf_too_large_error"
 msgstr ""
 
