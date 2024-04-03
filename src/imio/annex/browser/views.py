@@ -30,8 +30,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     button_with_icon = True
     apply_button_title = _CEBA('download-annexes-batch-action-but')
     section = "annexes"
-    # gives a human readable size of "25.0 Mb"
-    MAX_TOTAL_SIZE = 26214400
+    # gives a human readable size of "50.0 Mb"
+    MAX_TOTAL_SIZE = 52428800
 
     @property
     def description(self):
@@ -232,7 +232,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data)))
+                    PdfFileReader(BytesIO(annex.file.data), strict=False))
             except PdfReadError, exc:
                 api.portal.show_message(
                     _("concatenate_annexes_pdf_error",
