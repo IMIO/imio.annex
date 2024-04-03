@@ -167,11 +167,12 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 title=_(u'Annex types'),
                 value_type=schema.Choice(
                     vocabulary=self._annex_types_vocabulary()),
-                required=False),
+                required=True),
             schema.Bool(__name__='two_sided',
                         title=_(u'Two-sided?'),
                         description=_(u'descr_two_sided'),
-                        default=False),
+                        default=False,
+                        required=False),
         )
         self.fields["annex_types"].widgetFactory = PMCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
