@@ -140,8 +140,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     label = _CEBA("Concatenate annexes for selected elements")
     button_with_icon = True
     apply_button_title = _CEBA('concatenate-annexes-batch-action-but')
-    # gives a human readable size of "50.0 Mb"
-    MAX_TOTAL_SIZE = 52428800
+    # gives a human readable size of "75.0 Mb"
+    MAX_TOTAL_SIZE = 78643200
 
     @property
     def description(self):
@@ -156,18 +156,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             context=self.request)
         return descr
 
-    def __init__(self, context, request):
-        super(ConcatenateAnnexesBatchActionForm, self).__init__(
-            context, request)
-        self.tool = api.portal.get_tool('portal_plonemeeting')
-        self.cfg = self.tool.getMeetingConfig(context)
-
-    def available(self):
-        """ """
-        # super() will check for self.available_permission
-        if self.cfg.isManager(self.cfg) and \
-           super(ConcatenateAnnexesBatchActionForm, self).available():
-            return True
+    def _annex_types_vocabulary(self):
+        return "collective.iconifiedcategory.every_category_uids"
 
     def _update(self):
         self.fields += Fields(
@@ -175,7 +165,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 __name__='annex_types',
                 title=_(u'Annex types'),
                 value_type=schema.Choice(
-                    vocabulary='Products.PloneMeeting.vocabularies.item_annex_types_vocabulary'),
+                    vocabulary=self._annex_types_vocabulary()),
                 required=False),
             schema.Bool(__name__='two_sided',
                         title=_(u'Two-sided?'),
