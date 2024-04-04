@@ -228,7 +228,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data), strict=True))
+                    PdfFileReader(BytesIO(annex.file.data), strict=False))
             except PdfReadError, exc:
                 api.portal.show_message(
                     _("concatenate_annexes_pdf_read_error",
