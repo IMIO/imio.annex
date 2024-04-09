@@ -8,6 +8,9 @@ Changelog
 - Added parameter `filters={"to_print": True}` to `utils.get_annexes_to_print`
   so it is possible to filter annexes to print.
   [gbastien]
+- Added concatenate annexes batch action to be able to produce a single PDF file
+  from annex types of selected elements. Disabled by default (in `configure.zcml`).
+  [gbastien]
 
 2.21 (2023-12-11)
 -----------------
