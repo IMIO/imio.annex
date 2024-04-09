@@ -16,4 +16,11 @@
         class="imio.annex.browser.views.DownloadAnnexesBatchActionForm"
         permission="zope2.View" /-->
 
+    <!-- Concatenate annexes batch action -->
+    <!--browser:page
+        for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"
+        name="concatenate-annexes-batch-action"
+        class="imio.annex.browser.views.ConcatenateAnnexesBatchActionForm"
+        permission="zope2.View" /-->
+
 </configure>

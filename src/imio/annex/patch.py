@@ -9,8 +9,8 @@ Created by mpeeters
 
 from collective.documentviewer.async import JobRunner
 from collective.documentviewer.convert import Converter
-from imio.annex.events import ConversionStartedEvent
 from imio.annex.events import ConversionReallyFinishedEvent
+from imio.annex.events import ConversionStartedEvent
 from zope.event import notify
 
 

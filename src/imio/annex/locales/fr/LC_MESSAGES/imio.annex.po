@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-06-01 07:46+0000\n"
+"POT-Creation-Date: 2024-04-03 11:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,11 +14,11 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-#: ../columns.py:62
+#: ../columns.py:86
 msgid "Actions"
 msgstr "Actions"
 
-#: ../configure.zcml:75
+#: ../configure.zcml:63
 msgid "Adds scan information fields but hides fields to_sign/signed"
 msgstr "Ajoute les champs d'informations de numérisation mais en cachant les champs \"à signer?/signé?\""
 
@@ -26,30 +26,54 @@ msgstr "Ajoute les champs d'informations de numérisation mais en cachant les ch
 msgid "Annex"
 msgstr "Annexe"
 
+#: ../browser/views.py:167
+msgid "Annex types"
+msgstr "Types d'annexe"
+
 #: ../quickupload/templates/quick_upload.pt:28
 msgid "Apply the first category on all elements"
 msgstr "Appliquer la première catégorie à l'ensemble des éléments"
 
-#: ../content/annex.py:51
+#: ../content/annex.py:52
 msgid "File"
 msgstr "Fichier"
 
-#: ../configure.zcml:35
+#: ../profiles.zcml:16
 msgid "Installs the imio.annex add-on."
 msgstr ""
 
-#: ../configure.zcml:42
+#: ../profiles.zcml:23
 msgid "Installs the zamqp part for imio.annex."
 msgstr ""
 
-#: ../configure.zcml:75
+#: ../browser/views.py:212
+msgid "Nothing to export."
+msgstr "Rien à exporter."
+
+#: ../configure.zcml:63
 msgid "Scan metadata (fields to_sign/signed hidden)"
 msgstr "Métadonnées de numérisation (champs \"à signer?/signé?\" cachés)"
 
-#: ../columns.py:19
+#: ../columns.py:22
 msgid "Title"
 msgstr "Titre"
 
-#: ../configure.zcml:35
+#: ../browser/views.py:172
+msgid "Two-sided?"
+msgstr "Pour impression recto-verso?"
+
+#: ../browser/views.py:233
+msgid "concatenate_annexes_pdf_read_error"
+msgstr "Erreur lors de l'exportation du fichier PDF, format PDF incorrect pour l'annexe \"${annex_title}\" de l'élément \"${obj_title}\"!"
+
+#: ../browser/views.py:219
+msgid "concatenate_annexes_pdf_too_large_error"
+msgstr "Erreur lors de l'exportation du fichier PDF, la taille des annexes sélectionnées est de ${total_size} mais la taille maximale est de ${max_total_size}!"
+
+#: ../browser/views.py:173
+msgid "descr_two_sided"
+msgstr "Si le document PDF généré est destiné à être imprimé, une page blanche sera insérée pour que le nombre de pages par annexe soit toujours pair."
+
+#: ../profiles.zcml:16
 msgid "imio.annex"
 msgstr ""
