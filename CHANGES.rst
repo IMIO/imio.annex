@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.22 (unreleased)
+2.22 (2024-04-10)
 -----------------
 
 - Added parameter `filters={"to_print": True}` to `utils.get_annexes_to_print`
