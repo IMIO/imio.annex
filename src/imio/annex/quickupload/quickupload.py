@@ -37,8 +37,7 @@ from zope.lifecycleevent import ObjectAddedEvent
 
 import json
 import pkg_resources
-import urllib
-
+import urllib.parse
 
 try:
     pkg_resources.get_distribution('plone.uuid')
@@ -80,7 +79,7 @@ class QuickUploadFileInit(QuickUploadInit):
         if self.request.get('PUBLISHED').__name__ == 'quick_upload':
             session = self.request.get('SESSION', '')
             for session_key in ('mediaupload', 'typeupload'):
-                if session_key in session.keys():
+                if session_key in list(session.keys()):
                     del session[session_key]
         return super(QuickUploadFileInit, self).upload_settings()
 
@@ -130,7 +129,7 @@ class QuickUploadFileView(QuickUploadFile):
 
         if request.HTTP_X_REQUESTED_WITH:
             # using ajax upload
-            file_name = urllib.unquote(request.HTTP_X_FILE_NAME)
+            file_name = urllib.parse.unquote(request.HTTP_X_FILE_NAME)
             upload_with = "XHR"
             try:
                 file = request.BODYFILE
