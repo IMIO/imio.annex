@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.23 (unreleased)
+2.23 (2024-09-25)
 -----------------
 
 - Fixed XSS vulnerability in annexes table `PrettyLinkColumn`.
