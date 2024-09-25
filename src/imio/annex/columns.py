@@ -14,8 +14,9 @@ from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
 from imio.annex import _
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
-from zope.component import getMultiAdapter
 from zope.i18n import translate
+
+import html
 
 
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
@@ -33,12 +34,12 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         blank = u'<p class="discreet"></p>'
 
         # display description if any
-        description = safe_unicode(obj.Description() or u'').replace('\n', '<br/>')
+        description = safe_unicode(html.escape(obj.Description() or u'')).replace('\n', '<br/>')
         if description:
             description = u'<p class="discreet">{0}</p>'.format(description)
 
         # display filename if any
-        filename = obj.file.filename
+        filename = html.escape(obj.file.filename or '')
         field_name = translate(
             'File',
             domain='imio.annex',
@@ -48,7 +49,7 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
                 field_name, filename)
 
         # display scan_id if any
-        scan_id = getattr(obj, "scan_id", '') or ''
+        scan_id = html.escape(getattr(obj, "scan_id", '') or '')
         if scan_id:
             field_name = translate(
                 'scan_id',
@@ -92,7 +93,7 @@ class ActionsColumn(DashboardActionsColumn):
             'sort_categorized_tab',
             interface=IIconifiedCategorySettings,
         )
-        return not(bool(sort_categorized_tab))
+        return not (bool(sort_categorized_tab))
 
     def renderCell(self, item):
         """ """
