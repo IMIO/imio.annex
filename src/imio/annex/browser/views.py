@@ -38,19 +38,25 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         descr = super(DownloadAnnexesBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
-        readable_total_size = calculate_filesize(self.total_size)
-        readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
         if self.total_size > self.MAX_TOTAL_SIZE:
+            readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
             descr += translate(
                 '<p class="warn_filesize">The maximum size you may download at one '
                 'time is ${max_size}, here your download size is ${total_size}. '
                 'Please unselect some elements, especially large elements for which '
                 'size is displayed in red, download it separately.<p>',
                 mapping={'max_size': readable_max_size,
-                         'total_size': readable_total_size},
+                         'total_size': calculate_filesize(self.total_size)},
                 domain="collective.eeafaceted.batchactions",
                 context=self.request)
-            self.do_apply = False
+        elif self.annex_not_downloadable is not None:
+            descr += translate(
+                '<p style="color: red;">You selected some elements that are not downloadable, '
+                'check for example "${annex_title}". '
+                'Please unselect elements that are only previewable.</p>',
+                mapping={'annex_title': self.annex_not_downloadable.Title()},
+                domain="collective.eeafaceted.batchactions",
+                context=self.request)
         else:
             descr += translate(
                 '<p>This will download the selected elements as a Zip file.</p>'
@@ -58,7 +64,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
                 '"${button_title}", you will have a spinner, wait until the Zip file '
                 'is available.</p>',
                 mapping={
-                    'total_size': readable_total_size,
+                    'total_size': calculate_filesize(self.total_size),
                     'button_title': translate(
                         self.apply_button_title,
                         domain="collective.eeafaceted.batchactions",
@@ -66,6 +72,22 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
                 domain="collective.eeafaceted.batchactions",
                 context=self.request)
         return descr
+
+    def _check_annex_not_downloadable(self):
+        """ """
+        self.annex_not_downloadable = None
+        for brain in self.brains:
+            obj = brain.getObject()
+            if not obj.show_download():
+                self.annex_not_downloadable = obj
+                self.do_apply = False
+                return
+
+    def _check_total_size(self):
+        """ """
+        self.total_size = self._total_size()
+        if self.total_size > self.MAX_TOTAL_SIZE:
+            self.do_apply = False
 
     def _total_size(self):
         """ """
@@ -79,9 +101,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
     def _update(self):
         """Can not apply action if total size exceeded."""
-        self.total_size = self._total_size()
-        if self.total_size > self.MAX_TOTAL_SIZE:
-            self.do_apply = False
+        self._check_total_size()
+        if self.do_apply:
+            self._check_annex_not_downloadable()
 
     def available(self):
         """ """
@@ -229,7 +251,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             try:
                 output_writer.appendPagesFromReader(
                     PdfFileReader(BytesIO(annex.file.data), strict=False))
-            except PdfReadError, exc:
+            except PdfReadError as exc:
                 api.portal.show_message(
                     _("concatenate_annexes_pdf_read_error",
                       mapping={'annex_title': safe_unicode(annex.Title()),

@@ -17,12 +17,16 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.eeafaceted.batchactions\n"
 
-#: ../browser/views.py:31
+#. Default: "<p class=\"warn_filesize\">The maximum size you may download at one time is ${max_size}, here your download size is ${total_size}. Please unselect some elements, especially large elements for which size is displayed in red, download it separately.<p>"
 msgid "<p class=\"warn_filesize\">The maximum size you may download at one time is ${max_size}, here your download size is ${total_size}. Please unselect some elements, especially large elements for which size is displayed in red, download it separately.<p>"
 msgstr ""
 
-#: ../browser/views.py:43
+#. Default: "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
 msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
+msgstr ""
+
+#. Default: "<p style=\"color: red;\">You selected some elements that are not downloadable, check for example \"${annex_title}\". Please unselect elements that are only previewable.</p>"
+msgid "<p style=\"color: red;\">You selected some elements that are not downloadable, check for example \"${annex_title}\". Please unselect elements that are only previewable.</p>"
 msgstr ""
 
 #. Default: "Download as Zip file"

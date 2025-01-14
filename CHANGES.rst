@@ -5,8 +5,9 @@ Changelog
 2.24 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `DownloadAnnexesBatchActionForm` to not download annexes that are only
+  previewable (annexes for which `show_download` is `False`).
+  [gbastien]
 
 2.23 (2024-09-25)
 -----------------
