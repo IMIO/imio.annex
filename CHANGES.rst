@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.24 (unreleased)
+2.24 (2025-02-03)
 -----------------
 
 - Fixed `DownloadAnnexesBatchActionForm` to not download annexes that are only
