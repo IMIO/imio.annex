@@ -15,7 +15,7 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.PloneMeeting.widgets.pm_checkbox import PMCheckBoxFieldWidget
 from PyPDF2 import PdfFileReader
 from PyPDF2 import PdfFileWriter
-from PyPDF2.utils import PdfReadError
+from PyPDF2.errors import PdfReadError
 from z3c.form.browser.radio import RadioFieldWidget
 from z3c.form.field import Fields
 from zope import schema

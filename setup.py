@@ -44,6 +44,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'PyPDF2',
         'collective.documentviewer',
         'collective.iconifiedcategory',
         'collective.monkeypatcher',

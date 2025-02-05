@@ -51,7 +51,7 @@
 
   <monkey:patch
     description="Ensure that an event is triggered before the document conversion"
-    class="collective.documentviewer.async.JobRunner"
+    class="collective.documentviewer.async_utils.CeleryJobRunner"
     original="queue_it"
     replacement=".patch.jobrunner_queue_it"
     preserveOriginal="true" />
