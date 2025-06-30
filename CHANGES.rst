@@ -5,8 +5,11 @@ Changelog
 2.25 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- For `DownloadAnnexesBatchActionForm` and `ConcatenateAnnexesBatchActionForm`,
+  manage `MAX_TOTAL_SIZE` in method `_max_total_size` so it is easy to override
+  and to manage functionnal usecases (like different max size depending
+  on current user).
+  [gbastien]
 
 2.24 (2025-02-03)
 -----------------

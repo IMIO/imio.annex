@@ -33,26 +33,30 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     # gives a human readable size of "50.0 Mb"
     MAX_TOTAL_SIZE = 52428800
 
+    def _max_total_size(self):
+        """ """
+        return self.MAX_TOTAL_SIZE
+
     @property
     def description(self):
         """ """
         descr = super(DownloadAnnexesBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
-        if self.total_size > self.MAX_TOTAL_SIZE:
-            readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
+        if self.total_size > self._max_total_size():
+            readable_max_size = calculate_filesize(self._max_total_size())
             descr += translate(
-                '<p class="warn_filesize">The maximum size you may download at one '
-                'time is ${max_size}, here your download size is ${total_size}. '
-                'Please unselect some elements, especially large elements for which '
-                'size is displayed in red, download it separately.<p>',
+                '<p class="warn_filesize">The maximum size you may download at '
+                'one time is ${max_size}, here your download size is ${total_size}. '
+                'Please unselect some elements, especially large elements for '
+                'which size is displayed in red, download it separately.<p>',
                 mapping={'max_size': readable_max_size,
                          'total_size': calculate_filesize(self.total_size)},
                 domain="collective.eeafaceted.batchactions",
                 context=self.request)
         elif self.annex_not_downloadable is not None:
             descr += translate(
-                '<p style="color: red;">You selected some elements that are not downloadable, '
-                'check for example "${annex_title}". '
+                '<p style="color: red;">You selected some elements that are '
+                'not downloadable, check for example "${annex_title}". '
                 'Please unselect elements that are only previewable.</p>',
                 mapping={'annex_title': self.annex_not_downloadable.Title()},
                 domain="collective.eeafaceted.batchactions",
@@ -60,9 +64,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         else:
             descr += translate(
                 '<p>This will download the selected elements as a Zip file.</p>'
-                '<p>The total file size is <b>${total_size}</b>, when clicking on '
-                '"${button_title}", you will have a spinner, wait until the Zip file '
-                'is available.</p>',
+                '<p>The total file size is <b>${total_size}</b>, when clicking '
+                'on "${button_title}", you will have a spinner, wait until the '
+                'Zip file is available.</p>',
                 mapping={
                     'total_size': calculate_filesize(self.total_size),
                     'button_title': translate(
@@ -86,7 +90,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     def _check_total_size(self):
         """ """
         self.total_size = self._total_size()
-        if self.total_size > self.MAX_TOTAL_SIZE:
+        if self.total_size > self._max_total_size():
             self.do_apply = False
 
     def _total_size(self):
@@ -125,7 +129,11 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             zipper.writestr(filename, data)
             created = obj.created()
             zipper.NameToInfo[filename].date_time = (
-                created.year(), created.month(), created.day(), created.hour(), created.minute(),
+                created.year(),
+                created.month(),
+                created.day(),
+                created.hour(),
+                created.minute(),
                 int(created.second()))
         zipper.close()
         return fstream.getvalue()
@@ -142,8 +150,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     def do_zip(self):
         """ Zip all of the content in this location (context)"""
         self.request.response.setHeader('Content-Type', 'application/zip')
-        self.request.response.setHeader('Content-disposition', 'attachment;filename=%s.zip'
-                                        % self.context.getId())
+        self.request.response.setHeader(
+            'Content-disposition', 'attachment;filename=%s.zip'
+            % self.context.getId())
         content = [brain.getObject() for brain in self.brains]
         zipped_content = self.zipfiles(content)
         self.request.set('zip_file_content', zipped_content)
@@ -165,12 +174,16 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
 
+    def _max_total_size(self):
+        """ """
+        return self.MAX_TOTAL_SIZE
+
     @property
     def description(self):
         """ """
         descr = super(ConcatenateAnnexesBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
-        readable_max_size = calculate_filesize(self.MAX_TOTAL_SIZE)
+        readable_max_size = calculate_filesize(self._max_total_size())
         descr += translate(
             'concatenate_annexes_batch_action_descr',
             mapping={'max_size': readable_max_size, },
@@ -237,11 +250,12 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             return
         # can not generate if total size too large
         total_size = self._total_size(annexes)
-        if self._total_size(annexes) > self.MAX_TOTAL_SIZE:
+        if self._total_size(annexes) > self._max_total_size():
             api.portal.show_message(
                 _("concatenate_annexes_pdf_too_large_error",
                   mapping={'total_size': calculate_filesize(total_size),
-                           'max_total_size': calculate_filesize(self.MAX_TOTAL_SIZE)}),
+                           'max_total_size': calculate_filesize(
+                            self._max_total_size())}),
                 request=self.request,
                 type="error")
             return
@@ -276,8 +290,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         if 'pdf_file_content' in self.request:
             filename = "%s-annexes.pdf" % self.context.getId()
             self.request.response.setHeader('Content-Type', 'application/pdf')
-            self.request.response.setHeader('Content-disposition', 'attachment; filename=%s'
-                                            % filename)
+            self.request.response.setHeader(
+                'Content-disposition', 'attachment; filename=%s' % filename)
             pdf_file_content = self.request['pdf_file_content']
             pdf_file_content.seek(0)
             return pdf_file_content.read()
