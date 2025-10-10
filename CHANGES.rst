@@ -10,6 +10,8 @@ Changelog
   and to manage functionnal usecases (like different max size depending
   on current user).
   [gbastien]
+- Add `sort_on` parameter to `utils.get_annexes_to_print` so annexes can be sorted.
+  [aduchene]
 
 2.24 (2025-02-03)
 -----------------

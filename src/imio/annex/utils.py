@@ -6,7 +6,7 @@ from plone import api
 from zope.annotation import IAnnotations
 
 
-def get_annexes_to_print(container, portal_type=None, filters={"to_print": True}, caching=True):
+def get_annexes_to_print(container, portal_type=None, sort_on=None, filters={"to_print": True}, caching=True):
     ''' '''
     res = None
     if caching:
@@ -23,6 +23,7 @@ def get_annexes_to_print(container, portal_type=None, filters={"to_print": True}
         global_settings = GlobalSettings(portal)
         annexes = get_categorized_elements(container,
                                            result_type='dict',
+                                           sort_on=sort_on,
                                            portal_type=portal_type,
                                            filters=filters)
         i = 1
