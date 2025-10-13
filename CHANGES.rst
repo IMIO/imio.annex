@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.25 (unreleased)
+2.25 (2025-10-13)
 -----------------
 
 - For `DownloadAnnexesBatchActionForm` and `ConcatenateAnnexesBatchActionForm`,
