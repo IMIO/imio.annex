@@ -21,7 +21,7 @@ def annex_content_created(obj, event):
 
 
 def annex_content_updated(obj, event):
-    if obj.file._blob._p_blob_uncommitted is not None:
+    if obj.file is not None and obj.file._blob._p_blob_uncommitted is not None:
         notify(AnnexFileChangedEvent(obj, obj.file))
 
 
