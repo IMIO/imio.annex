@@ -36,7 +36,7 @@ msgstr "Exporter les annexes en PDF"
 
 #. Default: "<p>This will concatenate selected annex types PDF annexes of selected items into one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less elements and download it separately.<p>"
 msgid "concatenate_annexes_batch_action_descr"
-msgstr "<p>Cette action permet de grouper des documents PDF dans un PDF unique. Choisissez ci-dessous les types d'annexes à exporter dans un fichier PDF unique pour les éléments sélectionnés. La taille maximum du fichier exporté est de <strong>${max_size}</strong>. Si le PDF exporté est trop volumineux, vous aurez un message, sélectionnez alors moins d'éléménts à exporter. Lorsque vous cliquez sur \"Télécharger\", veuillez patienter quelques secondes pour que le fichier PDF soit disponible, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.<p>"
+msgstr "<p class='discreet'>Cette action permet de grouper des documents PDF dans un PDF unique. Choisissez ci-dessous les types d'annexes à exporter dans un fichier PDF unique pour les éléments sélectionnés. La taille maximum du fichier exporté est de <strong>${max_size}</strong>. Si le PDF exporté est trop volumineux, vous aurez un message, sélectionnez alors moins d'éléménts à exporter. Lorsque vous cliquez sur \"Télécharger\", veuillez patienter quelques secondes pour que le fichier PDF soit disponible, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.<p>"
 
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"

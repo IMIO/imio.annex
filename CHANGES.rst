@@ -5,8 +5,9 @@ Changelog
 2.26 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Adapted `concatenate_annexes_batch_action_descr` translation to use
+  CSS class `discreet` like it is the case for other bacth actions description.
+  [gbastien]
 
 2.25 (2025-10-13)
 -----------------
