@@ -39,4 +39,13 @@
         import_steps="typeinfo" />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+      source="1000"
+      destination="1001"
+      profile="imio.annex:zamqp">
+    <genericsetup:upgradeDepends
+        title="Update annex scanbehavior"
+        import_steps="typeinfo" />
+  </genericsetup:upgradeSteps>
+
 </configure>
