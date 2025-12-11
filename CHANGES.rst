@@ -8,6 +8,8 @@ Changelog
 - Adapted `concatenate_annexes_batch_action_descr` translation to use
   CSS class `discreet` like it is the case for other bacth actions description.
   [gbastien]
+- Update annex scanbehavior.
+  [chris-adam]
 
 2.25 (2025-10-13)
 -----------------

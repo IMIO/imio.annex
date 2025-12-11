@@ -60,7 +60,7 @@ setup(
             'plone.app.robotframework[debug]',
         ],
         'amqp': [
-            'collective.dms.scanbehavior',
+            'collective.dms.scanbehavior>1.3.1',
         ],
     },
     entry_points="""
