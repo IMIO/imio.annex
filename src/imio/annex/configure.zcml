@@ -56,4 +56,10 @@
     replacement=".patch.jobrunner_queue_it"
     preserveOriginal="true" />
 
+  <!-- behaviors -->
+  <plone:behavior zcml:condition="installed collective.dms.scanbehavior"
+       title="Scan metadata (fields to_sign/signed hidden)"
+       description="Adds scan information fields but hides fields to_sign/signed"
+       provides=".behaviors.IScanFieldsHiddenToSignAndSigned" />
+
 </configure>
