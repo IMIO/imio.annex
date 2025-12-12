@@ -41,10 +41,6 @@ msgstr ""
 msgid "Installs the imio.annex add-on."
 msgstr ""
 
-#: ../profiles.zcml:23
-msgid "Installs the zamqp part for imio.annex."
-msgstr ""
-
 #: ../browser/views.py:234
 msgid "Nothing to export."
 msgstr ""

@@ -10,6 +10,8 @@ Changelog
   [gbastien]
 - Update annex scanbehavior.
   [chris-adam]
+- Merged zamqp profile into default profile.
+  [chris-adam]
 
 2.25 (2025-10-13)
 -----------------
