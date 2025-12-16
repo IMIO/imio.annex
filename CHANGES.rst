@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.26 (unreleased)
+2.26 (2025-12-16)
 -----------------
 
 - Adapted `concatenate_annexes_batch_action_descr` translation to use
