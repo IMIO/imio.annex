@@ -44,6 +44,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'collective.dms.scanbehavior>1.3.1',
         'collective.documentviewer',
         'collective.iconifiedcategory',
         'collective.monkeypatcher',
@@ -58,9 +59,6 @@ setup(
             'plone.app.testing',
             'plone.app.contenttypes',
             'plone.app.robotframework[debug]',
-        ],
-        'amqp': [
-            'collective.dms.scanbehavior>1.3.1',
         ],
     },
     entry_points="""

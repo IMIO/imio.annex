@@ -5,8 +5,8 @@ Changelog
 2.27 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added collective.dms.scanbehavior dependency.
+  [sgeulette]
 
 2.26 (2025-12-16)
 -----------------
