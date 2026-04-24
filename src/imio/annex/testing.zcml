@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="imio.annex"
+    >
+
+  <include file="configure.zcml" />
+
+  <genericsetup:registerProfile
+      name="testing"
+      title="imio.annex tests"
+      description="Installs the test fixture for the imio.annex add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/testing"
+      />
+
+</configure>

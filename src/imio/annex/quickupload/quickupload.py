@@ -28,7 +28,6 @@ from imio.annex.quickupload import utils
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import base_hasattr
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form.validator import Data
 from ZODB.POSException import ConflictError
@@ -37,7 +36,16 @@ from zope.lifecycleevent import ObjectAddedEvent
 
 import json
 import pkg_resources
-import urllib
+
+try:
+    from urllib import unquote
+except ImportError:
+    from urllib.parse import unquote
+
+try:
+    from plone.base.utils import base_hasattr
+except ImportError:
+    from Products.CMFPlone.utils import base_hasattr
 
 
 try:
@@ -130,7 +138,7 @@ class QuickUploadFileView(QuickUploadFile):
 
         if request.HTTP_X_REQUESTED_WITH:
             # using ajax upload
-            file_name = urllib.unquote(request.HTTP_X_FILE_NAME)
+            file_name = unquote(request.HTTP_X_FILE_NAME)
             upload_with = "XHR"
             try:
                 file = request.BODYFILE
