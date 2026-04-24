@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<metadata>
+  <version>1002</version>
+  <dependencies>
+    <dependency>profile-collective.iconifiedcategory:default</dependency>
+    <dependency>profile-collective.documentviewer:default</dependency>
+    <dependency>profile-imio.actionspanel:default</dependency>
+    <dependency>profile-collective.dms.scanbehavior:default</dependency>
+  </dependencies>
+</metadata>

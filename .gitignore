@@ -21,3 +21,6 @@ output.xml
 *.swp
 include
 lib
+.plone-version
+.plone*
+checkversion*.html
