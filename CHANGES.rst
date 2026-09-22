@@ -2,10 +2,21 @@ Changelog
 =========
 
 
-2.27.2 (unreleased)
+2.28.0 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Moved `PMCheckBoxFieldWidget` from `Products.PloneMeeting` to
+  `imio.annex.widgets.checkbox.AnnexesCheckBoxFieldWidget`.
+  [sgeulette]
+- Moved `ItemExportPDFForm` from `Products.PloneMeeting` to
+  `imio.annex.browser.views.ExportPDFForm`: needs to be registered as
+  `@@export-pdf-form` by the using applications.
+  [sgeulette]
+- Added `ContainedAnnexesVocabulary` and `ExportPDFElementsVocabulary`
+  in `imio.annex.vocabularies`.
+  [sgeulette]
+- Added test infrastructure (`testing.py` and `tests`).
+  [sgeulette]
 
 
 2.27.1 (2026-01-15)

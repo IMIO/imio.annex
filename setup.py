@@ -52,6 +52,7 @@ setup(
         'imio.dashboard',
         'plone.api',
         'plone.app.lockingbehavior',
+        'PyPDF2',
         'setuptools',
     ],
     extras_require={
