@@ -23,7 +23,6 @@ from z3c.form.browser.radio import RadioFieldWidget
 from z3c.form.field import Fields
 from zope import schema
 from zope.i18n import translate
-from zope.interface import Interface
 
 import zipfile
 
@@ -305,31 +304,11 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         return super(ConcatenateAnnexesBatchActionForm, self).render()
 
 
-class IExportPDF(Interface):
-    """Schema for the @@export-pdf-form."""
-
-    elements = schema.List(
-        title=_(u"Elements to export in PDF"),
-        description=_(u""),
-        required=False,
-        value_type=schema.Choice(
-            vocabulary=u"imio.annex.export_pdf_elements"),
-    )
-
-    two_sided = schema.Bool(
-        title=_(u'Two-sided?'),
-        description=_(u'descr_two_sided'),
-        default=False,
-        required=False,
-    )
-
-
 class ExportPDFForm(z3c_form.Form):
     """Concatenate selected elements of context into a single PDF."""
 
-    fields = Fields(IExportPDF)
-    fields["elements"].widgetFactory = AnnexesCheckBoxFieldWidget
-    fields["two_sided"].widgetFactory = RadioFieldWidget
+    # name of the vocabulary listing the selectable elements, subclasses may change it
+    vocabulary = u"imio.annex.export_pdf_elements"
 
     ignoreContext = True  # don't use context to get widget data
 
@@ -340,6 +319,22 @@ class ExportPDFForm(z3c_form.Form):
     def __init__(self, context, request):
         self.context = context
         self.request = request
+        self.fields = Fields(
+            schema.List(
+                __name__="elements",
+                title=_(u"Elements to export in PDF"),
+                description=_(u""),
+                required=False,
+                value_type=schema.Choice(vocabulary=self.vocabulary)),
+            schema.Bool(
+                __name__="two_sided",
+                title=_(u'Two-sided?'),
+                description=_(u'descr_two_sided'),
+                default=False,
+                required=False),
+        )
+        self.fields["elements"].widgetFactory = AnnexesCheckBoxFieldWidget
+        self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
     @button.buttonAndHandler(_('Apply'), name='apply')
     def handleApply(self, action):
