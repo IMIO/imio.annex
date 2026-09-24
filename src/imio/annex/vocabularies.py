@@ -36,20 +36,18 @@ class ContainedAnnexesVocabulary(object):
         i = 1
         sort_on = 'getObjPositionInParent' if \
             get_sort_categorized_tab() is False else None
-        annex_infos = get_categorized_elements(
-            context, portal_type=portal_type, sort_on=sort_on, filters=filters)
+        annex_infos = self._prepare_annex_infos(
+            context,
+            get_categorized_elements(
+                context, portal_type=portal_type, sort_on=sort_on, filters=filters))
         if annex_infos:
             categories_vocab = get_vocab(
                 context,
                 'collective.iconifiedcategory.categories',
                 use_category_uid_as_token=True)
             parent_title = u'%s<br><span class="titleVisualPadding">➔ </span>' % \
-                safe_unicode(context.Title()) \
+                cgi.escape(safe_unicode(context.Title()), True) \
                 if include_parent_title else ''
-            portal_type_title = u'%s - ' % translate(
-                portal.portal_types[portal_type].title,
-                domain="imio.annex",
-                context=context.REQUEST) if include_portal_type else ''
 
             for annex_info in annex_infos:
                 # term title is annex icon, number and title
@@ -59,18 +57,30 @@ class ContainedAnnexesVocabulary(object):
                         portal_url,
                         annex_info['icon_url'],
                         cgi.escape(safe_unicode(annex_info['category_title']), True),
-                        portal_type_title,
+                        self._portal_type_title(context, annex_info)
+                        if include_portal_type else '',
                         str(i),
                         cgi.escape(safe_unicode(annex_info['title']), True))
                 i += 1
                 if annex_info['warn_filesize']:
                     term_title += u' ({0})'.format(render_filesize(annex_info['filesize']))
                 term = SimpleTerm(annex_info[token_value], annex_info[token_value], term_title)
-                term.description = annex_info['description'].replace('\n', '<br>')
+                term.description = cgi.escape(safe_unicode(annex_info['description']), True).replace('\n', '<br>')
                 # check if need to disable term
                 self._check_disable_term(context, annex_info, categories_vocab, term)
                 terms.append(term)
         return SimpleVocabulary(terms)
+
+    def _prepare_annex_infos(self, context, annex_infos):
+        """Hook, filter and/or order the listed annexes."""
+        return annex_infos
+
+    def _portal_type_title(self, context, annex_info):
+        """Translated portal_type title prefixing the term title."""
+        return u'%s - ' % translate(
+            api.portal.get().portal_types[annex_info['portal_type']].title,
+            domain="imio.annex",
+            context=context.REQUEST)
 
     def _check_disable_term(self, context, annex_info, categories_vocab, term):
         """By default, disable if not downloadable (only previewable)."""

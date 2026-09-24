@@ -13,11 +13,11 @@ Changelog
   `@@export-pdf-form` by the using applications.
   [sgeulette]
 - Added `ContainedAnnexesVocabulary` and `ExportPDFElementsVocabulary`
-  in `imio.annex.vocabularies`.
+  in `imio.annex.vocabularies`, with `_prepare_annex_infos` (filter/order the listed
+  annexes) and `_portal_type_title` hooks.
   [sgeulette]
 - Added test infrastructure (`testing.py` and `tests`).
   [sgeulette]
-
 
 2.27.1 (2026-01-15)
 -------------------

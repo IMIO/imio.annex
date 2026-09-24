@@ -341,7 +341,7 @@ class ExportPDFForm(z3c_form.Form):
         self.context = context
         self.request = request
 
-    @button.buttonAndHandler(_('Apply'), name='apply_export_pdf')
+    @button.buttonAndHandler(_('Apply'), name='apply')
     def handleApply(self, action):
         self._check_auth()
         data, errors = self.extractData()
