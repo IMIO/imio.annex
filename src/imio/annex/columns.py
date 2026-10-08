@@ -16,7 +16,14 @@ from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from zope.i18n import translate
 
-import html
+
+try:
+    from html import escape
+except ImportError:  # Python 2 without the future package
+    from cgi import escape as cgi_escape
+
+    def escape(s):
+        return cgi_escape(s, quote=True).replace("'", '&#x27;')
 
 
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
@@ -34,12 +41,12 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         blank = u'<p class="discreet"></p>'
 
         # display description if any
-        description = safe_unicode(html.escape(obj.Description() or u'')).replace('\n', '<br/>')
+        description = safe_unicode(escape(obj.Description() or u'')).replace('\n', '<br/>')
         if description:
             description = u'<p class="discreet">{0}</p>'.format(description)
 
         # display filename if any
-        filename = html.escape(obj.file.filename or '')
+        filename = escape(obj.file.filename or '')
         field_name = translate(
             'File',
             domain='imio.annex',
@@ -49,7 +56,7 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
                 field_name, filename)
 
         # display scan_id if any
-        scan_id = html.escape(getattr(obj, "scan_id", '') or '')
+        scan_id = escape(getattr(obj, "scan_id", '') or '')
         if scan_id:
             field_name = translate(
                 'scan_id',

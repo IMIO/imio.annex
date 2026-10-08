@@ -10,8 +10,13 @@ Created by mpeeters
 from imio.annex.interfaces import IAnnexFileChangedEvent
 from imio.annex.interfaces import IConversionReallyFinishedEvent
 from imio.annex.interfaces import IConversionStartedEvent
-from zope.component.interfaces import ObjectEvent
 from zope.interface import implementer
+
+
+try:
+    from zope.interface.interfaces import ObjectEvent
+except ImportError:  # Plone 4 (zope.interface 3.6)
+    from zope.component.interfaces import ObjectEvent
 
 
 @implementer(IAnnexFileChangedEvent)

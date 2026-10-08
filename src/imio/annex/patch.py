@@ -7,11 +7,16 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.documentviewer.async import JobRunner  # noqa: W606
 from collective.documentviewer.convert import Converter
 from imio.annex.events import ConversionReallyFinishedEvent
 from imio.annex.events import ConversionStartedEvent
 from zope.event import notify
+
+import importlib
+
+
+# "async" is a keyword on Python 3: an import statement can't name this module
+JobRunner = importlib.import_module('collective.documentviewer.async').JobRunner
 
 
 def converter_call(self, *args, **kwargs):

@@ -6,7 +6,12 @@ from imio.annex.interfaces import IAnnexFileChangedEvent
 from imio.annex.interfaces import IConversionReallyFinishedEvent
 from imio.annex.interfaces import IConversionStartedEvent
 from imio.annex.testing import ImioAnnexTestCase
-from zope.component.interfaces import IObjectEvent
+
+
+try:
+    from zope.interface.interfaces import IObjectEvent
+except ImportError:  # Plone 4 (zope.interface 3.6)
+    from zope.component.interfaces import IObjectEvent
 
 
 class TestEvents(ImioAnnexTestCase):
