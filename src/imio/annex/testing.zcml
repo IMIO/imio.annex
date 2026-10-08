@@ -6,6 +6,20 @@
     >
 
   <include file="configure.zcml" />
+  <!-- loaded by z3c.autoinclude in an instance, not in the test layers -->
+  <include package="plone.app.lockingbehavior" />
+  <includeOverrides file="overrides.zcml" />
+
+  <!-- The test layers stack the component registries: the unnamed (*, *, *) adapter of
+       collective.eeafaceted.collectionwidget, registered in this layer, hides the dexterity add view
+       registered in a base layer, and ++add++annex fails (not in an instance: one registry) -->
+  <adapter
+      for="Products.CMFCore.interfaces.IFolderish
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           plone.dexterity.interfaces.IDexterityFTI"
+      provides="zope.publisher.interfaces.browser.IBrowserPage"
+      factory="plone.dexterity.browser.add.DefaultAddView"
+      />
 
   <genericsetup:registerProfile
       name="testing"

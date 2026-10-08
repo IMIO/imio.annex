@@ -2,6 +2,8 @@
 <metadata>
   <version>1000</version>
   <dependencies>
+    <!-- before imio.annex: its quickupload/helpers.js extends the collective.quickupload one -->
+    <dependency>profile-collective.quickupload:default</dependency>
     <dependency>profile-imio.annex:default</dependency>
   </dependencies>
 </metadata>
