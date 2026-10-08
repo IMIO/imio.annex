@@ -35,7 +35,7 @@ def annex_file_changed(event):
 
 def annex_conversion_started(obj, event):
     container = obj.aq_parent
-    if obj.UID() not in getattr(container, 'categorized_elements', {}):
+    if obj.UID() not in getattr(container, "categorized_elements", {}):
         return
     category = get_category_object(obj, obj.content_category)
     update_categorized_elements(container, obj, category)
@@ -43,7 +43,7 @@ def annex_conversion_started(obj, event):
 
 def annex_conversion_really_finished(obj, event):
     container = obj.aq_parent
-    if obj.UID() not in getattr(container, 'categorized_elements', {}):
+    if obj.UID() not in getattr(container, "categorized_elements", {}):
         return
     category = get_category_object(obj, obj.content_category)
     update_categorized_elements(container, obj, category)

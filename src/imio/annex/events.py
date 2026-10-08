@@ -21,10 +21,9 @@ except ImportError:  # Plone 4 (zope.interface 3.6)
 
 @implementer(IAnnexFileChangedEvent)
 class AnnexFileChangedEvent(ObjectEvent):
-
     def __init__(self, object, file, called_by=None):
         """p_called_by can be used by notifier to specify where it was notified
-           and so handlers may check this value and behave accordingly."""
+        and so handlers may check this value and behave accordingly."""
         super(AnnexFileChangedEvent, self).__init__(object)
         self.file = file
         self.called_by = called_by

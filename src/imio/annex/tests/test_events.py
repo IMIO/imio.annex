@@ -15,7 +15,6 @@ except ImportError:  # Plone 4 (zope.interface 3.6)
 
 
 class TestEvents(ImioAnnexTestCase):
-
     def test_AnnexFileChangedEvent(self):
         event = AnnexFileChangedEvent(self.annex, self.annex.file)
         self.assertTrue(IAnnexFileChangedEvent.providedBy(event))
@@ -23,7 +22,9 @@ class TestEvents(ImioAnnexTestCase):
         self.assertEqual(event.object, self.annex)
         self.assertEqual(event.file, self.annex.file)
         self.assertIsNone(event.called_by)
-        self.assertEqual(AnnexFileChangedEvent(self.annex, None, called_by='me').called_by, 'me')
+        self.assertEqual(
+            AnnexFileChangedEvent(self.annex, None, called_by="me").called_by, "me"
+        )
 
     def test_ConversionStartedEvent(self):
         event = ConversionStartedEvent(self.annex)

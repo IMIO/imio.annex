@@ -16,7 +16,7 @@ import importlib
 
 
 # "async" is a keyword on Python 3: an import statement can't name this module
-JobRunner = importlib.import_module('collective.documentviewer.async').JobRunner
+JobRunner = importlib.import_module("collective.documentviewer.async").JobRunner
 
 
 def converter_call(self, *args, **kwargs):
