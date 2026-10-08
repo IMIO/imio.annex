@@ -12,6 +12,8 @@ Library  Remote  ${PLONE_URL}/RobotRemote
 ${MODAL}  css=div.overlay-ajax
 ${ERROR_PAGE_TEXT}  there seems to be an error
 ${NOT_FOUND_TEXT}  This page does not seem to exist
+# history of the imio.actionspanel actions
+${HISTORY_VIEW}  @@historyview
 
 
 *** Keywords ***
@@ -96,6 +98,11 @@ The content action links to
     [Documentation]  Item of the Actions menu (object_buttons), by action id
     [Arguments]  ${action_id}  ${url}
     Element attribute value should be  css=#plone-contentmenu-actions-${action_id}  href  ${url}
+
+Action link href
+    [Documentation]  XPath condition on the href of an action link to this URL
+    [Arguments]  ${url}
+    [Return]  @href="${url}"
 
 Click the add menu item
     [Documentation]  Item of the add menu, by portal type

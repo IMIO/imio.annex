@@ -1,12 +1,14 @@
 #!/usr/bin/make
-# pyenv is a requirement, with 2.7, 3.7, 3.10, 3.13 python versions, and virtualenv installed in each version
-# plone parameter must be passed to create environment 'make setup plone=6.0' or after a make cleanall
+# pyenv is a requirement, with the 3.13 python version, and virtualenv installed in it
+# plone parameter must be passed to create environment 'make setup plone=6.2' or after a make cleanall
 # The original Makefile can be found on https://github.com/IMIO/scripts-buildout
 
 SHELL=/bin/bash
-plones=4.3 5.2 6.0 6.1
+plones=6.2
 b_o=
 old_plone=$(shell [ -e .plone-version ] && cat .plone-version)
+ZSERVER_PORT ?= 55001
+LISTENER_PORT ?= 55002
 
 ifeq (, $(shell which pyenv))
   $(error "pyenv command not found! Aborting")
@@ -23,16 +25,7 @@ ifneq ($(wildcard bin/instance),)
 endif
 
 ifndef python
-ifeq ($(plone),4.3)
-  python=2.7
-endif
-ifeq ($(plone),5.2)
-  python=3.8
-endif
-ifeq ($(plone),6.0)
-  python=3.10
-endif
-ifeq ($(plone),6.1)
+ifeq ($(plone),6.2)
   python=3.13
 endif
 endif
@@ -69,14 +62,14 @@ test: oneof-plone bin/buildout  ## run bin/test without robot
 
 .PHONY: robot
 robot: oneof-plone bin/buildout  ## run robot tests in headless firefox
-	# can be run by example with: make robot opt='-t "Add a contact*"'
-	MOZ_HEADLESS=1 bin/test --all -t robot ${opt}
+	# can be run by example with: make robot opt='-t "Add an annex*"'
+	MOZ_HEADLESS=1 ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/test --all -t robot ${opt}
 
 .PHONY: robot-server
 robot-server:  ## Starts robot server (layer=<layer name in testing.py>, default ACCEPTANCE)
-	# run a robot file against it with: bin/robot -v PLONE_MAJOR:$(firstword $(subst ., ,$(plone))) src/imio/annex/tests/robot/test_<feature>.robot
+	# run a robot file against it with: ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/robot -v PLONE_MAJOR:$(firstword $(subst ., ,$(plone))) src/imio/annex/tests/robot/test_<feature>.robot
 	# --no-reload: the reload watchdog restarts the server when a template is read
-	env ZSERVER_HOST=localhost ZSERVER_PORT=55001 bin/robot-server --no-reload -v imio.annex.testing.$(or $(layer),ACCEPTANCE)
+	env ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/robot-server --no-reload -v imio.annex.testing.$(or $(layer),ACCEPTANCE)
 
 .PHONY: cleanall
 cleanall:  ## Cleans all installed buildout files

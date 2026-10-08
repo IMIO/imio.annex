@@ -10,8 +10,8 @@ Created by mpeeters
 from imio.annex import _
 from plone.app.contenttypes.content import File
 from plone.app.contenttypes.interfaces import IFile
-from plone.app.dexterity import PloneMessageFactory as _PMF
 from plone.autoform import directives as form
+from plone.base import PloneMessageFactory as _PMF
 from plone.dexterity.schema import DexteritySchemaPolicy
 from plone.namedfile.field import NamedBlobFile
 from plone.supermodel import model

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
 from imio.annex.interfaces import IImioAnnexLayer
-from imio.annex.testing import HAS_PLONE_6
 from imio.annex.testing import IMIO_ANNEX_INTEGRATION_TESTING
 from imio.annex.testing import ImioAnnexTestCase
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.base.utils import get_installer
 from plone.browserlayer import utils as browserlayer_utils
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
@@ -14,9 +14,6 @@ from zope.i18n import translate
 
 import unittest
 
-
-if HAS_PLONE_6:
-    from Products.CMFPlone.utils import get_installer
 
 CSS = "++resource++imio.annex.quickupload/quickupload.css"
 JS = "++resource++imio.annex.quickupload/helpers.js"
@@ -27,16 +24,10 @@ class TestSetup(ImioAnnexTestCase):
 
     def setUp(self):
         super(TestSetup, self).setUp()
-        if HAS_PLONE_6:
-            self.installer = get_installer(self.portal, self.request)
-        else:
-            self.installer = api.portal.get_tool("portal_quickinstaller")
+        self.installer = get_installer(self.portal, self.request)
 
     def test_product_installed(self):
-        if HAS_PLONE_6:
-            self.assertTrue(self.installer.is_product_installed("imio.annex"))
-        else:
-            self.assertTrue(self.installer.isProductInstalled("imio.annex"))
+        self.assertTrue(self.installer.is_product_installed("imio.annex"))
 
     def test_browserlayer(self):
         """Test that IImioAnnexLayer is registered."""
@@ -52,7 +43,9 @@ class TestSetup(ImioAnnexTestCase):
         self.assertEqual(fti.add_view_expr, "string:${folder_url}/++add++annex")
         self.assertTrue(fti.global_allow)
         self.assertEqual(fti.default_view, "view")
-        self.assertEqual(tuple(fti.view_methods), ("view", "documentviewer"))
+        # no "documentviewer" view: collective.documentviewer is replaced on Plone 6
+        self.assertEqual(tuple(fti.view_methods), ("view",))
+        self.assertEqual(fti.icon_expr, "string:contenttype/file")
         self.assertEqual(fti.getMethodAliases()["(Default)"], "@@display-file")
         self.assertEqual(
             tuple(fti.behaviors),
@@ -64,14 +57,9 @@ class TestSetup(ImioAnnexTestCase):
             ),
         )
         actions = dict((action.id, action) for action in fti.listActions())
-        self.assertEqual(
-            sorted(actions),
-            ["download", "edit", "view", "view_element", "view_preview"],
-        )
+        # no "view_preview" action: collective.documentviewer is replaced on Plone 6
+        self.assertEqual(sorted(actions), ["download", "edit", "view", "view_element"])
         self.assertEqual(actions["view_element"].permissions, ("Manage portal",))
-        self.assertEqual(
-            actions["view_preview"].condition.text, "python:object.show_preview()"
-        )
         self.assertEqual(
             actions["download"].condition.text, "python:object.show_download()"
         )
@@ -79,6 +67,7 @@ class TestSetup(ImioAnnexTestCase):
             actions["download"].getActionExpression(),
             "string:${object/absolute_url}/@@download",
         )
+        self.assertEqual(actions["download"].getIconExpression(), "string:download")
 
     def test_annex_actions(self):
         """object_buttons shown on an annex, depending on the user."""
@@ -114,37 +103,19 @@ class TestSetup(ImioAnnexTestCase):
 
     def test_types_use_view_action(self):
         """Test that annex is listed in types_use_view_action_in_listings."""
-        if HAS_PLONE_6:
-            registry = getUtility(IRegistry)
-            types = registry.get("plone.types_use_view_action_in_listings", ())
-            self.assertIn("annex", types)
-        else:
-            props = api.portal.get_tool("portal_properties")
-            types = props.site_properties.getProperty(
-                "typesUseViewActionInListings", ()
-            )
-            self.assertIn("annex", types)
+        registry = getUtility(IRegistry)
+        types = registry.get("plone.types_use_view_action_in_listings", ())
+        self.assertIn("annex", types)
 
     def test_resources(self):
-        """The quickupload CSS and JS are registered."""
-        if HAS_PLONE_6:
-            self.assertEqual(
-                api.portal.get_registry_record(
-                    "plone.bundles/imio.annex.base.csscompilation"
-                ),
-                CSS,
-            )
-            self.assertEqual(
-                api.portal.get_registry_record(
-                    "plone.bundles/imio.annex.base.jscompilation"
-                ),
-                JS,
-            )
-        else:
-            self.assertIn(CSS, api.portal.get_tool("portal_css").getResourceIds())
-            self.assertIn(
-                JS, api.portal.get_tool("portal_javascripts").getResourceIds()
-            )
+        """The quickupload CSS and JS are registered, after the collective.quickupload JS."""
+        prefix = "plone.bundles/imio.annex.base."
+        self.assertEqual(api.portal.get_registry_record(prefix + "csscompilation"), CSS)
+        self.assertEqual(api.portal.get_registry_record(prefix + "jscompilation"), JS)
+        self.assertEqual(
+            api.portal.get_registry_record(prefix + "depends"),
+            "collective.quickupload.helpers",
+        )
         self.assertIsNotNone(self.portal.unrestrictedTraverse(CSS))
         self.assertIsNotNone(self.portal.unrestrictedTraverse(JS))
 
@@ -170,7 +141,6 @@ class TestSetup(ImioAnnexTestCase):
         )
 
 
-@unittest.skipUnless(HAS_PLONE_6, "Uninstall profile only available on Plone 6")
 class TestUninstall(unittest.TestCase):
     """Test that imio.annex is properly uninstalled."""
 

@@ -9,8 +9,8 @@ Created by mpeeters
 
 from collective.iconifiedcategory import _ as ICMF
 from collective.iconifiedcategory.widget.widget import CategoryTitleFieldWidget
-from collective.z3cform.select2.widget.widget import SingleSelect2FieldWidget
 from imio.annex.quickupload import utils
+from plone.app.z3cform.widgets.select import Select2FieldWidget
 from plone.z3cform.layout import FormWrapper
 from z3c.form import field
 from z3c.form.form import Form
@@ -46,7 +46,7 @@ class IQuickUpload(Interface):
 
 class QuickUploadForm(Form):
     fields = field.Fields(IQuickUpload)
-    fields["content_category"].widgetFactory = SingleSelect2FieldWidget
+    fields["content_category"].widgetFactory = Select2FieldWidget
     fields["default_titles"].widgetFactory = CategoryTitleFieldWidget
     fields["default_titles"].mode = HIDDEN_MODE
     ignoreContext = True

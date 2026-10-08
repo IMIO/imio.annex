@@ -53,7 +53,8 @@ class TestQuickUploadPortletView(ImioAnnexTestCase):
         )
         self.assertTrue(
             script.strip().endswith(
-                "jQuery('a#copy_categories').click(PloneQuickUpload.extendCategories);"
+                "jQuery('a#copy_categories').off('click')"
+                ".click(PloneQuickUpload.extendCategories);"
             )
         )
 
@@ -66,7 +67,13 @@ class TestQuickUploadPortletView(ImioAnnexTestCase):
             '<input type="hidden" class="uploadify_typeupload" value="annex" />',
             rendered,
         )
+        # CSRF token sent by helpers.js with each upload
+        self.assertIn('name="_authenticator"', rendered)
         self.assertNotIn('id="copy_categories"', self.view("File")())
+        # pat-plone-modal shows the #content of the body
+        self.assertIn(
+            '<body>\n<div id="content">\n<div class="quick-uploader">', rendered
+        )
 
 
 class TestQuickUploadFileInit(ImioAnnexTestCase):
@@ -229,9 +236,9 @@ class TestImioAnnexQuickUploadCapableFileFactory(ImioAnnexTestCase):
             factory("file.txt", u"", u"", "text/plain", b"Data", "unknown"),
             {"success": None, "error": u"serverErrorDisallowedType"},
         )
-        # no permission: CMF invokeFactory raises ValueError, not Unauthorized
+        # no permission: the Dexterity container raises zExceptions.Unauthorized
         logout()
         self.assertEqual(
             factory("file.txt", u"", u"", "text/plain", b"Data", "annex"),
-            {"success": None, "error": u"serverErrorDisallowedType"},
+            {"success": None, "error": u"serverErrorNoPermission"},
         )

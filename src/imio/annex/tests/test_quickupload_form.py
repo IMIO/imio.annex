@@ -45,7 +45,7 @@ class TestQuickUploadFormView(ImioAnnexTestCase):
         self.assertIsInstance(view, QuickUploadFormView)
         rendered = view()
         self.assertIn('id="form-widgets-title"', rendered)
-        self.assertIn('name="form.widgets.content_category:list"', rendered)
+        self.assertIn('name="form.widgets.content_category"', rendered)
         self.assertIn(
             'value="{0}"'.format(calculate_category_id(self.category)), rendered
         )

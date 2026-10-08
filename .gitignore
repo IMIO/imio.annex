@@ -24,3 +24,8 @@ lib
 .plone-version
 .plone*
 checkversion*.html
+pyvenv.cfg
+.python-version
+CACHEDIR.TAG
+local/
+dist/

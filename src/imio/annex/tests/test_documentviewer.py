@@ -3,11 +3,9 @@
 
 One class per tested production class or module, as in the other test modules.
 """
-from collective.documentviewer.settings import GlobalSettings
-from collective.documentviewer.settings import Settings
 from collective.iconifiedcategory.utils import calculate_category_id
 from collective.iconifiedcategory.utils import get_category_icon_url
-from imio.annex import patch
+from imio.annex import HAS_DOCUMENTVIEWER
 from imio.annex import safe_utils
 from imio.annex.content.events import annex_file_changed
 from imio.annex.events import AnnexFileChangedEvent
@@ -27,7 +25,13 @@ import os
 import shutil
 import tempfile
 import transaction
+import unittest
 
+
+if HAS_DOCUMENTVIEWER:
+    from collective.documentviewer.settings import GlobalSettings
+    from collective.documentviewer.settings import Settings
+    from imio.annex import patch
 
 # not a valid PDF: a conversion always fails, with or without docsplit
 PDF = b"%PDF-1.4 not really a PDF"
@@ -43,6 +47,10 @@ class FakeAsyncService(object):
         self.jobs.append((queue, quota_names, func, args))
 
 
+@unittest.skipIf(
+    not HAS_DOCUMENTVIEWER,
+    "collective.documentviewer is replaced on Plone 6 (no viewer decided yet)",
+)
 class DocumentviewerTestCase(ImioAnnexTestCase):
     def setUp(self):
         super(DocumentviewerTestCase, self).setUp()
@@ -199,17 +207,18 @@ class TestAnnexPrettyLinkAdapter(DocumentviewerTestCase):
             IPrettyLink(self.pdf)._leadingIcons(),
             [
                 (
-                    "spinner_small.gif",
+                    "@@iconresolver/hourglass-split",
                     u"The document is currently under conversion, please refresh the page in a few minutes",
                 ),
                 icon,
-                ("file_icon.png", u"Preview"),
+                ("@@iconresolver/contenttype/file", u"Preview"),
             ],
         )
         # converted
         self.converted(self.pdf)
         self.assertEqual(
-            IPrettyLink(self.pdf)._leadingIcons(), [icon, ("file_icon.png", u"Preview")]
+            IPrettyLink(self.pdf)._leadingIcons(),
+            [icon, ("@@iconresolver/contenttype/file", u"Preview")],
         )
         # the category doesn't show the preview
         self.category.show_preview = 0

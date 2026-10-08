@@ -11,19 +11,9 @@
   <genericsetup:registerProfile
       name="default"
       title="imio.annex"
-      directory="profiles/plone4"
+      directory="profiles/default"
       description="Installs the imio.annex add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      zcml:condition="not-have plone-5"
-      />
-
-  <genericsetup:registerProfile
-      name="default"
-      title="imio.annex"
-      directory="profiles/plone6"
-      description="Installs the imio.annex add-on."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      zcml:condition="have plone-60"
       />
 
   <genericsetup:registerProfile
@@ -32,7 +22,6 @@
       directory="profiles/uninstall"
       description="Uninstalls the imio.annex add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      zcml:condition="have plone-60"
       />
 
   <genericsetup:importStep

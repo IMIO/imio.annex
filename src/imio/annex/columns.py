@@ -25,19 +25,11 @@ from collective.iconifiedcategory.browser.tabview import (
     LastModificationColumn as IconifiedLastModificationColumn,
 )
 from collective.iconifiedcategory.interfaces import IIconifiedCategorySettings
+from html import escape
 from imio.annex import _
 from plone import api
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from zope.i18n import translate
-
-
-try:
-    from html import escape
-except ImportError:  # Python 2 without the future package
-    from cgi import escape as cgi_escape
-
-    def escape(s):
-        return cgi_escape(s, quote=True).replace("'", "&#x27;")
 
 
 class PrettyLinkColumn(DashboardPrettyLinkColumn):
@@ -55,9 +47,8 @@ class PrettyLinkColumn(DashboardPrettyLinkColumn):
         blank = u'<p class="discreet"></p>'
 
         # display description if any
-        description = safe_unicode(escape(obj.Description() or u"")).replace(
-            "\n", "<br/>"
-        )
+        # Description() of Plone 6 replaces the new lines by spaces
+        description = safe_text(escape(obj.description or u"")).replace("\n", "<br/>")
         if description:
             description = u'<p class="discreet">{0}</p>'.format(description)
 

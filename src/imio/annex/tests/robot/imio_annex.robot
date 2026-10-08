@@ -109,9 +109,11 @@ The annex row shows the actions
     [Arguments]  ${title}  ${url}
     ${row} =  The annex row  ${title}
     ${actions} =  Set variable  ${row}//td[@class="td_cell_action-column"]
-    Page should contain element  ${actions}//a[contains(@class, "overlay-history")][@href="${url}/@@historyview"]
-    Page should contain element  ${actions}//a[@href="${url}/view"]/img[@title="View element"]
-    Page should contain element  ${actions}//a[@href="${url}/@@download"][@target="_blank"]/img[@title="Download"]
+    Page should contain element  ${actions}//a[contains(@class, "overlay-history")][@href="${url}/${HISTORY_VIEW}"]
+    ${view_href} =  Action link href  ${url}/view
+    Page should contain element  ${actions}//a[${view_href}]/img[@title="View element"]
+    ${download_href} =  Action link href  ${url}/@@download
+    Page should contain element  ${actions}//a[${download_href}][@target="_blank"]/img[@title="Download"]
 
 # Category configuration
 

@@ -5,7 +5,8 @@ Changelog
 3.0.0 (unreleased)
 ------------------
 
-- Added unit and robot tests, Python 3 compatibility (Plone 6.2 migration in progress).
+- Migrated to Plone 6.2 and Python 3, dropped Plone 4 support, added unit and robot tests.
+  collective.documentviewer is optional: without it, no annex preview.
   [chris-adam]
 
 

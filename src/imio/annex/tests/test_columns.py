@@ -91,17 +91,21 @@ class TestActionsColumn(ColumnsTestCase):
             "sort_categorized_tab", False, interface=IIconifiedCategorySettings
         )
         rendered = column.renderCell(table.values[0])
-        self.assertIn(u"http://nohost/plone/folder/annex/@@historyview", rendered)
-        self.assertIn(u"arrowDown.png", rendered)
-        self.assertNotIn(u"arrowUp.png", rendered)
-        self.assertIn(u"arrowUp.png", column.renderCell(table.values[1]))
+        self.assertIn(
+            u"http://nohost/plone/folder/annex/@@contenthistorypopup", rendered
+        )
+        self.assertIn(u"/arrow-down.svg", rendered)
+        self.assertNotIn(u"/arrow-up.svg", rendered)
+        self.assertIn(u"/arrow-up.svg", column.renderCell(table.values[1]))
         # no arrows when the categorized elements are sorted
         api.portal.set_registry_record(
             "sort_categorized_tab", True, interface=IIconifiedCategorySettings
         )
         rendered = column.renderCell(table.values[0])
-        self.assertIn(u"http://nohost/plone/folder/annex/@@historyview", rendered)
-        self.assertNotIn(u"arrowDown.png", rendered)
+        self.assertIn(
+            u"http://nohost/plone/folder/annex/@@contenthistorypopup", rendered
+        )
+        self.assertNotIn(u"/arrow-down.svg", rendered)
 
 
 class TestElementNumberColumn(ColumnsTestCase):

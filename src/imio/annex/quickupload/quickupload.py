@@ -7,7 +7,6 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from collective.iconifiedcategory.utils import validateFileIsPDF
 from collective.quickupload import logger
@@ -26,36 +25,18 @@ from collective.quickupload.interfaces import IQuickUploadFileSetter
 from collective.quickupload.interfaces import IQuickUploadFileUpdater
 from imio.annex.quickupload import utils
 from plone.i18n.normalizer.interfaces import IUserPreferredFileNameNormalizer
+from plone.uuid.interfaces import IUUID
 from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from urllib.parse import unquote
 from z3c.form.validator import Data
+from zExceptions import Unauthorized
 from ZODB.POSException import ConflictError
 from zope.event import notify
 from zope.lifecycleevent import ObjectAddedEvent
 
 import json
-import pkg_resources
-
-
-try:
-    from urllib import unquote
-except ImportError:
-    from urllib.parse import unquote
-
-try:
-    from plone.base.utils import base_hasattr
-except ImportError:
-    from Products.CMFPlone.utils import base_hasattr
-
-
-try:
-    pkg_resources.get_distribution("plone.uuid")
-    from plone.uuid.interfaces import IUUID
-
-    HAS_UUID = True
-except pkg_resources.DistributionNotFound:
-    HAS_UUID = False
 
 
 class QuickUploadPortletView(QuickUploadView):
@@ -74,9 +55,10 @@ class QuickUploadPortletView(QuickUploadView):
 
     def script_content(self):
         result = super(QuickUploadPortletView, self).script_content()
+        # off: pat-plone-modal (Plone 6) loads the links of the modal in the modal
         return u"""
 {0}
-jQuery('a#copy_categories').click(PloneQuickUpload.extendCategories);
+jQuery('a#copy_categories').off('click').click(PloneQuickUpload.extendCategories);
         """.format(
             result
         )
@@ -165,11 +147,6 @@ class QuickUploadFileView(QuickUploadFile):
             file.seek(0)
             filename = getattr(file, "filename", "")
             file_name = filename.split("\\")[-1]
-            if isinstance(file_name, bytes):
-                try:
-                    file_name = file_name.decode("utf-8")
-                except UnicodeDecodeError:
-                    pass
 
             file_name = IUserPreferredFileNameNormalizer(self.request).normalize(
                 file_name
@@ -309,10 +286,7 @@ class QuickUploadFileView(QuickUploadFile):
             if f["success"] is not None:
                 o = f["success"]
                 logger.info("file url: %s" % o.absolute_url())
-                if HAS_UUID:
-                    uid = IUUID(o)
-                else:
-                    uid = o.UID()
+                uid = IUUID(o)
 
                 msg = {
                     u"success": True,
@@ -385,17 +359,8 @@ class ImioAnnexQuickUploadCapableFileFactory(QuickUploadCapableFileFactory):
                             data, filename, content_type
                         )
                         # XXX begin change by imio.annex
-                        if base_hasattr(obj, "processForm"):
-                            # Archetypes
-                            obj._at_rename_after_creation = False
-                            obj.processForm()
-                            del obj._at_rename_after_creation
-                        else:
-                            # Dexterity
-                            if obj.REQUEST.get(
-                                "defer_update_categorized_elements", False
-                            ):
-                                notify(ObjectAddedEvent(obj))
+                        if obj.REQUEST.get("defer_update_categorized_elements", False):
+                            notify(ObjectAddedEvent(obj))
                         # XXX end change by imio.annex
 
                 # XXX begin change by imio.annex

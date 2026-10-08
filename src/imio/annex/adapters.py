@@ -2,6 +2,7 @@
 
 from collective.iconifiedcategory.utils import get_category_icon_url
 from collective.iconifiedcategory.utils import get_category_object
+from imio.annex import HAS_DOCUMENTVIEWER
 from imio.prettylink.adapters import PrettyLinkAdapter
 from zope.i18n import translate
 
@@ -30,7 +31,7 @@ class AnnexPrettyLinkAdapter(PrettyLinkAdapter):
         if element["preview_status"] == "in_progress":
             res.append(
                 (
-                    "spinner_small.gif",
+                    "@@iconresolver/hourglass-split",
                     translate(
                         "The document is currently under conversion, "
                         "please refresh the page in a few minutes",
@@ -45,11 +46,11 @@ class AnnexPrettyLinkAdapter(PrettyLinkAdapter):
         res.append((category_url, category.title))
 
         # is a preview, store is_preview as it is reused in _get_url
-        self.is_preview = self.infos.show_preview(element)
+        self.is_preview = HAS_DOCUMENTVIEWER and self.infos.show_preview(element)
         if self.is_preview:
             res.append(
                 (
-                    "file_icon.png",
+                    "@@iconresolver/contenttype/file",
                     translate(
                         "Preview",
                         domain="collective.iconifiedcategory",

@@ -7,13 +7,17 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.documentviewer.settings import GlobalSettings
-from collective.documentviewer.utils import allowedDocumentType
 from collective.iconifiedcategory.utils import get_category_object
 from collective.iconifiedcategory.utils import update_categorized_elements
+from imio.annex import HAS_DOCUMENTVIEWER
 from imio.annex.events import AnnexFileChangedEvent
 from plone import api
 from zope.event import notify
+
+
+if HAS_DOCUMENTVIEWER:
+    from collective.documentviewer.settings import GlobalSettings
+    from collective.documentviewer.utils import allowedDocumentType
 
 
 def annex_content_created(obj, event):

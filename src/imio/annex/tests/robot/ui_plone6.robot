@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation  Plone 6 Classic UI keywords. Same keyword names and arguments as ui_plone4.robot.
 ...            Robot Framework 3.0 syntax: shared with the Plone 4.3 (Python 2) environment.
-...            Selectors checked on Plone 6.1 (collective.contact.contactlist).
+...            Selectors checked on Plone 6.1 (collective.contact.contactlist) and 6.2 (imio.annex).
 Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/robotframework/keywords.robot
 Library  Remote  ${PLONE_URL}/RobotRemote
@@ -11,6 +11,8 @@ Library  Remote  ${PLONE_URL}/RobotRemote
 ${MODAL}  css=.modal-dialog
 ${ERROR_PAGE_TEXT}  there seems to be an error
 ${NOT_FOUND_TEXT}  This page does not seem to exist
+# history of the imio.actionspanel actions
+${HISTORY_VIEW}  @@contenthistorypopup
 
 
 *** Keywords ***
@@ -21,6 +23,8 @@ Log in with the login form
     Go to  ${PLONE_URL}/login
     Input text  css=#__ac_name  ${username}
     Input password  css=#__ac_password  ${password}
+    # pat-validation enables the button once the required fields are validated
+    Wait until page contains element  css=#buttons-login:not(.disabled)
     Click button  css=#buttons-login
     Wait until page contains element  css=#personaltools-menulink
 
@@ -84,7 +88,6 @@ The page is not found
 The edit link is not available
     Page should not contain element  css=#contentview-edit
 
-# NOT CHECKED YET on Plone 6 (written in phase 3 on Plone 4.3): fix in phase 8.
 Click the content view
     [Documentation]  Tab of the content views (object actions), by action id
     [Arguments]  ${action_id}
@@ -93,7 +96,28 @@ Click the content view
 The content action links to
     [Documentation]  Item of the Actions menu (object_buttons), by action id
     [Arguments]  ${action_id}  ${url}
-    Element attribute value should be  css=#plone-contentmenu-actions-${action_id}  href  ${url}
+    ${href} =  Get element attribute  css=#plone-contentmenu-actions-${action_id}  href
+    ${href} =  URL without the authenticator  ${href}
+    Should be equal  ${href}  ${url}
+
+Action link href
+    [Documentation]  XPath condition on the href of an action link to this URL
+    [Arguments]  ${url}
+    [Return]  (@href="${url}" or starts-with(@href, "${url}?_authenticator="))
+
+Location should be
+    [Documentation]  Selenium2Library keyword, ignoring the authenticator of the action URLs
+    [Arguments]  ${url}
+    ${location} =  Get location
+    ${location} =  URL without the authenticator  ${location}
+    Should be equal  ${location}  ${url}
+
+URL without the authenticator
+    [Documentation]  Plone 6 adds an _authenticator token to the action URLs
+    ...              (plone.app.contentmenu, imio.actionspanel), always last
+    [Arguments]  ${url}
+    ${url} =  Evaluate  $url.split('_authenticator=')[0].rstrip('?&')
+    [Return]  ${url}
 
 Click the add menu item
     [Documentation]  Item of the add menu, by portal type
@@ -104,7 +128,7 @@ Click the add menu item
 Open in a modal
     [Documentation]  Load the URL in an ajax overlay (Plone 4) or a modal (Plone 6), as a page link would
     [Arguments]  ${url}
-    Execute javascript  var a = document.createElement('a'); a.id = 'robot-modal-link'; a.href = '${url}'; a.className = 'pat-plone-modal'; document.body.appendChild(a); new window.__patternslib_registry['plone-modal'](a); return true;
+    Execute javascript  var a = document.createElement('a'); a.id = 'robot-modal-link'; a.textContent = 'Open in a modal'; a.href = '${url}'; a.className = 'pat-plone-modal'; document.body.appendChild(a); new window.__patternslib_registry['plone-modal'](a); return true;
     Click element  css=#robot-modal-link
     Wait until element is visible  ${MODAL}
 

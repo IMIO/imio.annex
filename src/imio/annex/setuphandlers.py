@@ -19,4 +19,4 @@ def uninstall(context):
     types = list(registry.get(key, []))
     if "annex" in types:
         types.remove("annex")
-        registry[key] = tuple(types)
+        registry[key] = types

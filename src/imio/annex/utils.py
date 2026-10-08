@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from collective.documentviewer.settings import GlobalSettings
 from collective.iconifiedcategory.utils import get_categorized_elements
+from imio.annex import HAS_DOCUMENTVIEWER
 from plone import api
 from zope.annotation import IAnnotations
+
+
+if HAS_DOCUMENTVIEWER:
+    from collective.documentviewer.settings import GlobalSettings
 
 
 def get_annexes_to_print(
     container, portal_type=None, sort_on=None, filters={"to_print": True}, caching=True
 ):
     """ """
+    # only annexes converted by collective.documentviewer have printable images
+    if not HAS_DOCUMENTVIEWER:
+        return []
     res = None
     if caching:
         key = "utils-get_annexes_to_print-%s-%s-%s" % (

@@ -3,17 +3,21 @@ from collective.iconifiedcategory.utils import calculate_category_id
 from collective.iconifiedcategory.utils import remove_categorized_element
 from plone import api
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
+from plone.app.robotframework.remote import RemoteLibraryLayer
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+from plone.app.robotframework.utils import disableCSRFProtection
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import login
+from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from plone.testing.zope import WSGI_SERVER_FIXTURE
 from zope.event import notify
 from zope.globalrequest import setRequest
 from zope.traversing.interfaces import BeforeTraverseEvent
@@ -23,14 +27,6 @@ import os
 import sys
 import unittest
 
-
-PLONE_MAJOR = int(api.env.plone_version().split(".")[0])
-HAS_PLONE_6 = PLONE_MAJOR >= 6
-
-if PLONE_MAJOR >= 5:
-    from plone.testing.zope import WSGI_SERVER_FIXTURE as SERVER_FIXTURE
-else:
-    from plone.testing.z2 import ZSERVER_FIXTURE as SERVER_FIXTURE
 
 MANAGER_NAME = "manager"
 MANAGER_PASSWORD = "manager123"
@@ -95,8 +91,7 @@ class ImioAnnexLayer(PloneSandboxLayer):
     defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
-        if HAS_PLONE_6:
-            _fix_namespace_paths()
+        _fix_namespace_paths()
         self.loadZCML("testing.zcml", package=imio.annex)
         _add_sessions(app)
 
@@ -181,8 +176,28 @@ IMIO_ANNEX_FUNCTIONAL_TESTING = FunctionalTesting(
     name="ImioAnnexLayer:FunctionalTesting",
 )
 
+
+class SetFieldValueWithoutCSRF(object):
+    """plone.app.robotframework 3.0.0 "Set field value" doesn't disable the CSRF protection:
+    plone.protect aborts its change. Remove when fixed upstream."""
+
+    def set_field_value(self, uid, field, value, field_type):
+        """Set field value with a specific type"""
+        disableCSRFProtection()
+        return super(SetFieldValueWithoutCSRF, self).set_field_value(
+            uid, field, value, field_type
+        )
+
+
+REMOTE_LIBRARY_FIXTURE = RemoteLibraryLayer(
+    bases=(PLONE_FIXTURE,),
+    libraries=(SetFieldValueWithoutCSRF,)
+    + REMOTE_LIBRARY_BUNDLE_FIXTURE.libraryBases[1:],
+    name="ImioAnnexRemoteLibraryBundle:RobotRemote",
+)
+
 ACCEPTANCE = FunctionalTesting(
-    bases=(IMIO_ANNEX_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, SERVER_FIXTURE),
+    bases=(IMIO_ANNEX_FIXTURE, REMOTE_LIBRARY_FIXTURE, WSGI_SERVER_FIXTURE),
     name="ImioAnnexLayer:AcceptanceTesting",
 )
 
