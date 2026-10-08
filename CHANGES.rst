@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.27.2 (unreleased)
--------------------
+3.0.0 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Added unit and robot tests, Python 3 compatibility (Plone 6.2 migration in progress).
+  [chris-adam]
 
 
 2.27.1 (2026-01-15)

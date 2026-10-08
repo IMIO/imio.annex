@@ -20,7 +20,7 @@ long_description = (
 
 setup(
     name="imio.annex",
-    version="2.27.2.dev0",
+    version="3.0.0.dev0",
     description="An add-on for Plone",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
