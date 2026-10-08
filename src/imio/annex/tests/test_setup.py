@@ -14,7 +14,6 @@ import unittest
 
 
 if HAS_PLONE_6:
-    from plone.registry.interfaces import IRegistry
     from Products.CMFPlone.utils import get_installer
 
 

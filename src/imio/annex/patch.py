@@ -7,7 +7,7 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.documentviewer.async import JobRunner
+from collective.documentviewer.async import JobRunner  # noqa: W606
 from collective.documentviewer.convert import Converter
 from imio.annex.events import ConversionReallyFinishedEvent
 from imio.annex.events import ConversionStartedEvent

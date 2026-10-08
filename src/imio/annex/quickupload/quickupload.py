@@ -37,6 +37,7 @@ from zope.lifecycleevent import ObjectAddedEvent
 import json
 import pkg_resources
 
+
 try:
     from urllib import unquote
 except ImportError:
@@ -151,7 +152,7 @@ class QuickUploadFileView(QuickUploadFile):
                 # is removed by "cancel" action, but
                 # could be useful if someone change the js behavior
                 return json.dumps({u'error': u'emptyError'})
-            except:
+            except Exception:
                 logger.error(
                     "Error when trying to read the file %s in request",
                     file_name
