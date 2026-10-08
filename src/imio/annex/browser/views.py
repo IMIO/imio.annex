@@ -228,10 +228,10 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         return obj.Title()
 
-    def _apply(self, **data):
-        """ """
+    def _get_annexes(self, data):
+        """Return the annexes to concatenate, by default the PDF annexes
+           of the selected annex types."""
         annex_type_uids = data['annex_types']
-        # get annexes
         annexes = []
         sort_on = 'getObjPositionInParent' if \
             get_sort_categorized_tab() is False else None
@@ -245,6 +245,15 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                     result_type='objects',
                     sort_on=sort_on,
                     filters=filters)
+        return annexes
+
+    def _annex_content(self, annex):
+        """Return the PDF binary content of p_annex."""
+        return annex.file.data
+
+    def _apply(self, **data):
+        """ """
+        annexes = self._get_annexes(data)
         # return if nothing to produce
         if not annexes:
             api.portal.show_message(
@@ -267,7 +276,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data), strict=False))
+                    PdfFileReader(BytesIO(self._annex_content(annex)), strict=False))
             except PdfReadError as exc:
                 api.portal.show_message(
                     _("concatenate_annexes_pdf_read_error",
@@ -278,7 +287,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                     type="error")
                 logger.exception(exc)
                 self.request.set(
-                    'concatenate_annexes_item_pdf_error_url', obj.absolute_url())
+                    'concatenate_annexes_item_pdf_error_url', annex.aq_inner.aq_parent.absolute_url())
                 return
             if data['two_sided'] and \
                output_writer.getNumPages() % 2 != 0 and \

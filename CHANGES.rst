@@ -16,6 +16,8 @@ Changelog
   in `imio.annex.vocabularies`, with `_prepare_annex_infos` (filter/order the listed
   annexes) and `_portal_type_title` hooks.
   [sgeulette]
+- Added `_get_annexes` and `_annex_content` hooks in `ConcatenateAnnexesBatchActionForm`.
+  [sgeulette]
 - Added test infrastructure (`testing.py` and `tests`).
   [sgeulette]
 
