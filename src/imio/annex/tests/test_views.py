@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from AccessControl import Unauthorized
+from collective.iconifiedcategory.utils import get_categorized_elements
+from imio.annex.browser.views import ConcatenateAnnexesBatchActionForm
 from imio.annex.tests.base import BaseTestCase
+from plone import api
 from PyPDF2 import PdfFileReader
 
 
@@ -67,3 +70,23 @@ class TestExportPDFForm(BaseTestCase):
         self.assertEqual(
             self.request.RESPONSE.getHeader('content-disposition'),
             'attachment;filename=export_pdf_folder.pdf')
+
+
+class TestConcatenateAnnexesBatchActionForm(BaseTestCase):
+    """Test imio.annex.browser.views.ConcatenateAnnexesBatchActionForm."""
+
+    def test__excluded_elements(self):
+        """Elements for which _check_element gives a reason are not exported."""
+        annex = self._add_annex()
+        folder2 = api.content.create(id='folder2', type='Folder', title='Folder 2', container=self.portal)
+        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
+        form.brains = api.content.find(UID=[self.folder.UID(), folder2.UID()], sort_on='id')
+        data = {'annex_types': [get_categorized_elements(self.folder)[0]['category_uid']]}
+        self.assertEqual(form._excluded_elements(), [])
+        self.assertEqual(form._get_annexes(data), [annex])
+        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
+        form.brains = api.content.find(UID=[self.folder.UID(), folder2.UID()], sort_on='id')
+        form.CHECK_ELEMENTS = True
+        form._check_element = lambda obj: obj.getId() == 'folder' and u'Excluded' or None
+        self.assertEqual(form._excluded_elements(), [(self.folder, u'Excluded')])
+        self.assertEqual(form._get_annexes(data), [])

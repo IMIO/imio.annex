@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from AccessControl import Unauthorized
+from cgi import escape
 from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
 from collective.iconifiedcategory.config import get_sort_categorized_tab
@@ -176,6 +177,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     apply_button_title = _CEBA('Download')
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
+    # set to True to exclude selected elements with _check_element and display it
+    CHECK_ELEMENTS = False
 
     def _max_total_size(self):
         """ """
@@ -192,7 +195,34 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             mapping={'max_size': readable_max_size, },
             domain="collective.eeafaceted.batchactions",
             context=self.request)
-        return descr
+        excluded = self._excluded_elements()
+        if not excluded:
+            return descr
+        items = u"".join(
+            u'<li><a href="%s" target="_blank">%s</a> : %s</li>'
+            % (obj.absolute_url(), escape(safe_unicode(obj.Title())), translate(reason, context=self.request))
+            for obj, reason in excluded)
+        return u'%s<div class="portalMessage warning"><p>%s</p><ul>%s</ul></div>' % (
+            descr,
+            translate(_(u"These elements will not be exported:"), context=self.request),
+            items)
+
+    def _check_element(self, obj):
+        """Return the reason why selected p_obj is excluded from the export, None if it is exported."""
+        return None
+
+    def _excluded_elements(self):
+        """Return [(obj, reason)] of the selected elements excluded from the export, computed once."""
+        if not self.CHECK_ELEMENTS:
+            return []
+        if getattr(self, "_excluded", None) is None:
+            self._excluded = []
+            for brain in self.brains:
+                obj = brain.getObject()
+                reason = self._check_element(obj)
+                if reason:
+                    self._excluded.append((obj, reason))
+        return self._excluded
 
     def _annex_types_vocabulary(self):
         """The name of the vocabulary factory to use for annex_types field."""
@@ -228,23 +258,30 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         return obj.Title()
 
-    def _get_annexes(self, data):
-        """Return the annexes to concatenate, by default the PDF annexes
+    def _element_annexes(self, obj, data):
+        """Return the annexes of p_obj to concatenate, by default the PDF annexes
            of the selected annex types."""
-        annex_type_uids = data['annex_types']
         annexes = []
         sort_on = 'getObjPositionInParent' if \
             get_sort_categorized_tab() is False else None
+        filters = {'contentType': 'application/pdf'}
+        for annex_type_uid in data['annex_types']:
+            filters['category_uid'] = annex_type_uid
+            annexes += get_categorized_elements(
+                obj,
+                result_type='objects',
+                sort_on=sort_on,
+                filters=filters)
+        return annexes
+
+    def _get_annexes(self, data):
+        """Return the annexes to concatenate of the selected elements not excluded."""
+        excluded = [obj for obj, reason in self._excluded_elements()]
+        annexes = []
         for brain in self.brains:
             obj = brain.getObject()
-            filters = {'contentType': 'application/pdf'}
-            for annex_type_uid in annex_type_uids:
-                filters['category_uid'] = annex_type_uid
-                annexes += get_categorized_elements(
-                    obj,
-                    result_type='objects',
-                    sort_on=sort_on,
-                    filters=filters)
+            if obj not in excluded:
+                annexes += self._element_annexes(obj, data)
         return annexes
 
     def _annex_content(self, annex):
