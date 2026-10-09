@@ -369,7 +369,7 @@ class ExportPDFForm(z3c_form.Form):
             schema.List(
                 __name__="elements",
                 title=_(u"Elements to export in PDF"),
-                description=_(u""),
+                description=u"",
                 required=False,
                 value_type=schema.Choice(vocabulary=self.vocabulary)),
             schema.Bool(

@@ -11,15 +11,15 @@
 <span tal:attributes="id view/id"
       tal:omit-tag="single_checkbox"
       tal:condition="python:len(items) > 0">
- <tal:comment replace="nothing">XXX added Select all/unselect all inout</tal:comment>
+ <tal:comment replace="nothing">XXX added Select all/unselect all input</tal:comment>
  <div class="checkbox_widget_select_all" i18n:domain="collective.eeafaceted.z3ctable">
  <input class="noborder"
         type="checkbox"
         src="select_all_icon.gif"
         name="selectButton"
         id="selectButton"
-        title="select_unselect_items"
-        alt="select_unselect_items"
+        title="Select/Unselect all"
+        alt="Select/Unselect all"
         tal:define="initialState python: len(view.value) and 1;"
         tal:attributes="checked initialState;
                         src string:${view/portal_url}/select_all_icon.gif;
