@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from AccessControl import Unauthorized
+from cgi import escape
 from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
 from collective.iconifiedcategory.config import get_sort_categorized_tab
@@ -8,14 +10,16 @@ from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
 from imio.annex import logger
 from imio.annex.content.annex import IAnnex
+from imio.annex.widgets.checkbox import AnnexesCheckBoxFieldWidget
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFPlone.utils import safe_unicode
-from Products.PloneMeeting.widgets.pm_checkbox import PMCheckBoxFieldWidget
 from PyPDF2 import PdfFileReader
 from PyPDF2 import PdfFileWriter
 from PyPDF2.utils import PdfReadError
+from z3c.form import button
+from z3c.form import form as z3c_form
 from z3c.form.browser.radio import RadioFieldWidget
 from z3c.form.field import Fields
 from zope import schema
@@ -173,6 +177,8 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     apply_button_title = _CEBA('Download')
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
+    # set to True to exclude selected elements with _check_element and display it
+    CHECK_ELEMENTS = False
 
     def _max_total_size(self):
         """ """
@@ -189,7 +195,34 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             mapping={'max_size': readable_max_size, },
             domain="collective.eeafaceted.batchactions",
             context=self.request)
-        return descr
+        excluded = self._excluded_elements()
+        if not excluded:
+            return descr
+        items = u"".join(
+            u'<li><a href="%s" target="_blank">%s</a> : %s</li>'
+            % (obj.absolute_url(), escape(safe_unicode(obj.Title())), translate(reason, context=self.request))
+            for obj, reason in excluded)
+        return u'%s<div class="portalMessage warning"><p>%s</p><ul>%s</ul></div>' % (
+            descr,
+            translate(_(u"These elements will not be exported:"), context=self.request),
+            items)
+
+    def _check_element(self, obj):
+        """Return the reason why selected p_obj is excluded from the export, None if it is exported."""
+        return None
+
+    def _excluded_elements(self):
+        """Return [(obj, reason)] of the selected elements excluded from the export, computed once."""
+        if not self.CHECK_ELEMENTS:
+            return []
+        if getattr(self, "_excluded", None) is None:
+            self._excluded = []
+            for brain in self.brains:
+                obj = brain.getObject()
+                reason = self._check_element(obj)
+                if reason:
+                    self._excluded.append((obj, reason))
+        return self._excluded
 
     def _annex_types_vocabulary(self):
         """The name of the vocabulary factory to use for annex_types field."""
@@ -209,7 +242,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                         default=False,
                         required=False),
         )
-        self.fields["annex_types"].widgetFactory = PMCheckBoxFieldWidget
+        self.fields["annex_types"].widgetFactory = AnnexesCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
     def _total_size(self, annexes):
@@ -225,23 +258,39 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         return obj.Title()
 
-    def _apply(self, **data):
-        """ """
-        annex_type_uids = data['annex_types']
-        # get annexes
+    def _element_annexes(self, obj, data):
+        """Return the annexes of p_obj to concatenate, by default the PDF annexes
+           of the selected annex types."""
         annexes = []
         sort_on = 'getObjPositionInParent' if \
             get_sort_categorized_tab() is False else None
+        filters = {'contentType': 'application/pdf'}
+        for annex_type_uid in data['annex_types']:
+            filters['category_uid'] = annex_type_uid
+            annexes += get_categorized_elements(
+                obj,
+                result_type='objects',
+                sort_on=sort_on,
+                filters=filters)
+        return annexes
+
+    def _get_annexes(self, data):
+        """Return the annexes to concatenate of the selected elements not excluded."""
+        excluded = [obj for obj, reason in self._excluded_elements()]
+        annexes = []
         for brain in self.brains:
             obj = brain.getObject()
-            filters = {'contentType': 'application/pdf'}
-            for annex_type_uid in annex_type_uids:
-                filters['category_uid'] = annex_type_uid
-                annexes += get_categorized_elements(
-                    obj,
-                    result_type='objects',
-                    sort_on=sort_on,
-                    filters=filters)
+            if obj not in excluded:
+                annexes += self._element_annexes(obj, data)
+        return annexes
+
+    def _annex_content(self, annex):
+        """Return the PDF binary content of p_annex."""
+        return annex.file.data
+
+    def _apply(self, **data):
+        """ """
+        annexes = self._get_annexes(data)
         # return if nothing to produce
         if not annexes:
             api.portal.show_message(
@@ -255,7 +304,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 _("concatenate_annexes_pdf_too_large_error",
                   mapping={'total_size': calculate_filesize(total_size),
                            'max_total_size': calculate_filesize(
-                            self._max_total_size())}),
+                           self._max_total_size())}),
                 request=self.request,
                 type="error")
             return
@@ -264,7 +313,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data), strict=False))
+                    PdfFileReader(BytesIO(self._annex_content(annex)), strict=False))
             except PdfReadError as exc:
                 api.portal.show_message(
                     _("concatenate_annexes_pdf_read_error",
@@ -275,7 +324,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                     type="error")
                 logger.exception(exc)
                 self.request.set(
-                    'concatenate_annexes_item_pdf_error_url', obj.absolute_url())
+                    'concatenate_annexes_item_pdf_error_url', annex.aq_inner.aq_parent.absolute_url())
                 return
             if data['two_sided'] and \
                output_writer.getNumPages() % 2 != 0 and \
@@ -299,3 +348,122 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             # return something so the faceted is refrehsed
             return self.request.get('concatenate_annexes_pdf_error_url')
         return super(ConcatenateAnnexesBatchActionForm, self).render()
+
+
+class ExportPDFForm(z3c_form.Form):
+    """Concatenate selected elements of context into a single PDF."""
+
+    # name of the vocabulary listing the selectable elements, subclasses may change it
+    vocabulary = u"imio.annex.export_pdf_elements"
+
+    ignoreContext = True  # don't use context to get widget data
+
+    label = _(u"Export PDF")
+    description = _('export_pdf_descr')
+    _finished = False
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.fields = Fields(
+            schema.List(
+                __name__="elements",
+                title=_(u"Elements to export in PDF"),
+                description=u"",
+                required=False,
+                value_type=schema.Choice(vocabulary=self.vocabulary)),
+            schema.Bool(
+                __name__="two_sided",
+                title=_(u'Two-sided?'),
+                description=_(u'descr_two_sided'),
+                default=False,
+                required=False),
+        )
+        self.fields["elements"].widgetFactory = AnnexesCheckBoxFieldWidget
+        self.fields["two_sided"].widgetFactory = RadioFieldWidget
+
+    @button.buttonAndHandler(_('Apply'), name='apply_export_pdf')
+    def handleApply(self, action):
+        self._check_auth()
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        self._check_data(data)
+        return self._do_export_pdf(data)
+
+    def updateWidgets(self):
+        super(ExportPDFForm, self).updateWidgets()
+        self.widgets['elements'].sortable = True
+
+    def _check_data(self, data):
+        """Make sure elements are selectable.
+           As some values are disabled in the UI, a user could try
+           to surround this, raise Unauthorized in this case."""
+        selectable = [term.token for term in self.widgets['elements'].terms
+                      if not getattr(term, 'disabled', False)]
+        for elt_id in data['elements']:
+            if elt_id not in selectable:
+                raise Unauthorized
+
+    def _elements_content(self, data):
+        """Return {element_id: PDF binary content}, by default every
+           selected element is an annex contained in the context."""
+        return {element_id: self.context.get(element_id).file.data
+                for element_id in data['elements']}
+
+    def _do_export_pdf(self, data):
+        content = self._elements_content(data)
+        # create unique PDF file
+        output_writer = PdfFileWriter()
+        for element_id in data['elements']:
+            output_writer.appendPagesFromReader(
+                PdfFileReader(BytesIO(content[element_id]), strict=False))
+            # keep every element starting on a recto
+            if data.get('two_sided') and \
+               output_writer.getNumPages() % 2 != 0 and \
+               element_id != data['elements'][-1]:
+                output_writer.addBlankPage()
+        pdf_file_content = BytesIO()
+        output_writer.write(pdf_file_content)
+        self.request.set('pdf_file_content', pdf_file_content)
+        return pdf_file_content
+
+    @button.buttonAndHandler(_('Cancel'), name='cancel')
+    def handleCancel(self, action):
+        self._finished = True
+
+    def update(self):
+        self._check_auth()
+        super(ExportPDFForm, self).update()
+        # after calling parent's update, self.actions are available
+        self.actions.get('cancel').addClass('standalone')
+
+    def _may_export(self):
+        """Hook, may current user export context elements to PDF?
+           View permission is already checked by the browser:page."""
+        return True
+
+    def _check_auth(self):
+        """Raise Unauthorized if current user may not export to PDF."""
+        if not self._may_export():
+            raise Unauthorized
+
+    def _redirect(self, url):
+        """Hook, redirect to p_url."""
+        self.request.response.redirect(url)
+
+    def render(self):
+        if 'pdf_file_content' in self.request:
+            filename = "export_pdf_%s" % self.context.getId()
+            self.request.response.setHeader('Content-Type', 'application/pdf')
+            self.request.response.setHeader(
+                'Content-disposition', 'attachment;filename=%s.pdf' % filename)
+            pdf_file_content = self.request['pdf_file_content']
+            pdf_file_content.seek(0)
+            return pdf_file_content.read()
+
+        if self._finished:
+            self._redirect(self.context.absolute_url())
+            return ""
+        return super(ExportPDFForm, self).render()
