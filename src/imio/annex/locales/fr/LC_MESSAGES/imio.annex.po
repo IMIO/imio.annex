@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-01-14 10:17+0000\n"
+"POT-Creation-Date: 2026-10-09 12:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,21 +14,45 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
+#: ../browser/views.py
+msgid " [PDF required]"
+msgstr " [format PDF requis]"
+
 #: ../columns.py:87
 msgid "Actions"
 msgstr "Actions"
+
+#: ../configure.zcml:75
+msgid "Adds scan information fields but hides fields to_sign/signed"
+msgstr "Ajoute un behavior avec les informations de scan mais sans les champs à signer/signé"
 
 #: ../profiles/default/types/annex.xml
 msgid "Annex"
 msgstr "Annexe"
 
-#: ../browser/views.py:188
+#: ../browser/views.py:235
 msgid "Annex types"
 msgstr "Types d'annexe"
+
+#: ../browser/views.py:385
+msgid "Apply"
+msgstr "Appliquer"
 
 #: ../quickupload/templates/quick_upload.pt:28
 msgid "Apply the first category on all elements"
 msgstr "Appliquer la première catégorie à l'ensemble des éléments"
+
+#: ../browser/views.py:432
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ../browser/views.py:371
+msgid "Elements to export in PDF"
+msgstr "Inclure les fichiers suivants"
+
+#: ../browser/views.py:361
+msgid "Export PDF"
+msgstr "Exporter en PDF"
 
 #: ../content/annex.py:52
 msgid "File"
@@ -36,32 +60,49 @@ msgstr "Fichier"
 
 #: ../profiles.zcml:16
 msgid "Installs the imio.annex add-on."
-msgstr ""
+msgstr "Installe le module imio.annex"
 
-#: ../browser/views.py:234
+#: ../browser/views.py:297
 msgid "Nothing to export."
 msgstr "Rien à exporter."
+
+#: ../configure.zcml:75
+msgid "Scan metadata (fields to_sign/signed hidden)"
+msgstr "Informations de scan mais sans les champs à signer/signé"
+
+#: ../browser/views.py:207
+msgid "These elements will not be exported:"
+msgstr "Ces éléments ne sont pas concernés par ou exclus de l'export:"
 
 #: ../columns.py:23
 msgid "Title"
 msgstr "Titre"
 
-#: ../browser/views.py:193
+#: ../browser/views.py:240
 msgid "Two-sided?"
 msgstr "Pour impression recto-verso?"
 
-#: ../browser/views.py:255
+#: ../browser/views.py:319
 msgid "concatenate_annexes_pdf_read_error"
 msgstr "Erreur lors de l'exportation du fichier PDF, format PDF incorrect pour l'annexe \"${annex_title}\" de l'élément \"${obj_title}\"!"
 
-#: ../browser/views.py:241
+#: ../browser/views.py:304
 msgid "concatenate_annexes_pdf_too_large_error"
 msgstr "Erreur lors de l'exportation du fichier PDF, la taille des annexes sélectionnées est de ${total_size} mais la taille maximale est de ${max_total_size}!"
 
-#: ../browser/views.py:194
+#: ../browser/views.py:241
 msgid "descr_two_sided"
 msgstr "Si le document PDF généré est destiné à être imprimé, une page blanche sera insérée pour que le nombre de pages par annexe soit toujours pair."
 
+#: ../browser/views.py:362
+msgid "export_pdf_descr"
+msgstr "Cette action permet de grouper des documents PDF dans un PDF unique téléchargeable. Dans la liste des annexes, les annexes grisées ne peuvent pas être sélectionnées pour la raison indiquée entre crochets."
+
 #: ../profiles.zcml:16
 msgid "imio.annex"
-msgstr ""
+msgstr "imio.annex"
+
+#. Default: "None."
+#: ../widgets/checkbox_input.pt:10
+msgid "no_annexes"
+msgstr "Aucun fichier"

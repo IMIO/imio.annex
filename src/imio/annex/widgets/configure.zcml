@@ -1,0 +1,20 @@
+<configure
+    i18n_domain="imio.annex"
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:z3c="http://namespaces.zope.org/z3c">
+
+    <include package="z3c.form" file="meta.zcml" />
+
+    <z3c:widgetTemplate
+        mode="input"
+        widget=".checkbox.IAnnexesCheckBoxWidget"
+        template="checkbox_input.pt"
+        layer="z3c.form.interfaces.IFormLayer" />
+
+    <z3c:widgetTemplate
+        mode="display"
+        widget=".checkbox.IAnnexesCheckBoxWidget"
+        template="checkbox_display.pt"
+        layer="z3c.form.interfaces.IFormLayer" />
+
+</configure>

@@ -1,10 +1,7 @@
-# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
-# SOME DESCRIPTIVE TITLE.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-01-14 10:17+0000\n"
+"POT-Creation-Date: 2026-10-09 12:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +14,44 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.annex\n"
 
+#: ../browser/views.py
+msgid " [PDF required]"
+msgstr ""
+
 #: ../columns.py:87
 msgid "Actions"
+msgstr ""
+
+#: ../configure.zcml:75
+msgid "Adds scan information fields but hides fields to_sign/signed"
 msgstr ""
 
 #: ../profiles/default/types/annex.xml
 msgid "Annex"
 msgstr ""
 
-#: ../browser/views.py:188
+#: ../browser/views.py:235
 msgid "Annex types"
+msgstr ""
+
+#: ../browser/views.py:385
+msgid "Apply"
 msgstr ""
 
 #: ../quickupload/templates/quick_upload.pt:28
 msgid "Apply the first category on all elements"
+msgstr ""
+
+#: ../browser/views.py:432
+msgid "Cancel"
+msgstr ""
+
+#: ../browser/views.py:371
+msgid "Elements to export in PDF"
+msgstr ""
+
+#: ../browser/views.py:361
+msgid "Export PDF"
 msgstr ""
 
 #: ../content/annex.py:52
@@ -41,30 +62,47 @@ msgstr ""
 msgid "Installs the imio.annex add-on."
 msgstr ""
 
-#: ../browser/views.py:234
+#: ../browser/views.py:297
 msgid "Nothing to export."
+msgstr ""
+
+#: ../configure.zcml:75
+msgid "Scan metadata (fields to_sign/signed hidden)"
+msgstr ""
+
+#: ../browser/views.py:207
+msgid "These elements will not be exported:"
 msgstr ""
 
 #: ../columns.py:23
 msgid "Title"
 msgstr ""
 
-#: ../browser/views.py:193
+#: ../browser/views.py:240
 msgid "Two-sided?"
 msgstr ""
 
-#: ../browser/views.py:255
+#: ../browser/views.py:319
 msgid "concatenate_annexes_pdf_read_error"
 msgstr ""
 
-#: ../browser/views.py:241
+#: ../browser/views.py:304
 msgid "concatenate_annexes_pdf_too_large_error"
 msgstr ""
 
-#: ../browser/views.py:194
+#: ../browser/views.py:241
 msgid "descr_two_sided"
+msgstr ""
+
+#: ../browser/views.py:362
+msgid "export_pdf_descr"
 msgstr ""
 
 #: ../profiles.zcml:16
 msgid "imio.annex"
+msgstr ""
+
+#. Default: "None."
+#: ../widgets/checkbox_input.pt:10
+msgid "no_annexes"
 msgstr ""

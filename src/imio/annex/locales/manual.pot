@@ -1,0 +1,8 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Domain: imio.annex\n"
+
+#: ../browser/views.py
+msgid " [PDF required]"
+msgstr ""
