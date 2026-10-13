@@ -310,7 +310,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             return
         # create unique PDF file
         output_writer = PdfFileWriter()
-        for annex in annexes:
+        for i, annex in enumerate(annexes, start=1):
             try:
                 output_writer.appendPagesFromReader(
                     PdfFileReader(BytesIO(self._annex_content(annex)), strict=False))
@@ -328,7 +328,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 return
             if data['two_sided'] and \
                output_writer.getNumPages() % 2 != 0 and \
-               annex != annexes[-1]:
+               i < len(annexes):  # by position, an annex may be repeated
                 output_writer.addBlankPage()
         pdf_file_content = BytesIO()
         output_writer.write(pdf_file_content)

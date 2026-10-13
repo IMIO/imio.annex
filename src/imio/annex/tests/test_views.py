@@ -90,3 +90,14 @@ class TestConcatenateAnnexesBatchActionForm(BaseTestCase):
         form._check_element = lambda obj: obj.getId() == 'folder' and u'Excluded' or None
         self.assertEqual(form._excluded_elements(), [(self.folder, u'Excluded')])
         self.assertEqual(form._get_annexes(data), [])
+
+    def test__apply_two_sided(self):
+        """two_sided adds a blank page after every element but the last, even a repeated one."""
+        annex1 = self._add_annex(title=u'Annex 1')
+        annex2 = self._add_annex(title=u'Annex 2')
+        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
+        form._get_annexes = lambda data: [annex1, annex2, annex1, annex2]
+        res = form._apply(two_sided=True)
+        res.seek(0)
+        # 4 single page annexes and 3 blank pages
+        self.assertEqual(PdfFileReader(res, strict=False).getNumPages(), 7)
