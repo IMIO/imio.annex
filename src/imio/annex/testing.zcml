@@ -1,0 +1,32 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="imio.annex"
+    >
+
+  <include file="configure.zcml" />
+  <!-- loaded by z3c.autoinclude in an instance, not in the test layers -->
+  <include package="plone.app.lockingbehavior" />
+  <includeOverrides file="overrides.zcml" />
+
+  <!-- The test layers stack the component registries: the unnamed (*, *, *) adapter of
+       collective.eeafaceted.collectionwidget, registered in this layer, hides the dexterity add view
+       registered in a base layer, and ++add++annex fails (not in an instance: one registry) -->
+  <adapter
+      for="Products.CMFCore.interfaces.IFolderish
+           zope.publisher.interfaces.browser.IDefaultBrowserLayer
+           plone.dexterity.interfaces.IDexterityFTI"
+      provides="zope.publisher.interfaces.browser.IBrowserPage"
+      factory="plone.dexterity.browser.add.DefaultAddView"
+      />
+
+  <genericsetup:registerProfile
+      name="testing"
+      title="imio.annex tests"
+      description="Installs the test fixture for the imio.annex add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/testing"
+      />
+
+</configure>

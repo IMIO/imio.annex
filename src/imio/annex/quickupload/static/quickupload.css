@@ -20,11 +20,11 @@ a#copy_categories:hover {
     background-color: #518abc;
 }
 
-/* quickupload displayed in an overlay :
+/* quickupload displayed in a modal :
    - display files to upload next to each other;
    - clear display.
 */
-div.overlay div.qq-uploader li {
+.modal-dialog div.qq-uploader li {
     display: inline-block;
     margin-left: 3em;
     margin-right: 1em;
@@ -33,13 +33,13 @@ div.overlay div.qq-uploader li {
     width: 275px;
     border-radius: 5px;
 }
-div.overlay div.qq-uploader li input[type="text"] {
+.modal-dialog div.qq-uploader li input[type="text"] {
     width: 93%;
 }
-div.overlay div.qq-uploader .select2-container {
+.modal-dialog div.qq-uploader .select2-container {
     font-size: 125%;
 }
-div.overlay div.qq-upload-infos {
+.modal-dialog div.qq-upload-infos {
     font-size: 140%;
     color: #333333;
 }

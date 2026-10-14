@@ -2,10 +2,12 @@ Changelog
 =========
 
 
-2.27.2 (unreleased)
--------------------
+3.0.0 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Migrated to Plone 6.2 and Python 3, dropped Plone 4 support, added unit and robot tests.
+  collective.documentviewer is optional: without it, no annex preview.
+  [chris-adam]
 
 
 2.27.1 (2026-01-15)

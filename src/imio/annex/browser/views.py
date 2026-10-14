@@ -28,7 +28,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
     label = _CEBA("download-annexes-batch-action-but")
     button_with_icon = True
-    apply_button_title = _CEBA('Download')
+    apply_button_title = _CEBA("Download")
     section = "annexes"
     # gives a human readable size of "50.0 Mb"
     MAX_TOTAL_SIZE = 52428800
@@ -46,35 +46,42 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             readable_max_size = calculate_filesize(self._max_total_size())
             descr += translate(
                 '<p class="warn_filesize">The maximum size you may download at '
-                'one time is ${max_size}, here your download size is ${total_size}. '
-                'Please unselect some elements, especially large elements for '
-                'which size is displayed in red, download it separately.<p>',
-                mapping={'max_size': readable_max_size,
-                         'total_size': calculate_filesize(self.total_size)},
+                "one time is ${max_size}, here your download size is ${total_size}. "
+                "Please unselect some elements, especially large elements for "
+                "which size is displayed in red, download it separately.<p>",
+                mapping={
+                    "max_size": readable_max_size,
+                    "total_size": calculate_filesize(self.total_size),
+                },
                 domain="collective.eeafaceted.batchactions",
-                context=self.request)
+                context=self.request,
+            )
         elif self.annex_not_downloadable is not None:
             descr += translate(
                 '<p style="color: red;">You selected some elements that are '
                 'not downloadable, check for example "${annex_title}". '
-                'Please unselect elements that are only previewable.</p>',
-                mapping={'annex_title': self.annex_not_downloadable.Title()},
+                "Please unselect elements that are only previewable.</p>",
+                mapping={"annex_title": self.annex_not_downloadable.Title()},
                 domain="collective.eeafaceted.batchactions",
-                context=self.request)
+                context=self.request,
+            )
         else:
             descr += translate(
-                '<p>This will download the selected elements as a Zip file.</p>'
-                '<p>The total file size is <b>${total_size}</b>, when clicking '
+                "<p>This will download the selected elements as a Zip file.</p>"
+                "<p>The total file size is <b>${total_size}</b>, when clicking "
                 'on "${button_title}", you will have a spinner, wait until the '
-                'Zip file is available.</p>',
+                "Zip file is available.</p>",
                 mapping={
-                    'total_size': calculate_filesize(self.total_size),
-                    'button_title': translate(
+                    "total_size": calculate_filesize(self.total_size),
+                    "button_title": translate(
                         self.apply_button_title,
                         domain="collective.eeafaceted.batchactions",
-                        context=self.request)},
+                        context=self.request,
+                    ),
+                },
                 domain="collective.eeafaceted.batchactions",
-                context=self.request)
+                context=self.request,
+            )
         return descr
 
     def _check_annex_not_downloadable(self):
@@ -116,7 +123,7 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     def zipfiles(self, content):
         """Return zipped content."""
         fstream = BytesIO()
-        zipper = zipfile.ZipFile(fstream, 'w', zipfile.ZIP_DEFLATED)
+        zipper = zipfile.ZipFile(fstream, "w", zipfile.ZIP_DEFLATED)
         for obj in content:
             if not IAnnex.providedBy(obj):
                 continue
@@ -134,7 +141,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
                 created.day(),
                 created.hour(),
                 created.minute(),
-                int(created.second()))
+                int(created.second()),
+            )
         zipper.close()
         return fstream.getvalue()
 
@@ -148,20 +156,20 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             return self.request.response.redirect(self.context.absolute_url())
 
     def do_zip(self):
-        """ Zip all of the content in this location (context)"""
-        self.request.response.setHeader('Content-Type', 'application/zip')
+        """Zip all of the content in this location (context)"""
+        self.request.response.setHeader("Content-Type", "application/zip")
         self.request.response.setHeader(
-            'Content-disposition', 'attachment;filename=%s.zip'
-            % self.context.getId())
+            "Content-disposition", "attachment;filename=%s.zip" % self.context.getId()
+        )
         content = [brain.getObject() for brain in self.brains]
         zipped_content = self.zipfiles(content)
-        self.request.set('zip_file_content', zipped_content)
+        self.request.set("zip_file_content", zipped_content)
         return zipped_content
 
     def render(self):
         """ """
-        if 'zip_file_content' in self.request:
-            return self.request['zip_file_content']
+        if "zip_file_content" in self.request:
+            return self.request["zip_file_content"]
         else:
             return super(DownloadAnnexesBatchActionForm, self).render()
 
@@ -170,7 +178,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
     label = _CEBA("concatenate-annexes-batch-action-but")
     button_with_icon = True
-    apply_button_title = _CEBA('Download')
+    apply_button_title = _CEBA("Download")
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
 
@@ -185,10 +193,13 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         descr = translate(descr, domain=descr.domain, context=self.request)
         readable_max_size = calculate_filesize(self._max_total_size())
         descr += translate(
-            'concatenate_annexes_batch_action_descr',
-            mapping={'max_size': readable_max_size, },
+            "concatenate_annexes_batch_action_descr",
+            mapping={
+                "max_size": readable_max_size,
+            },
             domain="collective.eeafaceted.batchactions",
-            context=self.request)
+            context=self.request,
+        )
         return descr
 
     def _annex_types_vocabulary(self):
@@ -198,16 +209,18 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     def _update(self):
         self.fields += Fields(
             schema.List(
-                __name__='annex_types',
-                title=_(u'Annex types'),
-                value_type=schema.Choice(
-                    vocabulary=self._annex_types_vocabulary()),
-                required=True),
-            schema.Bool(__name__='two_sided',
-                        title=_(u'Two-sided?'),
-                        description=_(u'descr_two_sided'),
-                        default=False,
-                        required=False),
+                __name__="annex_types",
+                title=_(u"Annex types"),
+                value_type=schema.Choice(vocabulary=self._annex_types_vocabulary()),
+                required=True,
+            ),
+            schema.Bool(
+                __name__="two_sided",
+                title=_(u"Two-sided?"),
+                description=_(u"descr_two_sided"),
+                default=False,
+                required=False,
+            ),
         )
         self.fields["annex_types"].widgetFactory = PMCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
@@ -227,75 +240,87 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
 
     def _apply(self, **data):
         """ """
-        annex_type_uids = data['annex_types']
+        annex_type_uids = data["annex_types"]
         # get annexes
         annexes = []
-        sort_on = 'getObjPositionInParent' if \
-            get_sort_categorized_tab() is False else None
+        sort_on = (
+            "getObjPositionInParent" if get_sort_categorized_tab() is False else None
+        )
         for brain in self.brains:
             obj = brain.getObject()
-            filters = {'contentType': 'application/pdf'}
+            filters = {"contentType": "application/pdf"}
             for annex_type_uid in annex_type_uids:
-                filters['category_uid'] = annex_type_uid
+                filters["category_uid"] = annex_type_uid
                 annexes += get_categorized_elements(
-                    obj,
-                    result_type='objects',
-                    sort_on=sort_on,
-                    filters=filters)
+                    obj, result_type="objects", sort_on=sort_on, filters=filters
+                )
         # return if nothing to produce
         if not annexes:
-            api.portal.show_message(
-                _("Nothing to export."),
-                request=self.request)
+            api.portal.show_message(_("Nothing to export."), request=self.request)
             return
         # can not generate if total size too large
         total_size = self._total_size(annexes)
         if self._total_size(annexes) > self._max_total_size():
             api.portal.show_message(
-                _("concatenate_annexes_pdf_too_large_error",
-                  mapping={'total_size': calculate_filesize(total_size),
-                           'max_total_size': calculate_filesize(
-                            self._max_total_size())}),
+                _(
+                    "concatenate_annexes_pdf_too_large_error",
+                    mapping={
+                        "total_size": calculate_filesize(total_size),
+                        "max_total_size": calculate_filesize(self._max_total_size()),
+                    },
+                ),
                 request=self.request,
-                type="error")
+                type="error",
+            )
             return
         # create unique PDF file
         output_writer = PdfFileWriter()
         for annex in annexes:
             try:
                 output_writer.appendPagesFromReader(
-                    PdfFileReader(BytesIO(annex.file.data), strict=False))
+                    PdfFileReader(BytesIO(annex.file.data), strict=False)
+                )
             except PdfReadError as exc:
                 api.portal.show_message(
-                    _("concatenate_annexes_pdf_read_error",
-                      mapping={'annex_title': safe_unicode(annex.Title()),
-                               'obj_title': safe_unicode(
-                          self._error_obj_title(annex.aq_inner.aq_parent))}),
+                    _(
+                        "concatenate_annexes_pdf_read_error",
+                        mapping={
+                            "annex_title": safe_unicode(annex.Title()),
+                            "obj_title": safe_unicode(
+                                self._error_obj_title(annex.aq_inner.aq_parent)
+                            ),
+                        },
+                    ),
                     request=self.request,
-                    type="error")
+                    type="error",
+                )
                 logger.exception(exc)
                 self.request.set(
-                    'concatenate_annexes_item_pdf_error_url', obj.absolute_url())
+                    "concatenate_annexes_item_pdf_error_url", obj.absolute_url()
+                )
                 return
-            if data['two_sided'] and \
-               output_writer.getNumPages() % 2 != 0 and \
-               annex != annexes[-1]:
+            if (
+                data["two_sided"]
+                and output_writer.getNumPages() % 2 != 0
+                and annex != annexes[-1]
+            ):
                 output_writer.addBlankPage()
         pdf_file_content = BytesIO()
         output_writer.write(pdf_file_content)
-        self.request.set('pdf_file_content', pdf_file_content)
+        self.request.set("pdf_file_content", pdf_file_content)
         return pdf_file_content
 
     def render(self):
-        if 'pdf_file_content' in self.request:
+        if "pdf_file_content" in self.request:
             filename = "%s-annexes.pdf" % self.context.getId()
-            self.request.response.setHeader('Content-Type', 'application/pdf')
+            self.request.response.setHeader("Content-Type", "application/pdf")
             self.request.response.setHeader(
-                'Content-disposition', 'attachment; filename=%s' % filename)
-            pdf_file_content = self.request['pdf_file_content']
+                "Content-disposition", "attachment; filename=%s" % filename
+            )
+            pdf_file_content = self.request["pdf_file_content"]
             pdf_file_content.seek(0)
             return pdf_file_content.read()
         elif self.request.RESPONSE.status == 204:
             # return something so the faceted is refrehsed
-            return self.request.get('concatenate_annexes_pdf_error_url')
+            return self.request.get("concatenate_annexes_pdf_error_url")
         return super(ConcatenateAnnexesBatchActionForm, self).render()
