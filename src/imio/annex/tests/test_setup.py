@@ -106,6 +106,8 @@ class TestSetup(ImioAnnexTestCase):
         registry = getUtility(IRegistry)
         types = registry.get("plone.types_use_view_action_in_listings", ())
         self.assertIn("annex", types)
+        # Plone's own entries are kept
+        self.assertIn("File", types)
 
     def test_resources(self):
         """The quickupload CSS and JS are registered, after the collective.quickupload JS."""
