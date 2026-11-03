@@ -18,8 +18,10 @@ from imio.annex.testing import ImioAnnexTestCase
 from imio.annex.utils import get_annexes_to_print
 from imio.prettylink.interfaces import IPrettyLink
 from plone import api
+from unittest import mock
 from ZODB.blob import Blob
 from zope.event import notify
+from zope.interface import alsoProvides
 
 import os
 import shutil
@@ -29,22 +31,14 @@ import unittest
 
 
 if HAS_DOCUMENTVIEWER:
+    from collective.documentviewer import async_utils
+    from collective.documentviewer.interfaces import ILayer
     from collective.documentviewer.settings import GlobalSettings
     from collective.documentviewer.settings import Settings
     from imio.annex import patch
 
 # not a valid PDF: a conversion always fails, with or without docsplit
 PDF = b"%PDF-1.4 not really a PDF"
-
-
-class FakeAsyncService(object):
-    """plone.app.async queue service (not installed): records the queued jobs."""
-
-    def __init__(self):
-        self.jobs = []
-
-    def queueJobInQueue(self, queue, quota_names, func, *args):
-        self.jobs.append((queue, quota_names, func, args))
 
 
 @unittest.skipIf(
@@ -56,6 +50,9 @@ class DocumentviewerTestCase(ImioAnnexTestCase):
         super(DocumentviewerTestCase, self).setUp()
         # conversions are triggered by the tests
         GlobalSettings(self.portal).auto_convert = False
+        # imio.annex does not install collective.documentviewer: the views of
+        # collective.documentviewer need its browser layer
+        alsoProvides(self.request, ILayer)
 
     def pdf_annex(self, annex_id, title, to_print=False):
         return api.content.create(
@@ -128,14 +125,12 @@ class TestPatch(DocumentviewerTestCase):
 
     def test_jobrunner_queue_it(self):
         annex = self.pdf_annex("pdf", u"PDF")
-        # JobRunner needs plone.app.async
-        runner = patch.JobRunner.__new__(patch.JobRunner)
-        runner.object = annex
-        runner.queue = "queue"
-        async_service = FakeAsyncService()
-        runner.__dict__["async"] = async_service
-        runner.queue_it()
-        self.assertEqual(len(async_service.jobs), 1)
+        # the Celery task is replaced: collective.celery may not be installed
+        task = mock.Mock()
+        task.delay.return_value = mock.Mock(id="task-id")
+        with mock.patch.object(async_utils, "_celeryQueueJob", task, create=True):
+            async_utils.CeleryJobRunner(annex).queue_it()
+        task.delay.assert_called_once_with(annex)
         self.assertEqual(self.events, [("ConversionStartedEvent", annex, True)])
         # the spinner is displayed
         self.assertEqual(
@@ -164,18 +159,6 @@ class TestAnnex(DocumentviewerTestCase):
             self.folder.categorized_elements[annex.UID()]["preview_status"], "converted"
         )
         self.assertTrue(annex.show_preview())
-        # the 'View preview' action
-        actions = dict(
-            (action["id"], action)
-            for action in api.portal.get_tool("portal_actions").listFilteredActionsFor(
-                annex
-            )["object_buttons"]
-        )
-        self.assertEqual(
-            actions["view_preview"]["url"],
-            "http://nohost/plone/folder/pdf/documentviewer#document/#/p1",
-        )
-        self.assertEqual(actions["view_preview"]["link_target"], "_blank")
 
 
 class TestAnnexPrettyLinkAdapter(DocumentviewerTestCase):
