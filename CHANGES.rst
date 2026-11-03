@@ -11,6 +11,9 @@ Changelog
 - Fixed the patch of the conversion queue for collective.documentviewer 6:
   it patches `async_utils.CeleryJobRunner`, because documentviewer 6 has no `async` module.
   [duchenean]
+- Fixed the imports of the annexes batch actions: the widget comes from `plonemeeting.core`
+  (PloneMeeting on Plone 6) and `PdfReadError` from `PyPDF2.errors`.
+  [duchenean]
 
 
 2.27.1 (2026-01-15)
