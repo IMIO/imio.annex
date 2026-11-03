@@ -71,7 +71,7 @@ class QuickUploadFileInit(QuickUploadInit):
         # to determinate media format (image) and it keeps media if adding an image
         # using CKeditor then adding an annex
         if self.request.get("PUBLISHED").__name__ == "quick_upload":
-            session = self.request.get("SESSION", "")
+            session = self.request.get("SESSION") or {}
             for session_key in ("mediaupload", "typeupload"):
                 if session_key in session.keys():
                     del session[session_key]

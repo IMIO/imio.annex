@@ -14,6 +14,8 @@ Changelog
 - Fixed the imports of the annexes batch actions: the widget comes from `plonemeeting.core`
   (PloneMeeting on Plone 6) and `PdfReadError` from `PyPDF2.errors`.
   [duchenean]
+- Fixed the quick upload when the request has no session (`REQUEST.SESSION` is `None`).
+  [duchenean]
 
 
 2.27.1 (2026-01-15)

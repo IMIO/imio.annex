@@ -100,6 +100,18 @@ class TestQuickUploadFileInit(ImioAnnexTestCase):
         self.assertEqual(settings["ul_file_extensions"], "*.*;")
         self.assertEqual(self.request.get("SESSION"), {})
 
+    def test_upload_settings_without_session(self):
+        # without a session data container, REQUEST.SESSION is None
+        self.request.set("SESSION", None)
+        self.request.form["typeupload"] = "annex"
+        init = getMultiAdapter((self.folder, self.request), name="quick_upload_init")
+        init.uploader_id = "uploader"
+        self.request["PUBLISHED"] = getMultiAdapter(
+            (self.folder, self.request), name="quick_upload"
+        )
+        settings = init.upload_settings()
+        self.assertEqual(settings["typeupload"], "annex")
+
 
 class TestQuickUploadFileView(ImioAnnexTestCase):
     """@@quick_upload_file, called by the uploader (XHR) for each file."""
