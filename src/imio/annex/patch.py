@@ -12,12 +12,6 @@ from imio.annex.events import ConversionReallyFinishedEvent
 from imio.annex.events import ConversionStartedEvent
 from zope.event import notify
 
-import importlib
-
-
-# "async" is a keyword on Python 3: an import statement can't name this module
-JobRunner = importlib.import_module("collective.documentviewer.async").JobRunner
-
 
 def converter_call(self, *args, **kwargs):
     notify(ConversionStartedEvent(self.context))
@@ -30,5 +24,5 @@ def converter_call(self, *args, **kwargs):
 
 
 def jobrunner_queue_it(self):
-    JobRunner._old_queue_it(self)
+    self._old_queue_it()
     notify(ConversionStartedEvent(self.object))

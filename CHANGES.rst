@@ -8,6 +8,9 @@ Changelog
 - Migrated to Plone 6.2 and Python 3, dropped Plone 4 support, added unit and robot tests.
   collective.documentviewer is optional: without it, no annex preview.
   [chris-adam]
+- Fixed the patch of the conversion queue for collective.documentviewer 6:
+  it patches `async_utils.CeleryJobRunner`, because documentviewer 6 has no `async` module.
+  [duchenean]
 
 
 2.27.1 (2026-01-15)
