@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<registry>
+
+  <!-- Disable resource bundle -->
+  <records interface="Products.CMFPlone.interfaces.IBundleRegistry"
+           prefix="plone.bundles/imio.annex.base">
+    <value key="enabled">False</value>
+  </records>
+
+</registry>

@@ -13,7 +13,23 @@
       title="imio.annex"
       directory="profiles/default"
       description="Installs the imio.annex add-on."
-      provides="Products.GenericSetup.interfaces.EXTENSION" />
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="imio.annex uninstall"
+      directory="profiles/uninstall"
+      description="Uninstalls the imio.annex add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:importStep
+      name="imio.annex-uninstall"
+      title="imio.annex uninstall import step"
+      description="Uninstall import step from imio.annex"
+      handler=".setuphandlers.uninstall">
+  </genericsetup:importStep>
 
   <genericsetup:importStep
       name="imio.annex-postInstall"

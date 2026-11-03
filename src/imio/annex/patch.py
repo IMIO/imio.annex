@@ -7,7 +7,6 @@ Created by mpeeters
 :license: GPL, see LICENCE.txt for more details.
 """
 
-from collective.documentviewer.async import JobRunner
 from collective.documentviewer.convert import Converter
 from imio.annex.events import ConversionReallyFinishedEvent
 from imio.annex.events import ConversionStartedEvent
@@ -25,5 +24,5 @@ def converter_call(self, *args, **kwargs):
 
 
 def jobrunner_queue_it(self):
-    JobRunner._old_queue_it(self)
+    self._old_queue_it()
     notify(ConversionStartedEvent(self.object))

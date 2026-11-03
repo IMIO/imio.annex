@@ -14,7 +14,7 @@
   <include package="imio.dashboard" />
   <include package="imio.actionspanel" />
   <include package="collective.dms.scanbehavior" zcml:condition="installed collective.dms.scanbehavior" />
-  <include package="collective.documentviewer" />
+  <include package="collective.documentviewer" zcml:condition="installed collective.documentviewer" />
   <include package="collective.iconifiedcategory" />
   <include package="collective.quickupload" />
 
@@ -43,6 +43,7 @@
   <include package="collective.monkeypatcher" />
 
   <monkey:patch
+    zcml:condition="installed collective.documentviewer"
     description="Ensure that an event is triggered before the document conversion"
     class="collective.documentviewer.convert.Converter"
     original="__call__"
@@ -50,8 +51,9 @@
     preserveOriginal="true" />
 
   <monkey:patch
+    zcml:condition="installed collective.documentviewer.async_utils"
     description="Ensure that an event is triggered before the document conversion"
-    class="collective.documentviewer.async.JobRunner"
+    class="collective.documentviewer.async_utils.CeleryJobRunner"
     original="queue_it"
     replacement=".patch.jobrunner_queue_it"
     preserveOriginal="true" />

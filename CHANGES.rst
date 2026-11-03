@@ -2,10 +2,20 @@ Changelog
 =========
 
 
-2.27.2 (unreleased)
--------------------
+3.0.0 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Migrated to Plone 6.2 and Python 3, dropped Plone 4 support, added unit and robot tests.
+  collective.documentviewer is optional: without it, no annex preview.
+  [chris-adam]
+- Fixed the patch of the conversion queue for collective.documentviewer 6:
+  it patches `async_utils.CeleryJobRunner`, because documentviewer 6 has no `async` module.
+  [duchenean]
+- Fixed the imports of the annexes batch actions: the widget comes from `plonemeeting.core`
+  (PloneMeeting on Plone 6) and `PdfReadError` from `PyPDF2.errors`.
+  [duchenean]
+- Fixed the quick upload when the request has no session (`REQUEST.SESSION` is `None`).
+  [duchenean]
 
 
 2.27.1 (2026-01-15)
