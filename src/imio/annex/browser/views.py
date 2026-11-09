@@ -23,12 +23,20 @@ from z3c.form import form as z3c_form
 from z3c.form.browser.radio import RadioFieldWidget
 from z3c.form.field import Fields
 from zope import schema
+from zope.component import getUtility
 from zope.i18n import translate
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary
 
+import os
+import re
 import zipfile
 
 
 class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
+    """Download selected annexes as a Zip file.
+       This is meant to be used on the "annexes" tab of an element,
+       selected elements (brains) are annexes."""
 
     label = _CEBA("download-annexes-batch-action-but")
     button_with_icon = True
@@ -36,6 +44,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     section = "annexes"
     # gives a human readable size of "50.0 Mb"
     MAX_TOTAL_SIZE = 52428800
+    annexes = []
+    annex_not_downloadable = None
 
     def _max_total_size(self):
         """ """
@@ -47,22 +57,19 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         descr = super(DownloadAnnexesBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
         if self.total_size > self._max_total_size():
-            readable_max_size = calculate_filesize(self._max_total_size())
-            descr += translate(
-                '<p class="warn_filesize">The maximum size you may download at '
-                'one time is ${max_size}, here your download size is ${total_size}. '
-                'Please unselect some elements, especially large elements for '
-                'which size is displayed in red, download it separately.<p>',
-                mapping={'max_size': readable_max_size,
-                         'total_size': calculate_filesize(self.total_size)},
-                domain="collective.eeafaceted.batchactions",
-                context=self.request)
+            descr += self._max_size_message(self.total_size)
         elif self.annex_not_downloadable is not None:
             descr += translate(
                 '<p style="color: red;">You selected some elements that are '
                 'not downloadable, check for example "${annex_title}". '
                 'Please unselect elements that are only previewable.</p>',
                 mapping={'annex_title': self.annex_not_downloadable.Title()},
+                domain="collective.eeafaceted.batchactions",
+                context=self.request)
+        elif not self.annexes:
+            descr += translate(
+                '<p style="color: red;">There is no downloadable annex '
+                'in the selected elements.</p>',
                 domain="collective.eeafaceted.batchactions",
                 context=self.request)
         else:
@@ -81,13 +88,29 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
                 context=self.request)
         return descr
 
+    def _max_size_message(self, total_size):
+        """Message displayed when p_total_size exceeds the max total size."""
+        return translate(
+            '<p class="warn_filesize">The maximum size you may download at '
+            'one time is ${max_size}, here your download size is ${total_size}. '
+            'Please unselect some elements, especially large elements for '
+            'which size is displayed in red, download it separately.<p>',
+            mapping={'max_size': calculate_filesize(self._max_total_size()),
+                     'total_size': calculate_filesize(total_size)},
+            domain="collective.eeafaceted.batchactions",
+            context=self.request)
+
+    def _get_annexes(self):
+        """Return the annexes to download.
+           Here, selected elements are the annexes."""
+        return [brain.getObject() for brain in self.brains]
+
     def _check_annex_not_downloadable(self):
         """ """
         self.annex_not_downloadable = None
-        for brain in self.brains:
-            obj = brain.getObject()
-            if not obj.show_download():
-                self.annex_not_downloadable = obj
+        for annex in self.annexes:
+            if not annex.show_download():
+                self.annex_not_downloadable = annex
                 self.do_apply = False
                 return
 
@@ -100,45 +123,72 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     def _total_size(self):
         """ """
         total = 0
-        for brain in self.brains:
-            obj = brain.getObject()
-            primary_field = IPrimaryFieldInfo(obj)
+        for annex in self.annexes:
+            primary_field = IPrimaryFieldInfo(annex)
             size = primary_field.value.size
             total += size
         return total
 
     def _update(self):
-        """Can not apply action if total size exceeded."""
+        """Can not apply action if total size exceeded,
+           if an annex is not downloadable or if there is nothing to download."""
+        self.annexes = self._get_annexes()
+        self.annex_not_downloadable = None
         self._check_total_size()
         if self.do_apply:
             self._check_annex_not_downloadable()
+        if not self.annexes:
+            self.do_apply = False
 
     def available(self):
         """ """
         return True
 
+    def _zip_filename(self):
+        """The name of the generated Zip file."""
+        return '%s.zip' % self.context.getId()
+
+    def _zip_path(self, annex):
+        """The path of p_annex in the Zip file."""
+        return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
+
+    def _unique_zip_path(self, path, used_paths):
+        """Make sure p_path is unique in the Zip file,
+           if it already exists, add a suffix "-1", "-2", ..."""
+        unique_path = path
+        base, ext = os.path.splitext(path)
+        i = 1
+        while unique_path in used_paths:
+            unique_path = u'{0}-{1}{2}'.format(base, i, ext)
+            i += 1
+        used_paths.add(unique_path)
+        return unique_path
+
     def zipfiles(self, content):
         """Return zipped content."""
         fstream = BytesIO()
         zipper = zipfile.ZipFile(fstream, 'w', zipfile.ZIP_DEFLATED)
+        used_paths = set()
         for obj in content:
             if not IAnnex.providedBy(obj):
                 continue
             primary_field = IPrimaryFieldInfo(obj)
-            data = primary_field.value.data
-            filename = primary_field.value.filename
             # can not do without a filename...
-            if not filename:
+            if not primary_field.value.filename:
                 continue
-            zipper.writestr(filename, data)
+            path = self._unique_zip_path(self._zip_path(obj), used_paths)
             created = obj.created()
-            zipper.NameToInfo[filename].date_time = (
-                created.year(),
-                created.month(),
-                created.day(),
-                created.hour(),
-                created.minute(),
-                int(created.second()))
+            zinfo = zipfile.ZipInfo(
+                path,
+                date_time=(created.year(),
+                           created.month(),
+                           created.day(),
+                           created.hour(),
+                           created.minute(),
+                           int(created.second())))
+            zinfo.compress_type = zipfile.ZIP_DEFLATED
+            zinfo.external_attr = 0o600 << 16
+            zipper.writestr(zinfo, primary_field.value.data)
         zipper.close()
         return fstream.getvalue()
 
@@ -152,13 +202,12 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             return self.request.response.redirect(self.context.absolute_url())
 
     def do_zip(self):
-        """ Zip all of the content in this location (context)"""
+        """ Zip annexes returned by self._get_annexes"""
         self.request.response.setHeader('Content-Type', 'application/zip')
         self.request.response.setHeader(
-            'Content-disposition', 'attachment;filename=%s.zip'
-            % self.context.getId())
-        content = [brain.getObject() for brain in self.brains]
-        zipped_content = self.zipfiles(content)
+            'Content-disposition', 'attachment;filename=%s'
+            % self._zip_filename())
+        zipped_content = self.zipfiles(self.annexes)
         self.request.set('zip_file_content', zipped_content)
         return zipped_content
 
@@ -168,6 +217,149 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             return self.request['zip_file_content']
         else:
             return super(DownloadAnnexesBatchActionForm, self).render()
+
+
+class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
+    """Download annexes of selected elements as a Zip file.
+       This is meant to be used on a dashboard of elements containing annexes,
+       selected elements (brains) are the elements containing the annexes.
+       Field "annexes" lists the annexes of selected elements, using the
+       "annexes_vocabulary", the user selects the annexes to download,
+       annexes the current user may not download (only previewable)
+       are disabled.
+       By default every annexes are stored at the root of the Zip file,
+       when "annexes_by_folder" is selected, annexes of each element are
+       stored in a separate folder of the Zip file."""
+
+    label = _CEBA("download-elements-annexes-batch-action-but")
+    section = "default"
+    # vocabulary used to list the annexes of every selected element
+    annexes_vocabulary = u"imio.annex.contained_annexes"
+    annexes_terms = []
+    annexes_by_folder = False
+    # max length of a folder name or filename prefix in the Zip file
+    MAX_ZIP_NAME_LENGTH = 80
+
+    def _update(self):
+        """Add the "annexes" and "annexes_by_folder" fields.
+           Fields are computed from the class fields so calling update
+           several times does not add the fields several times."""
+        super(DownloadElementsAnnexesBatchActionForm, self)._update()
+        self.fields = type(self).fields + Fields(
+            schema.List(
+                __name__='annexes',
+                title=_(u'Annexes to download'),
+                value_type=schema.Choice(
+                    vocabulary=SimpleVocabulary(self.annexes_terms)),
+                default=[annex.UID() for annex in self.annexes],
+                required=True),
+            schema.Bool(__name__='annexes_by_folder',
+                        title=_(u'Annexes by folder?'),
+                        description=_(u'descr_annexes_by_folder'),
+                        default=False,
+                        required=False),
+        )
+        self.fields["annexes"].widgetFactory = OrderableCheckBoxFieldWidget
+        self.fields["annexes_by_folder"].widgetFactory = RadioFieldWidget
+
+    def _check_total_size(self):
+        """Do not disable the action when total size is exceeded so the user
+           can unselect some annexes, size of selected annexes is checked
+           in _apply."""
+        self.total_size = self._total_size()
+
+    def _selected_annexes(self, annex_uids):
+        """Return selected annexes, make sure every selected annex is
+           selectable (disabled terms are not)."""
+        annexes_by_uid = {annex.UID(): annex for annex in self.annexes}
+        if set(annex_uids).difference(annexes_by_uid):
+            raise Unauthorized
+        return [annexes_by_uid[annex_uid] for annex_uid in annex_uids]
+
+    def _apply(self, **data):
+        """Only download selected annexes, if "annexes" not given,
+           every downloadable annexes are downloaded."""
+        if data.get('annexes') is not None:
+            self.annexes = self._selected_annexes(data['annexes'])
+        total_size = self._total_size()
+        if total_size > self._max_total_size():
+            api.portal.show_message(
+                _("download_annexes_zip_too_large_error",
+                  mapping={'total_size': calculate_filesize(total_size),
+                           'max_total_size': calculate_filesize(
+                               self._max_total_size())}),
+                request=self.request,
+                type="error")
+            return
+        self.annexes_by_folder = bool(data.get('annexes_by_folder'))
+        return super(DownloadElementsAnnexesBatchActionForm, self)._apply(**data)
+
+    def _annexes_filters(self):
+        """Filters passed to the annexes vocabulary to select annexes."""
+        return {}
+
+    def _element_terms(self, element, **kwargs):
+        """Terms of the annexes of p_element, term token is the annex UID,
+           p_kwargs are passed to the annexes vocabulary."""
+        factory = getUtility(IVocabularyFactory, self.annexes_vocabulary)
+        kwargs.setdefault('filters', self._annexes_filters())
+        return list(factory(element,
+                            token_value='UID',
+                            include_parent_title=True,
+                            **kwargs))
+
+    def _get_annexes(self):
+        """Return the downloadable annexes of every selected elements,
+           store the annexes vocabulary terms in self.annexes_terms."""
+        self.annexes_terms = []
+        annexes = []
+        for brain in self.brains:
+            obj = brain.getObject()
+            categorized_elements = getattr(obj, 'categorized_elements', {})
+            for term in self._element_terms(obj):
+                self.annexes_terms.append(term)
+                if getattr(term, 'disabled', False):
+                    continue
+                annex = obj.get(categorized_elements[term.token]['id'])
+                if IAnnex.providedBy(annex):
+                    annexes.append(annex)
+        return annexes
+
+    def _check_annex_not_downloadable(self):
+        """Not downloadable annexes are disabled in the annexes vocabulary."""
+        self.annex_not_downloadable = None
+
+    def _zip_folder_name(self, element):
+        """The name of the folder in which annexes of p_element are stored
+           when "annexes_by_folder"."""
+        return element.getId()
+
+    def _zip_filename_prefix(self, element):
+        """A prefix added to the filename of annexes of p_element
+           when not "annexes_by_folder", None means no prefix."""
+        return None
+
+    def _safe_zip_name(self, name):
+        """Make p_name usable as a folder name or filename prefix:
+           remove characters not allowed in filenames (like "/" that would
+           create a sub folder) and limit the length."""
+        name = u' '.join(safe_unicode(name).split())
+        name = re.sub(u'[\\x00-\\x1f/\\\\:*?"<>|]', u'-', name)
+        return name[:self.MAX_ZIP_NAME_LENGTH].strip().rstrip(u'.')
+
+    def _zip_path(self, annex):
+        """Store annexes in a folder by element if "annexes_by_folder",
+           otherwise prefix the filename if _zip_filename_prefix."""
+        path = super(DownloadElementsAnnexesBatchActionForm, self)._zip_path(annex)
+        element = annex.aq_inner.aq_parent
+        if self.annexes_by_folder:
+            path = u'{0}/{1}'.format(
+                self._safe_zip_name(self._zip_folder_name(element)), path)
+        else:
+            prefix = self._zip_filename_prefix(element)
+            if prefix:
+                path = u'{0} - {1}'.format(self._safe_zip_name(prefix), path)
+        return path
 
 
 class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):

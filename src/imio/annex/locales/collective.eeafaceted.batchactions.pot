@@ -44,3 +44,11 @@ msgstr ""
 #. Default: "Download"
 msgid "Download"
 msgstr ""
+
+#. Default: "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgid "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgstr ""
+
+#. Default: "Download annexes as Zip file"
+msgid "download-elements-annexes-batch-action-but"
+msgstr ""

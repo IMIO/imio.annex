@@ -16,6 +16,13 @@
         class="imio.annex.browser.views.DownloadAnnexesBatchActionForm"
         permission="zope2.View" /-->
 
+    <!-- Download annexes of selected elements as Zip batch action (dashboard) -->
+    <!--browser:page
+        for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"
+        name="download-elements-annexes-batch-action"
+        class="imio.annex.browser.views.DownloadElementsAnnexesBatchActionForm"
+        permission="zope2.View" /-->
+
     <!-- Concatenate annexes batch action -->
     <!--browser:page
         for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"

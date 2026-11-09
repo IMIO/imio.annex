@@ -110,3 +110,16 @@ msgstr ""
 #: ../widgets/checkbox_input.pt:10
 msgid "checkbox_widget_no_values"
 msgstr ""
+
+msgid "Annexes by folder?"
+msgstr ""
+
+msgid "descr_annexes_by_folder"
+msgstr ""
+
+msgid "Annexes to download"
+msgstr ""
+
+#. Default: "Error while downloading the Zip file, size of selected annexes is ${total_size} but the maximum size is ${max_total_size}!"
+msgid "download_annexes_zip_too_large_error"
+msgstr ""
