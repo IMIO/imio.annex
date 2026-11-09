@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="imio.annex">
+
+  <!-- The export PDF form is registered by the applications on their own
+       containers, register it on everything for the tests. -->
+  <browser:page
+      for="*"
+      layer="imio.annex.interfaces.IImioAnnexLayer"
+      name="export-pdf-form"
+      class="imio.annex.browser.views.ExportPDFForm"
+      permission="zope2.View" />
+
+</configure>

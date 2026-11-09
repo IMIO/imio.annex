@@ -1,0 +1,12 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Domain: imio.annex\n"
+
+#: ../vocabularies.py
+msgid " [only previewable]"
+msgstr ""
+
+#: ../browser/views.py
+msgid " [PDF required]"
+msgstr ""

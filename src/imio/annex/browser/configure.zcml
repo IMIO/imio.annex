@@ -23,4 +23,12 @@
         class="imio.annex.browser.views.ConcatenateAnnexesBatchActionForm"
         permission="zope2.View" /-->
 
+    <!-- Example of view registration to export selected annexes as a single PDF -->
+    <!--browser:page
+        for="*"
+        layer="imio.annex.interfaces.IImioAnnexLayer"
+        name="export-pdf-form"
+        class="imio.annex.browser.views.ExportPDFForm"
+        permission="zope2.View" /-->
+
 </configure>

@@ -20,6 +20,7 @@
 
   <include package=".browser" />
   <include package=".content" />
+  <include package=".widgets" />
   <include package=".quickupload" />
 
   <include file="profiles.zcml" />
@@ -28,6 +29,17 @@
   <adapter for="imio.annex.content.annex.IAnnex"
            factory=".adapters.AnnexPrettyLinkAdapter"
            provides="imio.prettylink.interfaces.IPrettyLink" />
+
+  <!-- Vocabularies -->
+  <utility
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    name="imio.annex.contained_annexes"
+    component=".vocabularies.ContainedAnnexesVocabularyFactory" />
+
+  <utility
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    name="imio.annex.export_pdf_elements"
+    component=".vocabularies.ExportPDFElementsVocabularyFactory" />
 
   <!-- Columns -->
   <adapter
