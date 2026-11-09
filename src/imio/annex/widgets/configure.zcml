@@ -7,13 +7,13 @@
 
     <z3c:widgetTemplate
         mode="input"
-        widget=".checkbox.IAnnexesCheckBoxWidget"
+        widget=".checkbox.IOrderableCheckBoxWidget"
         template="checkbox_input.pt"
         layer="z3c.form.interfaces.IFormLayer" />
 
     <z3c:widgetTemplate
         mode="display"
-        widget=".checkbox.IAnnexesCheckBoxWidget"
+        widget=".checkbox.IOrderableCheckBoxWidget"
         template="checkbox_display.pt"
         layer="z3c.form.interfaces.IFormLayer" />
 

@@ -4,11 +4,11 @@ from imio.annex.tests.base import BaseTestCase
 from plone import api
 
 
-class TestAnnexesCheckBoxWidget(BaseTestCase):
-    """Test imio.annex.widgets.checkbox.AnnexesCheckBoxWidget."""
+class TestOrderableCheckBoxWidget(BaseTestCase):
+    """Test imio.annex.widgets.checkbox.OrderableCheckBoxWidget."""
 
     def setUp(self):
-        super(TestAnnexesCheckBoxWidget, self).setUp()
+        super(TestOrderableCheckBoxWidget, self).setUp()
         self._add_annex(title=u'PDF annex')
         self._add_annex(title=u'Text annex', annex_file=self.file_txt)
         form = self.folder.restrictedTraverse('@@export-pdf-form')

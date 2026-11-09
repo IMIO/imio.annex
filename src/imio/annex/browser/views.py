@@ -10,7 +10,7 @@ from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
 from imio.annex import logger
 from imio.annex.content.annex import IAnnex
-from imio.annex.widgets.checkbox import AnnexesCheckBoxFieldWidget
+from imio.annex.widgets.checkbox import OrderableCheckBoxFieldWidget
 from io import BytesIO
 from plone import api
 from plone.rfc822.interfaces import IPrimaryFieldInfo
@@ -242,7 +242,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                         default=False,
                         required=False),
         )
-        self.fields["annex_types"].widgetFactory = AnnexesCheckBoxFieldWidget
+        self.fields["annex_types"].widgetFactory = OrderableCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
     def _total_size(self, annexes):
@@ -379,7 +379,7 @@ class ExportPDFForm(z3c_form.Form):
                 default=False,
                 required=False),
         )
-        self.fields["elements"].widgetFactory = AnnexesCheckBoxFieldWidget
+        self.fields["elements"].widgetFactory = OrderableCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
     @button.buttonAndHandler(_('Apply'), name='apply_export_pdf')

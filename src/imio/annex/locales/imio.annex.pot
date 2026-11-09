@@ -14,6 +14,10 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.annex\n"
 
+#: ../vocabularies.py
+msgid " [only previewable]"
+msgstr ""
+
 #: ../browser/views.py
 msgid " [PDF required]"
 msgstr ""
@@ -104,5 +108,5 @@ msgstr ""
 
 #. Default: "None."
 #: ../widgets/checkbox_input.pt:10
-msgid "no_annexes"
+msgid "checkbox_widget_no_values"
 msgstr ""

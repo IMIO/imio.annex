@@ -5,9 +5,9 @@
                  items python:list(items);
                  single_checkbox python:len(items) == 1"
      i18n:domain="imio.annex">
-<div class="annex_checkbox_widget">
+<div class="orderable_checkbox_widget">
 <tal:comment replace="nothing">XXX added "None." when nothing to select</tal:comment>
-<span class="discreet" tal:condition="not:items" i18n:translate="no_annexes">None.</span>
+<span class="discreet" tal:condition="not:items" i18n:translate="checkbox_widget_no_values">None.</span>
 <span tal:attributes="id view/id"
       tal:omit-tag="single_checkbox"
       tal:condition="python:len(items) > 0">
@@ -101,7 +101,7 @@
           tal:attributes="for item/id">
      <tal:comment replace="nothing">XXX added 'structure' to render label when it is HTML</tal:comment>
      <span class="label" tal:content="structure item/label">Label</span>
-     <div class="annex-checkbox-description discreet" tal:content="structure item/description">Description</div>
+     <div class="orderable-checkbox-description discreet" tal:content="structure item/description">Description</div>
    </label>
   </span>
  </span>

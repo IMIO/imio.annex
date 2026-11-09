@@ -11,8 +11,8 @@ from zope.interface import implementer_only
 import zope.schema
 
 
-class IAnnexesCheckBoxWidget(ICheckBoxWidget):
-    """Marker interface for the imio.annex checkbox widget."""
+class IOrderableCheckBoxWidget(ICheckBoxWidget):
+    """Marker interface for the orderable checkbox widget."""
 
     sortable = zope.schema.Bool(
         title=u'Sortable',
@@ -20,8 +20,8 @@ class IAnnexesCheckBoxWidget(ICheckBoxWidget):
         default=False)
 
 
-@implementer_only(IAnnexesCheckBoxWidget)
-class AnnexesCheckBoxWidget(CheckBoxWidget):
+@implementer_only(IOrderableCheckBoxWidget)
+class OrderableCheckBoxWidget(CheckBoxWidget):
     """Checkbox widget managing disabled/readonly/description on terms,
        a "select all" checkbox and optionally drag and drop sorting."""
 
@@ -35,7 +35,7 @@ class AnnexesCheckBoxWidget(CheckBoxWidget):
     @property
     def items(self):
         """Manage disabled/readonly on some items."""
-        items = super(AnnexesCheckBoxWidget, self).items
+        items = super(OrderableCheckBoxWidget, self).items
         terms = self.terms
         for item in items:
             term = terms.getTermByToken(item['value'])
@@ -46,5 +46,5 @@ class AnnexesCheckBoxWidget(CheckBoxWidget):
 
 
 @implementer(IFieldWidget)
-def AnnexesCheckBoxFieldWidget(field, request):
-    return FieldWidget(field, AnnexesCheckBoxWidget(request))
+def OrderableCheckBoxFieldWidget(field, request):
+    return FieldWidget(field, OrderableCheckBoxWidget(request))

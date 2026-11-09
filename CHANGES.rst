@@ -6,8 +6,12 @@ Changelog
 -------------------
 
 - Moved `PMCheckBoxFieldWidget` from `Products.PloneMeeting` to
-  `imio.annex.widgets.checkbox.AnnexesCheckBoxFieldWidget`.
+  `imio.annex.widgets.checkbox.OrderableCheckBoxFieldWidget`.
   [sgeulette]
+- Renamed `AnnexesCheckBoxFieldWidget` to the more generic `OrderableCheckBoxFieldWidget`
+  as it may be used for any multi-valued field, the wrapping `div` CSS class is
+  `orderable_checkbox_widget` and the "None." msgid is `checkbox_widget_no_values`.
+  [gbastien]
 - Moved `ItemExportPDFForm` from `Products.PloneMeeting` to
   `imio.annex.browser.views.ExportPDFForm`: needs to be registered as
   `@@export-pdf-form` by the using applications.
