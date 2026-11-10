@@ -110,3 +110,16 @@ msgstr "imio.annex"
 #: ../widgets/checkbox_input.pt:10
 msgid "checkbox_widget_no_values"
 msgstr "Aucun(e)."
+
+msgid "Annexes by folder?"
+msgstr "Annexes par dossier?"
+
+msgid "descr_annexes_by_folder"
+msgstr "Si « Oui », les annexes de chaque élément seront stockées dans un dossier séparé du fichier Zip, sinon toutes les annexes seront stockées au même niveau."
+
+msgid "Annexes to download"
+msgstr "Annexes à télécharger"
+
+#. Default: "Error while downloading the Zip file, size of selected annexes is ${total_size} but the maximum size is ${max_total_size}!"
+msgid "download_annexes_zip_too_large_error"
+msgstr "Erreur lors du téléchargement du fichier Zip, la taille des annexes sélectionnées est de ${total_size} mais la taille maximale est de ${max_total_size}!"

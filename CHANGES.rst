@@ -20,11 +20,45 @@ Changelog
   in `imio.annex.vocabularies`, with `_prepare_annex_infos` (filter/order the listed
   annexes) and `_portal_type_title` hooks.
   [sgeulette]
+- `ContainedAnnexesVocabulary` extra parameters (`**kwargs`) are passed to
+  the `_prepare_annex_infos` hook.
+  In term title, the annex part (arrow, icon, number, title, file size and what
+  `_check_disable_term` adds) is rendered in a `span.contained_annex_title` and,
+  when `include_parent_title`, the element title in a `span.contained_annex_parent_title`
+  so it is possible to style it separately.
+  Added parameter `title_kwargs` to `ContainedAnnexesVocabulary`, passed to the
+  element `Title` method when `include_parent_title`, so it is possible to manage
+  `Title` parameters depending on the context type.
+  [gbastien]
 - Added `_get_annexes`, `_annex_content`, `_check_element` and `_element_annexes` hooks
   in `ConcatenateAnnexesBatchActionForm`.
   [sgeulette]
 - Added test infrastructure (`testing.py` and `tests`).
   [sgeulette]
+- `OrderableCheckBoxWidget` options get an `odd`/`even` CSS class (first option
+  is `odd`), recomputed after a drag and drop when the widget is `sortable`.
+  [gbastien]
+- Set `DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE` (Zip download, also used by
+  `DownloadElementsAnnexesBatchActionForm`) to 250Mb.
+  [gbastien]
+- Added `DownloadElementsAnnexesBatchActionForm`, a variant of
+  `DownloadAnnexesBatchActionForm` that works on a dashboard of elements
+  containing annexes (selected elements are the annexes containers).
+  Field `annexes` lists annexes of selected elements using the vocabulary defined
+  in `annexes_vocabulary` (`imio.annex.contained_annexes` by default, extra
+  parameters may be passed using `_element_terms`), every downloadable annexes
+  are selected by default, annexes that are only previewable are disabled.
+  Max total size is checked on selected annexes when applying so the user may
+  unselect annexes when it is exceeded. By default every annexes are
+  stored at the same level in the Zip file, field `annexes_by_folder`
+  (`False` by default) stores annexes of each element in a separate folder.
+  Folder name (`_zip_folder_name`, element id by default) and filename prefix
+  (`_zip_filename_prefix`, no prefix by default) may be overridden, it is made
+  safe (no `/`, `:`, ..., limited to `MAX_ZIP_NAME_LENGTH` characters).
+  `DownloadAnnexesBatchActionForm` was refactored to ease this: annexes to
+  download are computed by `_get_annexes`, path in the Zip file by `_zip_path`
+  (duplicated paths are now made unique) and Zip file name by `_zip_filename`.
+  [gbastien]
 
 2.27.1 (2026-01-15)
 -------------------

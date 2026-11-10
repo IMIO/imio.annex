@@ -28,8 +28,12 @@ class ContainedAnnexesVocabulary(object):
             token_value='id',
             include_portal_type=False,
             include_parent_title=False,
-            filters={}):
-        """ """
+            filters={},
+            title_kwargs={},
+            **kwargs):
+        """When p_include_parent_title, p_title_kwargs are passed to the context
+           Title method, so it is possible to manage Title parameters depending
+           on context type, p_kwargs are passed to _prepare_annex_infos."""
         portal = api.portal.get()
         portal_url = portal.absolute_url()
         terms = []
@@ -39,21 +43,25 @@ class ContainedAnnexesVocabulary(object):
         annex_infos = self._prepare_annex_infos(
             context,
             get_categorized_elements(
-                context, portal_type=portal_type, sort_on=sort_on, filters=filters))
+                context, portal_type=portal_type, sort_on=sort_on, filters=filters),
+            **kwargs)
         if annex_infos:
             categories_vocab = get_vocab(
                 context,
                 'collective.iconifiedcategory.categories',
                 use_category_uid_as_token=True)
-            parent_title = u'%s<br><span class="titleVisualPadding">➔ </span>' % \
-                cgi.escape(safe_unicode(context.Title()), True) \
-                if include_parent_title else ''
+            # element title and annex title (with arrow) are rendered in
+            # separate tags so it is possible to style it separately
+            parent_title = arrow = u''
+            if include_parent_title:
+                parent_title = u'<span class="contained_annex_parent_title">{0}</span><br>'.format(
+                    cgi.escape(safe_unicode(context.Title(**title_kwargs)), True))
+                arrow = u'<span class="titleVisualPadding">➔ </span>'
 
             for annex_info in annex_infos:
                 # term title is annex icon, number and title
-                term_title = u'{0}<img src="{1}/{2}" title="{3}" ' \
-                    u'width="16px" height="16px"> {4}{5}. {6}'.format(
-                        parent_title,
+                term_title = u'<img src="{0}/{1}" title="{2}" ' \
+                    u'width="16px" height="16px"> {3}{4}. {5}'.format(
                         portal_url,
                         annex_info['icon_url'],
                         cgi.escape(safe_unicode(annex_info['category_title']), True),
@@ -66,13 +74,17 @@ class ContainedAnnexesVocabulary(object):
                     term_title += u' ({0})'.format(render_filesize(annex_info['filesize']))
                 term = SimpleTerm(annex_info[token_value], annex_info[token_value], term_title)
                 term.description = cgi.escape(safe_unicode(annex_info['description']), True).replace('\n', '<br>')
-                # check if need to disable term
+                # check if need to disable term, this may complete term.title
                 self._check_disable_term(context, annex_info, categories_vocab, term)
+                # wrap annex part (including what _check_disable_term added)
+                term.title = u'{0}<span class="contained_annex_title">{1}{2}</span>'.format(
+                    parent_title, arrow, term.title)
                 terms.append(term)
         return SimpleVocabulary(terms)
 
-    def _prepare_annex_infos(self, context, annex_infos):
-        """Hook, filter and/or order the listed annexes."""
+    def _prepare_annex_infos(self, context, annex_infos, **kwargs):
+        """Hook, filter and/or order the listed annexes,
+           p_kwargs are the extra parameters received by __call__."""
         return annex_infos
 
     def _portal_type_title(self, context, annex_info):

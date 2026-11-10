@@ -41,3 +41,11 @@ msgstr "<p class='discreet'>Cette action permet de grouper des documents PDF dan
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"
 msgstr "Télécharger les annexes en Zip"
+
+#. Default: "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgid "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgstr "<p style=\"color: red;\">Il n'y a aucune annexe téléchargeable dans les éléments sélectionnés.</p>"
+
+#. Default: "Download annexes as Zip file"
+msgid "download-elements-annexes-batch-action-but"
+msgstr "Télécharger les annexes en Zip"

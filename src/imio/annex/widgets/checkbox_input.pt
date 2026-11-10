@@ -33,9 +33,13 @@
  </label>
  </div>
  <span class="options">
+  <tal:comment replace="nothing">XXX added odd/even CSS class, first option is "odd",
+  updated after a drag and drop when sortable</tal:comment>
+  <tal:option repeat="item items">
   <span class="option"
-        tal:repeat="item items"
-        tal:attributes="id python:single_checkbox and view.id or None">
+        tal:define="oddrow repeat/item/odd"
+        tal:attributes="id python:single_checkbox and view.id or None;
+                        class python: oddrow and 'option even' or 'option odd'">
    <span tal:condition="python: view.sortable" class="draggable">⣿</span>
    <input type="checkbox" id="" name="" class="" alt="" title=""
           tabindex="" disabled="" readonly="" accesskey="" value=""
@@ -104,14 +108,21 @@
      <div class="orderable-checkbox-description discreet" tal:content="structure item/description">Description</div>
    </label>
   </span>
+  </tal:option>
  </span>
 </span>
 <input name="field-empty-marker" type="hidden" value="1"
        tal:attributes="name string:${view/name}-empty-marker" />
 <script type="text/javascript" tal:condition="python: view.sortable">
     $(document).ready(function() {
-        // initialize drag and drop
-        $('span.options').sortable();
+        // initialize drag and drop, keep odd/even CSS classes coherent after sorting
+        $('span.options').sortable({
+            update: function(event, ui) {
+                $(this).children('span.option').each(function(index) {
+                    $(this).removeClass('odd even').addClass(index % 2 ? 'even' : 'odd');
+                });
+            }
+        });
     });
 </script>
 </div>

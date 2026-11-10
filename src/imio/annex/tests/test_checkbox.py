@@ -3,6 +3,8 @@
 from imio.annex.tests.base import BaseTestCase
 from plone import api
 
+import re
+
 
 class TestOrderableCheckBoxWidget(BaseTestCase):
     """Test imio.annex.widgets.checkbox.OrderableCheckBoxWidget."""
@@ -27,3 +29,15 @@ class TestOrderableCheckBoxWidget(BaseTestCase):
         self.assertEqual([item['description'] for item in items], ['', ''])
         # the view sets sortable, the widget defaults to False
         self.assertTrue(self.widget.sortable)
+
+    def test_render_odd_even(self):
+        """Options get an "odd"/"even" CSS class, first option is "odd"."""
+        self._add_annex(title=u'Third annex')
+        form = self.folder.restrictedTraverse('@@export-pdf-form')
+        form.update()
+        rendered = form.widgets['elements'].render()
+        self.assertEqual(
+            re.findall(r'<span class="(option [a-z]+)"', rendered),
+            ['option odd', 'option even', 'option odd'])
+        # odd/even are recomputed after a drag and drop
+        self.assertIn("addClass(index % 2 ? 'even' : 'odd')", rendered)
