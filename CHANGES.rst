@@ -35,6 +35,9 @@ Changelog
   [sgeulette]
 - Added test infrastructure (`testing.py` and `tests`).
   [sgeulette]
+- `OrderableCheckBoxWidget` options get an `odd`/`even` CSS class (first option
+  is `odd`), recomputed after a drag and drop when the widget is `sortable`.
+  [gbastien]
 - Added `DownloadElementsAnnexesBatchActionForm`, a variant of
   `DownloadAnnexesBatchActionForm` that works on a dashboard of elements
   containing annexes (selected elements are the annexes containers).
