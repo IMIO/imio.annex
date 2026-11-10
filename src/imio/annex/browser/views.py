@@ -42,8 +42,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     button_with_icon = True
     apply_button_title = _CEBA('Download')
     section = "annexes"
-    # gives a human readable size of "50.0 Mb"
-    MAX_TOTAL_SIZE = 52428800
+    # gives a human readable size of "250.0 Mb"
+    MAX_TOTAL_SIZE = 262144000
     annexes = []
     annex_not_downloadable = None
 

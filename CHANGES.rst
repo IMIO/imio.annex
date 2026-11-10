@@ -38,6 +38,9 @@ Changelog
 - `OrderableCheckBoxWidget` options get an `odd`/`even` CSS class (first option
   is `odd`), recomputed after a drag and drop when the widget is `sortable`.
   [gbastien]
+- Set `DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE` (Zip download, also used by
+  `DownloadElementsAnnexesBatchActionForm`) to 250Mb.
+  [gbastien]
 - Added `DownloadElementsAnnexesBatchActionForm`, a variant of
   `DownloadAnnexesBatchActionForm` that works on a dashboard of elements
   containing annexes (selected elements are the annexes containers).
