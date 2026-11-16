@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.28.0 (unreleased)
+2.28.0 (2026-11-16)
 -------------------
 
 - Moved `PMCheckBoxFieldWidget` from `Products.PloneMeeting` to
