@@ -38,4 +38,12 @@
         class="imio.annex.browser.views.ExportPDFForm"
         permission="zope2.View" /-->
 
+    <!-- Example of view registration to export selected annexes as a Zip file -->
+    <!--browser:page
+        for="*"
+        layer="imio.annex.interfaces.IImioAnnexLayer"
+        name="export-zip-form"
+        class="imio.annex.browser.views.ExportZipForm"
+        permission="zope2.View" /-->
+
 </configure>

@@ -18,6 +18,10 @@ msgstr ""
 msgid "<p class=\"warn_filesize\">The maximum size you may download at one time is ${max_size}, here your download size is ${total_size}. Please unselect some elements, especially large elements for which size is displayed in red, download it separately.<p>"
 msgstr "<p class=\"warn_filesize\">La taille maximum que peut atteindre le fichier à télécharger est ${max_size}, vous êtes actuellement à ${total_size}. Veuillez désélectionner certains éléments, notamment les éléments dont la taille est affichée en rouge et télécharger ceux-ci séparément.</p>"
 
+#. Default: "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgid "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
+msgstr "<p style=\"color: red;\">Il n'y a aucune annexe téléchargeable dans les éléments sélectionnés.</p>"
+
 #. Default: "<p style=\"color: red;\">You selected some elements that are not downloadable, check for example \"${annex_title}\". Please unselect elements that are only previewable.</p>"
 msgid "<p style=\"color: red;\">You selected some elements that are not downloadable, check for example \"${annex_title}\". Please unselect elements that are only previewable.</p>"
 msgstr "<p style=\"color: red;\">Certains éléments sélectionnés ne sont pas téléchargeables, par exemple \"${annex_title}\". Veuillez désélectionner les éléments qui sont seulement en prévisualisation (non téléchargeables).</p>"
@@ -41,10 +45,6 @@ msgstr "<p class='discreet'>Cette action permet de grouper des documents PDF dan
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"
 msgstr "Télécharger les annexes en Zip"
-
-#. Default: "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
-msgid "<p style=\"color: red;\">There is no downloadable annex in the selected elements.</p>"
-msgstr "<p style=\"color: red;\">Il n'y a aucune annexe téléchargeable dans les éléments sélectionnés.</p>"
 
 #. Default: "Download annexes as Zip file"
 msgid "download-elements-annexes-batch-action-but"

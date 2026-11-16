@@ -59,6 +59,12 @@ Changelog
   download are computed by `_get_annexes`, path in the Zip file by `_zip_path`
   (duplicated paths are now made unique) and Zip file name by `_zip_filename`.
   [gbastien]
+- Added `ExportZipForm`, the Zip counterpart of `ExportPDFForm` to download selected
+  annexes of an element: needs to be registered as `@@export-zip-form` by the using
+  applications. Zip writing moved to the `zip_annexes` and `unique_zip_path` functions,
+  `ExportPDFForm` exports through the `_do_export` hook.
+  Added `_default_annexes` and `_annex_from_term` hooks in `DownloadElementsAnnexesBatchActionForm`.
+  [sgeulette]
 
 2.27.1 (2026-01-15)
 -------------------

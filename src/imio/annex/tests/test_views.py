@@ -76,6 +76,48 @@ class TestExportPDFForm(BaseTestCase):
             'attachment;filename=export_pdf_folder.pdf')
 
 
+class TestExportZipForm(BaseTestCase):
+    """Test imio.annex.browser.views.ExportZipForm."""
+
+    def setUp(self):
+        super(TestExportZipForm, self).setUp()
+        self.annex1 = self._add_annex(title=u'Annex 1')
+        self.annex2 = self._add_annex(title=u'Annex 2')
+        self.txt_annex = self._add_annex(title=u'Text annex', annex_file=self.file_txt)
+        self.form = self.folder.restrictedTraverse('@@export-zip-form')
+
+    def _zip_names(self, data):
+        return sorted(zipfile.ZipFile(io.BytesIO(data)).namelist())
+
+    def test_fields(self):
+        """Every annex is selectable, two_sided is useless for a Zip file."""
+        self.form.update()
+        self.assertEqual(list(self.form.fields.keys()), ['elements'])
+        self.assertEqual([term.token for term in self.form.widgets['elements'].terms],
+                         [self.annex1.getId(), self.annex2.getId(), self.txt_annex.getId()])
+
+    def test_handleApply(self):
+        """Selected annexes are zipped, same filenames are made unique."""
+        self.request['form.widgets.elements'] = [self.annex1.getId(), self.annex2.getId(),
+                                                 self.txt_annex.getId()]
+        self.form.update()
+        res = self.form.handleApply(self.form, None)
+        self.assertEqual(self._zip_names(res), [u'file-1.pdf', u'file.pdf', u'file.txt'])
+        self.assertEqual(self.form.render(), res)
+        self.assertEqual(self.request.RESPONSE.getHeader('content-disposition'),
+                         'attachment;filename=folder.zip')
+
+    def test__do_export_max_total_size(self):
+        """Nothing is exported when the total size is exceeded."""
+        self.form.update()
+        self.form.MAX_TOTAL_SIZE = self.annex1.file.size
+        self.assertIsNotNone(self.form._do_export({'elements': [self.annex1.getId()]}))
+        del self.request.other['zip_file_content']
+        self.assertIsNone(self.form._do_export({'elements': [self.annex1.getId(),
+                                                             self.annex2.getId()]}))
+        self.assertNotIn('zip_file_content', self.request)
+
+
 class TestConcatenateAnnexesBatchActionForm(BaseTestCase):
     """Test imio.annex.browser.views.ConcatenateAnnexesBatchActionForm."""
 

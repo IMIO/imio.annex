@@ -33,6 +33,48 @@ import re
 import zipfile
 
 
+def zip_annexes(annexes, zip_path):
+    """Return the Zip binary content of p_annexes, p_zip_path(annex) gives the
+       (unique) path of an annex in the Zip file.
+       Objects that are not annexes or without filename are skipped."""
+    fstream = BytesIO()
+    zipper = zipfile.ZipFile(fstream, 'w', zipfile.ZIP_DEFLATED)
+    for obj in annexes:
+        if not IAnnex.providedBy(obj):
+            continue
+        primary_field = IPrimaryFieldInfo(obj)
+        # can not do without a filename...
+        if not primary_field.value.filename:
+            continue
+        created = obj.created()
+        zinfo = zipfile.ZipInfo(
+            zip_path(obj),
+            date_time=(created.year(),
+                       created.month(),
+                       created.day(),
+                       created.hour(),
+                       created.minute(),
+                       int(created.second())))
+        zinfo.compress_type = zipfile.ZIP_DEFLATED
+        zinfo.external_attr = 0o600 << 16
+        zipper.writestr(zinfo, primary_field.value.data)
+    zipper.close()
+    return fstream.getvalue()
+
+
+def unique_zip_path(path, used_paths):
+    """Make sure p_path is unique in the Zip file,
+       if it already exists, add a suffix "-1", "-2", ..."""
+    unique_path = path
+    base, ext = os.path.splitext(path)
+    i = 1
+    while unique_path in used_paths:
+        unique_path = u'{0}-{1}{2}'.format(base, i, ext)
+        i += 1
+    used_paths.add(unique_path)
+    return unique_path
+
+
 class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     """Download selected annexes as a Zip file.
        This is meant to be used on the "annexes" tab of an element,
@@ -153,44 +195,14 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
 
     def _unique_zip_path(self, path, used_paths):
-        """Make sure p_path is unique in the Zip file,
-           if it already exists, add a suffix "-1", "-2", ..."""
-        unique_path = path
-        base, ext = os.path.splitext(path)
-        i = 1
-        while unique_path in used_paths:
-            unique_path = u'{0}-{1}{2}'.format(base, i, ext)
-            i += 1
-        used_paths.add(unique_path)
-        return unique_path
+        """Make sure p_path is unique in the Zip file."""
+        return unique_zip_path(path, used_paths)
 
     def zipfiles(self, content):
         """Return zipped content."""
-        fstream = BytesIO()
-        zipper = zipfile.ZipFile(fstream, 'w', zipfile.ZIP_DEFLATED)
         used_paths = set()
-        for obj in content:
-            if not IAnnex.providedBy(obj):
-                continue
-            primary_field = IPrimaryFieldInfo(obj)
-            # can not do without a filename...
-            if not primary_field.value.filename:
-                continue
-            path = self._unique_zip_path(self._zip_path(obj), used_paths)
-            created = obj.created()
-            zinfo = zipfile.ZipInfo(
-                path,
-                date_time=(created.year(),
-                           created.month(),
-                           created.day(),
-                           created.hour(),
-                           created.minute(),
-                           int(created.second())))
-            zinfo.compress_type = zipfile.ZIP_DEFLATED
-            zinfo.external_attr = 0o600 << 16
-            zipper.writestr(zinfo, primary_field.value.data)
-        zipper.close()
-        return fstream.getvalue()
+        return zip_annexes(
+            content, lambda annex: self._unique_zip_path(self._zip_path(annex), used_paths))
 
     def _apply(self, **data):
         """ """
@@ -251,7 +263,7 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
                 title=_(u'Annexes to download'),
                 value_type=schema.Choice(
                     vocabulary=SimpleVocabulary(self.annexes_terms)),
-                default=[annex.UID() for annex in self.annexes],
+                default=[annex.UID() for annex in self._default_annexes()],
                 required=True),
             schema.Bool(__name__='annexes_by_folder',
                         title=_(u'Annexes by folder?'),
@@ -261,6 +273,10 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
         )
         self.fields["annexes"].widgetFactory = OrderableCheckBoxFieldWidget
         self.fields["annexes_by_folder"].widgetFactory = RadioFieldWidget
+
+    def _default_annexes(self):
+        """Annexes selected by default, every downloadable annex."""
+        return self.annexes
 
     def _check_total_size(self):
         """Do not disable the action when total size is exceeded so the user
@@ -315,15 +331,18 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
         annexes = []
         for brain in self.brains:
             obj = brain.getObject()
-            categorized_elements = getattr(obj, 'categorized_elements', {})
             for term in self._element_terms(obj):
                 self.annexes_terms.append(term)
                 if getattr(term, 'disabled', False):
                     continue
-                annex = obj.get(categorized_elements[term.token]['id'])
+                annex = self._annex_from_term(obj, term)
                 if IAnnex.providedBy(annex):
                     annexes.append(annex)
         return annexes
+
+    def _annex_from_term(self, element, term):
+        """The annex of p_element the p_term (token is the annex UID) stands for."""
+        return element.get(element.categorized_elements[term.token]['id'])
 
     def _check_annex_not_downloadable(self):
         """Not downloadable annexes are disabled in the annexes vocabulary."""
@@ -582,7 +601,7 @@ class ExportPDFForm(z3c_form.Form):
             self.status = self.formErrorsMessage
             return
         self._check_data(data)
-        return self._do_export_pdf(data)
+        return self._do_export(data)
 
     def updateWidgets(self):
         super(ExportPDFForm, self).updateWidgets()
@@ -603,6 +622,10 @@ class ExportPDFForm(z3c_form.Form):
            selected element is an annex contained in the context."""
         return {element_id: self.context.get(element_id).file.data
                 for element_id in data['elements']}
+
+    def _do_export(self, data):
+        """Hook, export the selected elements, PDF by default."""
+        return self._do_export_pdf(data)
 
     def _do_export_pdf(self, data):
         content = self._elements_content(data)
@@ -659,3 +682,52 @@ class ExportPDFForm(z3c_form.Form):
             self._redirect(self.context.absolute_url())
             return ""
         return super(ExportPDFForm, self).render()
+
+
+class ExportZipForm(ExportPDFForm):
+    """Download selected elements of context as a Zip file."""
+
+    vocabulary = u"imio.annex.contained_annexes"
+
+    label = _(u"Export Zip")
+    description = u""
+    # gives a human readable size of "250.0 Mb"
+    MAX_TOTAL_SIZE = DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE
+
+    def __init__(self, context, request):
+        super(ExportZipForm, self).__init__(context, request)
+        self.fields = self.fields.omit('two_sided')
+        self.fields['elements'].field.title = _(u"Elements to export in Zip")
+
+    def _element(self, token):
+        """Hook, the annex p_token (a selected term token) stands for."""
+        return self.context.get(token)
+
+    def _zip_path(self, annex):
+        """Hook, the path of p_annex in the Zip file."""
+        return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
+
+    def _do_export(self, data):
+        annexes = [self._element(token) for token in data['elements']]
+        total_size = sum(IPrimaryFieldInfo(annex).value.size for annex in annexes)
+        if total_size > self.MAX_TOTAL_SIZE:
+            api.portal.show_message(
+                _("download_annexes_zip_too_large_error",
+                  mapping={'total_size': calculate_filesize(total_size),
+                           'max_total_size': calculate_filesize(self.MAX_TOTAL_SIZE)}),
+                request=self.request,
+                type="error")
+            return
+        used_paths = set()
+        zipped_content = zip_annexes(
+            annexes, lambda annex: unique_zip_path(self._zip_path(annex), used_paths))
+        self.request.set('zip_file_content', zipped_content)
+        return zipped_content
+
+    def render(self):
+        if 'zip_file_content' in self.request:
+            self.request.response.setHeader('Content-Type', 'application/zip')
+            self.request.response.setHeader(
+                'Content-disposition', 'attachment;filename=%s.zip' % self.context.getId())
+            return self.request['zip_file_content']
+        return super(ExportZipForm, self).render()
