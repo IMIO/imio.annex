@@ -16,6 +16,8 @@ Changelog
   [duchenean]
 - Fixed the quick upload when the request has no session (`REQUEST.SESSION` is `None`).
   [duchenean]
+- Dropped support for Plone versions below 6.2.
+  [chris-adam]
 
 
 2.27.1 (2026-01-15)
