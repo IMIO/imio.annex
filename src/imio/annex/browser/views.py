@@ -4,9 +4,7 @@ from AccessControl import Unauthorized
 from cgi import escape
 from collective.eeafaceted.batchactions import _ as _CEBA
 from collective.eeafaceted.batchactions.browser.views import BaseBatchActionForm
-from collective.iconifiedcategory.config import get_sort_categorized_tab
 from collective.iconifiedcategory.utils import calculate_filesize
-from collective.iconifiedcategory.utils import get_categorized_elements
 from imio.annex import _
 from imio.annex import logger
 from imio.annex.content.annex import IAnnex
@@ -219,7 +217,78 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
             return super(DownloadAnnexesBatchActionForm, self).render()
 
 
-class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
+class ElementsAnnexesMixin(object):
+    """Manage the "annexes" field listing the annexes of selected elements.
+       This is meant to be used by batch actions on a dashboard of elements
+       containing annexes, selected elements (brains) are the elements
+       containing the annexes.  Field "annexes" lists the annexes of selected
+       elements using the "annexes_vocabulary", disabled terms (annexes that
+       may not be used) are not selectable, every selectable annexes are
+       selected by default."""
+
+    # vocabulary used to list the annexes of every selected element
+    annexes_vocabulary = u"imio.annex.contained_annexes"
+    annexes_field_title = _(u'Annexes to download')
+    annexes = []
+    annexes_terms = []
+
+    def _annexes_field(self):
+        """The "annexes" field, terms are self.annexes_terms,
+           every selectable annexes (self.annexes) are selected by default."""
+        return schema.List(
+            __name__='annexes',
+            title=self.annexes_field_title,
+            value_type=schema.Choice(
+                vocabulary=SimpleVocabulary(self.annexes_terms)),
+            default=[annex.UID() for annex in self.annexes],
+            required=True)
+
+    def _annexes_filters(self):
+        """Filters passed to the annexes vocabulary to select annexes."""
+        return {}
+
+    def _element_terms(self, element, **kwargs):
+        """Terms of the annexes of p_element, term token is the annex UID,
+           p_kwargs are passed to the annexes vocabulary."""
+        factory = getUtility(IVocabularyFactory, self.annexes_vocabulary)
+        kwargs.setdefault('filters', self._annexes_filters())
+        return list(factory(element,
+                            token_value='UID',
+                            include_parent_title=True,
+                            **kwargs))
+
+    def _elements(self):
+        """The elements for which annexes are listed, by default every
+           selected elements."""
+        return [brain.getObject() for brain in self.brains]
+
+    def _get_annexes(self):
+        """Return the selectable annexes of every elements,
+           store the annexes vocabulary terms in self.annexes_terms."""
+        self.annexes_terms = []
+        annexes = []
+        for obj in self._elements():
+            categorized_elements = getattr(obj, 'categorized_elements', {})
+            for term in self._element_terms(obj):
+                self.annexes_terms.append(term)
+                if getattr(term, 'disabled', False):
+                    continue
+                annex = obj.get(categorized_elements[term.token]['id'])
+                if IAnnex.providedBy(annex):
+                    annexes.append(annex)
+        return annexes
+
+    def _selected_annexes(self, annex_uids):
+        """Return selected annexes in the selected order, make sure every
+           selected annex is selectable (disabled terms are not)."""
+        annexes_by_uid = {annex.UID(): annex for annex in self.annexes}
+        if set(annex_uids).difference(annexes_by_uid):
+            raise Unauthorized
+        return [annexes_by_uid[annex_uid] for annex_uid in annex_uids]
+
+
+class DownloadElementsAnnexesBatchActionForm(ElementsAnnexesMixin,
+                                             DownloadAnnexesBatchActionForm):
     """Download annexes of selected elements as a Zip file.
        This is meant to be used on a dashboard of elements containing annexes,
        selected elements (brains) are the elements containing the annexes.
@@ -233,9 +302,6 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
 
     label = _CEBA("download-elements-annexes-batch-action-but")
     section = "default"
-    # vocabulary used to list the annexes of every selected element
-    annexes_vocabulary = u"imio.annex.contained_annexes"
-    annexes_terms = []
     annexes_by_folder = False
     # max length of a folder name or filename prefix in the Zip file
     MAX_ZIP_NAME_LENGTH = 80
@@ -246,13 +312,7 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
            several times does not add the fields several times."""
         super(DownloadElementsAnnexesBatchActionForm, self)._update()
         self.fields = type(self).fields + Fields(
-            schema.List(
-                __name__='annexes',
-                title=_(u'Annexes to download'),
-                value_type=schema.Choice(
-                    vocabulary=SimpleVocabulary(self.annexes_terms)),
-                default=[annex.UID() for annex in self.annexes],
-                required=True),
+            self._annexes_field(),
             schema.Bool(__name__='annexes_by_folder',
                         title=_(u'Annexes by folder?'),
                         description=_(u'descr_annexes_by_folder'),
@@ -267,14 +327,6 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
            can unselect some annexes, size of selected annexes is checked
            in _apply."""
         self.total_size = self._total_size()
-
-    def _selected_annexes(self, annex_uids):
-        """Return selected annexes, make sure every selected annex is
-           selectable (disabled terms are not)."""
-        annexes_by_uid = {annex.UID(): annex for annex in self.annexes}
-        if set(annex_uids).difference(annexes_by_uid):
-            raise Unauthorized
-        return [annexes_by_uid[annex_uid] for annex_uid in annex_uids]
 
     def _apply(self, **data):
         """Only download selected annexes, if "annexes" not given,
@@ -293,37 +345,6 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
             return
         self.annexes_by_folder = bool(data.get('annexes_by_folder'))
         return super(DownloadElementsAnnexesBatchActionForm, self)._apply(**data)
-
-    def _annexes_filters(self):
-        """Filters passed to the annexes vocabulary to select annexes."""
-        return {}
-
-    def _element_terms(self, element, **kwargs):
-        """Terms of the annexes of p_element, term token is the annex UID,
-           p_kwargs are passed to the annexes vocabulary."""
-        factory = getUtility(IVocabularyFactory, self.annexes_vocabulary)
-        kwargs.setdefault('filters', self._annexes_filters())
-        return list(factory(element,
-                            token_value='UID',
-                            include_parent_title=True,
-                            **kwargs))
-
-    def _get_annexes(self):
-        """Return the downloadable annexes of every selected elements,
-           store the annexes vocabulary terms in self.annexes_terms."""
-        self.annexes_terms = []
-        annexes = []
-        for brain in self.brains:
-            obj = brain.getObject()
-            categorized_elements = getattr(obj, 'categorized_elements', {})
-            for term in self._element_terms(obj):
-                self.annexes_terms.append(term)
-                if getattr(term, 'disabled', False):
-                    continue
-                annex = obj.get(categorized_elements[term.token]['id'])
-                if IAnnex.providedBy(annex):
-                    annexes.append(annex)
-        return annexes
 
     def _check_annex_not_downloadable(self):
         """Not downloadable annexes are disabled in the annexes vocabulary."""
@@ -362,7 +383,14 @@ class DownloadElementsAnnexesBatchActionForm(DownloadAnnexesBatchActionForm):
         return path
 
 
-class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
+class ExportPDFBatchActionForm(ElementsAnnexesMixin, BaseBatchActionForm):
+    """Concatenate annexes of selected elements into a single PDF.
+       This is meant to be used on a dashboard of elements containing annexes,
+       selected elements (brains) are the elements containing the annexes.
+       Field "annexes" lists the annexes of selected elements, using the
+       "annexes_vocabulary", the user selects (and orders) the annexes to
+       export, annexes that may not be exported (not PDF, only previewable)
+       are disabled."""
 
     label = _CEBA("concatenate-annexes-batch-action-but")
     button_with_icon = True
@@ -371,6 +399,9 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     MAX_TOTAL_SIZE = 78643200
     # set to True to exclude selected elements with _check_element and display it
     CHECK_ELEMENTS = False
+    # vocabulary used to list the annexes of every selected element
+    annexes_vocabulary = u"imio.annex.export_pdf_elements"
+    annexes_field_title = _(u'Annexes to export')
 
     def _max_total_size(self):
         """ """
@@ -379,7 +410,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
     @property
     def description(self):
         """ """
-        descr = super(ConcatenateAnnexesBatchActionForm, self).description
+        descr = super(ExportPDFBatchActionForm, self).description
         descr = translate(descr, domain=descr.domain, context=self.request)
         readable_max_size = calculate_filesize(self._max_total_size())
         descr += translate(
@@ -416,26 +447,28 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                     self._excluded.append((obj, reason))
         return self._excluded
 
-    def _annex_types_vocabulary(self):
-        """The name of the vocabulary factory to use for annex_types field."""
-        return "collective.iconifiedcategory.every_category_uids"
-
     def _update(self):
-        self.fields += Fields(
-            schema.List(
-                __name__='annex_types',
-                title=_(u'Annex types'),
-                value_type=schema.Choice(
-                    vocabulary=self._annex_types_vocabulary()),
-                required=True),
+        """Add the "annexes" and "two_sided" fields.
+           Fields are computed from the class fields so calling update
+           several times does not add the fields several times.
+           Can not apply action if there is nothing to export."""
+        self.annexes = self._get_annexes()
+        self.fields = type(self).fields + Fields(
+            self._annexes_field(),
             schema.Bool(__name__='two_sided',
                         title=_(u'Two-sided?'),
                         description=_(u'descr_two_sided'),
                         default=False,
                         required=False),
         )
-        self.fields["annex_types"].widgetFactory = OrderableCheckBoxFieldWidget
+        self.fields["annexes"].widgetFactory = OrderableCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
+        if not self.annexes:
+            self.do_apply = False
+
+    def _update_widgets(self):
+        """Annexes are concatenated in the selected order."""
+        self.widgets['annexes'].sortable = True
 
     def _total_size(self, annexes):
         """ """
@@ -450,39 +483,22 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         return obj.Title()
 
-    def _element_annexes(self, obj, data):
-        """Return the annexes of p_obj to concatenate, by default the PDF annexes
-           of the selected annex types."""
-        annexes = []
-        sort_on = 'getObjPositionInParent' if \
-            get_sort_categorized_tab() is False else None
-        filters = {'contentType': 'application/pdf'}
-        for annex_type_uid in data['annex_types']:
-            filters['category_uid'] = annex_type_uid
-            annexes += get_categorized_elements(
-                obj,
-                result_type='objects',
-                sort_on=sort_on,
-                filters=filters)
-        return annexes
-
-    def _get_annexes(self, data):
-        """Return the annexes to concatenate of the selected elements not excluded."""
+    def _elements(self):
+        """The selected elements not excluded."""
         excluded = [obj for obj, reason in self._excluded_elements()]
-        annexes = []
-        for brain in self.brains:
-            obj = brain.getObject()
-            if obj not in excluded:
-                annexes += self._element_annexes(obj, data)
-        return annexes
+        return [obj for obj in super(ExportPDFBatchActionForm, self)._elements()
+                if obj not in excluded]
 
     def _annex_content(self, annex):
         """Return the PDF binary content of p_annex."""
         return annex.file.data
 
     def _apply(self, **data):
-        """ """
-        annexes = self._get_annexes(data)
+        """Concatenate selected annexes, in the selected order, if "annexes"
+           not given, every selectable annexes are concatenated."""
+        annexes = self.annexes
+        if data.get('annexes') is not None:
+            annexes = self._selected_annexes(data['annexes'])
         # return if nothing to produce
         if not annexes:
             api.portal.show_message(
@@ -491,7 +507,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
             return
         # can not generate if total size too large
         total_size = self._total_size(annexes)
-        if self._total_size(annexes) > self._max_total_size():
+        if total_size > self._max_total_size():
             api.portal.show_message(
                 _("concatenate_annexes_pdf_too_large_error",
                   mapping={'total_size': calculate_filesize(total_size),
@@ -518,7 +534,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
                 self.request.set(
                     'concatenate_annexes_item_pdf_error_url', annex.aq_inner.aq_parent.absolute_url())
                 return
-            if data['two_sided'] and \
+            if data.get('two_sided') and \
                output_writer.getNumPages() % 2 != 0 and \
                i < len(annexes):  # by position, an annex may be repeated
                 output_writer.addBlankPage()
@@ -539,7 +555,7 @@ class ConcatenateAnnexesBatchActionForm(BaseBatchActionForm):
         elif self.request.RESPONSE.status == 204:
             # return something so the faceted is refrehsed
             return self.request.get('concatenate_annexes_pdf_error_url')
-        return super(ConcatenateAnnexesBatchActionForm, self).render()
+        return super(ExportPDFBatchActionForm, self).render()
 
 
 class ExportPDFForm(z3c_form.Form):

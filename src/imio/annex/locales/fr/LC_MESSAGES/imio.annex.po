@@ -35,8 +35,8 @@ msgid "Annex"
 msgstr "Annexe"
 
 #: ../browser/views.py:235
-msgid "Annex types"
-msgstr "Types d'annexe"
+msgid "Annexes to export"
+msgstr "Annexes à exporter"
 
 #: ../browser/views.py:385
 msgid "Apply"

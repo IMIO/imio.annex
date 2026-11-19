@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from AccessControl import Unauthorized
-from collective.iconifiedcategory.utils import get_categorized_elements
-from imio.annex.browser.views import ConcatenateAnnexesBatchActionForm
 from imio.annex.browser.views import DownloadElementsAnnexesBatchActionForm
+from imio.annex.browser.views import ExportPDFBatchActionForm
 from imio.annex.tests.base import BaseTestCase
 from plone import api
 from PyPDF2 import PdfFileReader
@@ -76,35 +75,107 @@ class TestExportPDFForm(BaseTestCase):
             'attachment;filename=export_pdf_folder.pdf')
 
 
-class TestConcatenateAnnexesBatchActionForm(BaseTestCase):
-    """Test imio.annex.browser.views.ConcatenateAnnexesBatchActionForm."""
+class TestExportPDFBatchActionForm(BaseTestCase):
+    """Test imio.annex.browser.views.ExportPDFBatchActionForm."""
+
+    def setUp(self):
+        super(TestExportPDFBatchActionForm, self).setUp()
+        self.annex1 = self._add_annex(title=u'Annex 1')
+        self.txt_annex = self._add_annex(title=u'Text annex',
+                                         annex_file=self.file_txt)
+        self.folder2 = api.content.create(
+            id='folder2', type='Folder', title='Folder 2', container=self.portal)
+        self.annex2 = api.content.create(
+            type='annex',
+            title=u'Annex 2',
+            file=self.file_pdf,
+            container=self.folder2,
+            content_category='config_-_group-1_-_category-1-1',
+            to_print=False,
+            confidential=False,
+            publishable=False)
+
+    def _form(self, uids, update=True, **attrs):
+        form = ExportPDFBatchActionForm(self.portal, self.request)
+        form.brains = api.content.find(UID=uids, sort_on='id')
+        for name, value in attrs.items():
+            setattr(form, name, value)
+        if update:
+            form.update()
+        return form
+
+    def _num_pages(self, res):
+        res.seek(0)
+        return PdfFileReader(res, strict=False).getNumPages()
+
+    def test_annexes_field(self):
+        """Field "annexes" lists annexes of selected elements, non PDF annexes
+           are disabled, every selectable annexes are selected by default,
+           only selected annexes are exported, in the selected order."""
+        form = self._form([self.folder.UID(), self.folder2.UID()])
+        self.assertTrue(form.do_apply)
+        self.assertEqual(form.annexes, [self.annex1, self.annex2])
+        self.assertEqual(
+            [term.token for term in form.fields['annexes'].field.value_type.vocabulary],
+            [self.annex1.UID(), self.txt_annex.UID(), self.annex2.UID()])
+        self.assertEqual(form.fields['annexes'].field.default,
+                         [self.annex1.UID(), self.annex2.UID()])
+        self.assertTrue(form.widgets['annexes'].sortable)
+        # parent title is displayed in term title
+        self.assertIn(u'Folder 2', form.annexes_terms[-1].title)
+        rendered = form.render()
+        self.assertIn('form-widgets-annexes', rendered)
+        self.assertIn('form-widgets-two_sided', rendered)
+        self.assertEqual(self._num_pages(form._apply()), 2)
+        self.assertEqual(
+            self._num_pages(form._apply(annexes=[self.annex2.UID()])), 1)
+        # selected order is kept
+        self.assertEqual(
+            form._selected_annexes([self.annex2.UID(), self.annex1.UID()]),
+            [self.annex2, self.annex1])
+        # a disabled (or unknown) annex may not be exported
+        self.assertRaises(Unauthorized, form._apply, annexes=[self.txt_annex.UID()])
+
+    def test__update_nothing_to_export(self):
+        """Action can not be applied when selected elements have no PDF annex."""
+        folder3 = api.content.create(
+            id='folder3', type='Folder', title='Folder 3', container=self.portal)
+        form = self._form([folder3.UID()])
+        self.assertEqual(form.annexes, [])
+        self.assertFalse(form.do_apply)
 
     def test__excluded_elements(self):
         """Elements for which _check_element gives a reason are not exported."""
-        annex = self._add_annex()
-        folder2 = api.content.create(id='folder2', type='Folder', title='Folder 2', container=self.portal)
-        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
-        form.brains = api.content.find(UID=[self.folder.UID(), folder2.UID()], sort_on='id')
-        data = {'annex_types': [get_categorized_elements(self.folder)[0]['category_uid']]}
+        uids = [self.folder.UID(), self.folder2.UID()]
+        form = self._form(uids)
         self.assertEqual(form._excluded_elements(), [])
-        self.assertEqual(form._get_annexes(data), [annex])
-        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
-        form.brains = api.content.find(UID=[self.folder.UID(), folder2.UID()], sort_on='id')
-        form.CHECK_ELEMENTS = True
-        form._check_element = lambda obj: obj.getId() == 'folder' and u'Excluded' or None
+        self.assertEqual(form.annexes, [self.annex1, self.annex2])
+        form = self._form(
+            uids,
+            CHECK_ELEMENTS=True,
+            _check_element=lambda obj: obj.getId() == 'folder' and u'Excluded' or None)
         self.assertEqual(form._excluded_elements(), [(self.folder, u'Excluded')])
-        self.assertEqual(form._get_annexes(data), [])
+        self.assertEqual(form.annexes, [self.annex2])
+        self.assertIn(u'Excluded', form.description)
+        # annexes of excluded elements may not be exported
+        self.assertRaises(Unauthorized, form._apply, annexes=[self.annex1.UID()])
+
+    def test__apply_max_total_size(self):
+        """Size of selected annexes is checked when applying."""
+        form = self._form([self.folder.UID(), self.folder2.UID()],
+                          _max_total_size=lambda: self.annex1.file.size)
+        self.assertTrue(form.do_apply)
+        self.assertIsNone(form._apply())
+        self.assertNotIn('pdf_file_content', self.request)
+        self.assertEqual(
+            self._num_pages(form._apply(annexes=[self.annex1.UID()])), 1)
 
     def test__apply_two_sided(self):
         """two_sided adds a blank page after every element but the last, even a repeated one."""
-        annex1 = self._add_annex(title=u'Annex 1')
-        annex2 = self._add_annex(title=u'Annex 2')
-        form = ConcatenateAnnexesBatchActionForm(self.portal, self.request)
-        form._get_annexes = lambda data: [annex1, annex2, annex1, annex2]
-        res = form._apply(two_sided=True)
-        res.seek(0)
+        form = self._form([], update=False)
+        form.annexes = [self.annex1, self.annex2, self.annex1, self.annex2]
         # 4 single page annexes and 3 blank pages
-        self.assertEqual(PdfFileReader(res, strict=False).getNumPages(), 7)
+        self.assertEqual(self._num_pages(form._apply(two_sided=True)), 7)
 
 
 class TestDownloadElementsAnnexesBatchActionForm(BaseTestCase):
