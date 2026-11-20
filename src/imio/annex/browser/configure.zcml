@@ -23,11 +23,11 @@
         class="imio.annex.browser.views.DownloadElementsAnnexesBatchActionForm"
         permission="zope2.View" /-->
 
-    <!-- Concatenate annexes batch action -->
+    <!-- Export annexes of selected elements as a single PDF batch action (dashboard) -->
     <!--browser:page
         for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"
         name="concatenate-annexes-batch-action"
-        class="imio.annex.browser.views.ConcatenateAnnexesBatchActionForm"
+        class="imio.annex.browser.views.ExportPDFBatchActionForm"
         permission="zope2.View" /-->
 
     <!-- Example of view registration to export selected annexes as a single PDF -->

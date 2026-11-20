@@ -5,7 +5,18 @@ Changelog
 2.28.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Renamed `ConcatenateAnnexesBatchActionForm` to `ExportPDFBatchActionForm`
+  for consistency with `ExportPDFForm`.  Field `annex_types` is replaced by
+  field `annexes` that works like `DownloadElementsAnnexesBatchActionForm.annexes`:
+  it lists annexes of selected elements (not excluded by `_check_element`) using
+  the vocabulary defined in `annexes_vocabulary` (`imio.annex.export_pdf_elements`
+  by default, so non PDF and only previewable annexes are disabled), every
+  selectable annexes are selected by default and it is sortable, annexes are
+  concatenated in the selected order.  Max total size is checked on selected
+  annexes.  Hooks `_annex_types_vocabulary` and `_element_annexes` were removed,
+  use `annexes_vocabulary`, `_annexes_filters` or `_element_terms` instead.
+  Logic managing field `annexes` is shared in `ElementsAnnexesMixin`.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)
