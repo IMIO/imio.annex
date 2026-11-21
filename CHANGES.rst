@@ -2,7 +2,30 @@ Changelog
 =========
 
 
-2.28.0 (unreleased)
+2.28.1 (unreleased)
+-------------------
+
+- Renamed `ConcatenateAnnexesBatchActionForm` to `ExportPDFBatchActionForm`
+  for consistency with `ExportPDFForm`.  Field `annex_types` is replaced by
+  field `annexes` that works like `DownloadElementsAnnexesBatchActionForm.annexes`:
+  it lists annexes of selected elements (not excluded by `_check_element`) using
+  the vocabulary defined in `annexes_vocabulary` (`imio.annex.export_pdf_elements`
+  by default, so non PDF and only previewable annexes are disabled), every
+  selectable annexes are selected by default and it is sortable, annexes are
+  concatenated in the selected order.  Max total size is checked on selected
+  annexes.  Hooks `_annex_types_vocabulary` and `_element_annexes` were removed,
+  use `annexes_vocabulary`, `_annexes_filters` or `_element_terms` instead.
+  Logic managing field `annexes` is shared in `ElementsAnnexesMixin`.
+  [gbastien]
+- Added `ExportZipForm`, the Zip counterpart of `ExportPDFForm` to download selected
+  annexes of an element: needs to be registered as `@@export-zip-form` by the using
+  applications. Zip writing moved to the `zip_annexes` and `unique_zip_path` functions,
+  `ExportPDFForm` exports through the `_do_export` hook.
+  Added `_default_annexes` and `_annex_from_term` hooks in `ElementsAnnexesMixin`.
+  [sgeulette]
+
+
+2.28.0 (2026-11-16)
 -------------------
 
 - Moved `PMCheckBoxFieldWidget` from `Products.PloneMeeting` to
@@ -59,12 +82,6 @@ Changelog
   download are computed by `_get_annexes`, path in the Zip file by `_zip_path`
   (duplicated paths are now made unique) and Zip file name by `_zip_filename`.
   [gbastien]
-- Added `ExportZipForm`, the Zip counterpart of `ExportPDFForm` to download selected
-  annexes of an element: needs to be registered as `@@export-zip-form` by the using
-  applications. Zip writing moved to the `zip_annexes` and `unique_zip_path` functions,
-  `ExportPDFForm` exports through the `_do_export` hook.
-  Added `_default_annexes` and `_annex_from_term` hooks in `DownloadElementsAnnexesBatchActionForm`.
-  [sgeulette]
 
 2.27.1 (2026-01-15)
 -------------------
