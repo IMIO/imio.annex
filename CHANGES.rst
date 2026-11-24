@@ -28,6 +28,13 @@ Changelog
   is not served as `application/zip`.  `ExportZipForm` also manages `LargeZipFile`
   and displays an error instead of failing.
   [gbastien]
+- Zip logic shared by `DownloadAnnexesBatchActionForm` and `ExportZipForm` moved to
+  `ZipAnnexesMixin`, so `ExportZipForm` gets the `_max_total_size`, `_zip_filename`,
+  `_unique_zip_path` and `zipfiles` hooks.  `_total_size` and `do_zip` now take
+  the `annexes` parameter, `do_zip` manages `LargeZipFile` and returns `None`
+  in this case.  Added `_check_max_total_size(annexes)` that displays an error
+  when max total size is exceeded.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)

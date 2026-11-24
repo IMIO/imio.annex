@@ -77,7 +77,80 @@ def unique_zip_path(path, used_paths):
     return unique_path
 
 
-class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
+class ZipAnnexesMixin(object):
+    """Download annexes as a Zip file, shared by the batch actions and
+       the ExportZipForm.  do_zip stores the Zip file content in the request,
+       it is then returned by render."""
+
+    # gives a human readable size of "250.0 Mb"
+    MAX_TOTAL_SIZE = 262144000
+
+    def _max_total_size(self):
+        """ """
+        return self.MAX_TOTAL_SIZE
+
+    def _total_size(self, annexes):
+        """Total file size of p_annexes."""
+        return sum(IPrimaryFieldInfo(annex).value.size for annex in annexes)
+
+    def _check_max_total_size(self, annexes):
+        """Return True if total size of p_annexes does not exceed
+           the max total size, otherwise display an error and return False."""
+        total_size = self._total_size(annexes)
+        if total_size <= self._max_total_size():
+            return True
+        api.portal.show_message(
+            _("download_annexes_zip_too_large_error",
+              mapping={'total_size': calculate_filesize(total_size),
+                       'max_total_size': calculate_filesize(
+                           self._max_total_size())}),
+            request=self.request,
+            type="error")
+        return False
+
+    def _zip_filename(self):
+        """The name of the generated Zip file."""
+        return '%s.zip' % self.context.getId()
+
+    def _zip_path(self, annex):
+        """The path of p_annex in the Zip file."""
+        return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
+
+    def _unique_zip_path(self, path, used_paths):
+        """Make sure p_path is unique in the Zip file."""
+        return unique_zip_path(path, used_paths)
+
+    def zipfiles(self, annexes):
+        """Return zipped p_annexes."""
+        used_paths = set()
+        return zip_annexes(
+            annexes, lambda annex: self._unique_zip_path(self._zip_path(annex), used_paths))
+
+    def do_zip(self, annexes):
+        """Zip p_annexes and store the Zip file content in the request so it
+           is returned by render.  Return None and display an error if there
+           are too much annexes to zip.  Response headers are set once the Zip
+           file is generated so a failure is not served as a Zip."""
+        try:
+            zipped_content = self.zipfiles(annexes)
+        except zipfile.LargeZipFile:
+            api.portal.show_message(LARGE_ZIP_FILE_MESSAGE, request=self.request, type="error")
+            return
+        self.request.response.setHeader('Content-Type', 'application/zip')
+        self.request.response.setHeader(
+            'Content-disposition', 'attachment;filename=%s'
+            % self._zip_filename())
+        self.request.set('zip_file_content', zipped_content)
+        return zipped_content
+
+    def render(self):
+        """ """
+        if 'zip_file_content' in self.request:
+            return self.request['zip_file_content']
+        return super(ZipAnnexesMixin, self).render()
+
+
+class DownloadAnnexesBatchActionForm(ZipAnnexesMixin, BaseBatchActionForm):
     """Download selected annexes as a Zip file.
        This is meant to be used on the "annexes" tab of an element,
        selected elements (brains) are annexes."""
@@ -86,14 +159,8 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
     button_with_icon = True
     apply_button_title = _CEBA('Download')
     section = "annexes"
-    # gives a human readable size of "250.0 Mb"
-    MAX_TOTAL_SIZE = 262144000
     annexes = []
     annex_not_downloadable = None
-
-    def _max_total_size(self):
-        """ """
-        return self.MAX_TOTAL_SIZE
 
     @property
     def description(self):
@@ -160,18 +227,9 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
 
     def _check_total_size(self):
         """ """
-        self.total_size = self._total_size()
+        self.total_size = self._total_size(self.annexes)
         if self.total_size > self._max_total_size():
             self.do_apply = False
-
-    def _total_size(self):
-        """ """
-        total = 0
-        for annex in self.annexes:
-            primary_field = IPrimaryFieldInfo(annex)
-            size = primary_field.value.size
-            total += size
-        return total
 
     def _update(self):
         """Can not apply action if total size exceeded,
@@ -188,49 +246,13 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         """ """
         return True
 
-    def _zip_filename(self):
-        """The name of the generated Zip file."""
-        return '%s.zip' % self.context.getId()
-
-    def _zip_path(self, annex):
-        """The path of p_annex in the Zip file."""
-        return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
-
-    def _unique_zip_path(self, path, used_paths):
-        """Make sure p_path is unique in the Zip file."""
-        return unique_zip_path(path, used_paths)
-
-    def zipfiles(self, content):
-        """Return zipped content."""
-        used_paths = set()
-        return zip_annexes(
-            content, lambda annex: self._unique_zip_path(self._zip_path(annex), used_paths))
-
     def _apply(self, **data):
-        """ """
-        try:
-            return self.do_zip()
-        except zipfile.LargeZipFile:
-            api.portal.show_message(LARGE_ZIP_FILE_MESSAGE, self.request, type="error")
+        """Zip annexes returned by self._get_annexes,
+           redirect to the context if zipping failed."""
+        zipped_content = self.do_zip(self.annexes)
+        if zipped_content is None:
             return self.request.response.redirect(self.context.absolute_url())
-
-    def do_zip(self):
-        """Zip annexes returned by self._get_annexes, response headers are set
-           once the Zip file is generated so a failure is not served as a Zip."""
-        zipped_content = self.zipfiles(self.annexes)
-        self.request.response.setHeader('Content-Type', 'application/zip')
-        self.request.response.setHeader(
-            'Content-disposition', 'attachment;filename=%s'
-            % self._zip_filename())
-        self.request.set('zip_file_content', zipped_content)
         return zipped_content
-
-    def render(self):
-        """ """
-        if 'zip_file_content' in self.request:
-            return self.request['zip_file_content']
-        else:
-            return super(DownloadAnnexesBatchActionForm, self).render()
 
 
 class ElementsAnnexesMixin(object):
@@ -349,22 +371,14 @@ class DownloadElementsAnnexesBatchActionForm(ElementsAnnexesMixin,
         """Do not disable the action when total size is exceeded so the user
            can unselect some annexes, size of selected annexes is checked
            in _apply."""
-        self.total_size = self._total_size()
+        self.total_size = self._total_size(self.annexes)
 
     def _apply(self, **data):
         """Only download selected annexes, if "annexes" not given,
            every downloadable annexes are downloaded."""
         if data.get('annexes') is not None:
             self.annexes = self._selected_annexes(data['annexes'])
-        total_size = self._total_size()
-        if total_size > self._max_total_size():
-            api.portal.show_message(
-                _("download_annexes_zip_too_large_error",
-                  mapping={'total_size': calculate_filesize(total_size),
-                           'max_total_size': calculate_filesize(
-                               self._max_total_size())}),
-                request=self.request,
-                type="error")
+        if not self._check_max_total_size(self.annexes):
             return
         self.annexes_by_folder = bool(data.get('annexes_by_folder'))
         return super(DownloadElementsAnnexesBatchActionForm, self)._apply(**data)
@@ -704,15 +718,13 @@ class ExportPDFForm(z3c_form.Form):
         return super(ExportPDFForm, self).render()
 
 
-class ExportZipForm(ExportPDFForm):
+class ExportZipForm(ZipAnnexesMixin, ExportPDFForm):
     """Download selected elements of context as a Zip file."""
 
     vocabulary = u"imio.annex.contained_annexes"
 
     label = _(u"Export Zip")
     description = u""
-    # gives a human readable size of "250.0 Mb"
-    MAX_TOTAL_SIZE = DownloadAnnexesBatchActionForm.MAX_TOTAL_SIZE
 
     def __init__(self, context, request):
         super(ExportZipForm, self).__init__(context, request)
@@ -723,35 +735,8 @@ class ExportZipForm(ExportPDFForm):
         """Hook, the annex p_token (a selected term token) stands for."""
         return self.context.get(token)
 
-    def _zip_path(self, annex):
-        """Hook, the path of p_annex in the Zip file."""
-        return safe_unicode(IPrimaryFieldInfo(annex).value.filename)
-
     def _do_export(self, data):
+        """Zip selected annexes if max total size is not exceeded."""
         annexes = [self._element(token) for token in data['elements']]
-        total_size = sum(IPrimaryFieldInfo(annex).value.size for annex in annexes)
-        if total_size > self.MAX_TOTAL_SIZE:
-            api.portal.show_message(
-                _("download_annexes_zip_too_large_error",
-                  mapping={'total_size': calculate_filesize(total_size),
-                           'max_total_size': calculate_filesize(self.MAX_TOTAL_SIZE)}),
-                request=self.request,
-                type="error")
-            return
-        used_paths = set()
-        try:
-            zipped_content = zip_annexes(
-                annexes, lambda annex: unique_zip_path(self._zip_path(annex), used_paths))
-        except zipfile.LargeZipFile:
-            api.portal.show_message(LARGE_ZIP_FILE_MESSAGE, request=self.request, type="error")
-            return
-        self.request.set('zip_file_content', zipped_content)
-        return zipped_content
-
-    def render(self):
-        if 'zip_file_content' in self.request:
-            self.request.response.setHeader('Content-Type', 'application/zip')
-            self.request.response.setHeader(
-                'Content-disposition', 'attachment;filename=%s.zip' % self.context.getId())
-            return self.request['zip_file_content']
-        return super(ExportZipForm, self).render()
+        if self._check_max_total_size(annexes):
+            return self.do_zip(annexes)
