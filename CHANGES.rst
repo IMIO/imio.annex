@@ -17,6 +17,29 @@ Changelog
   use `annexes_vocabulary`, `_annexes_filters` or `_element_terms` instead.
   Logic managing field `annexes` is shared in `ElementsAnnexesMixin`.
   [gbastien]
+- Added `ExportZipForm`, the Zip counterpart of `ExportPDFForm` to download selected
+  annexes of an element: needs to be registered as `@@export-zip-form` by the using
+  applications. Zip writing moved to the `zip_annexes` and `unique_zip_path` functions,
+  `ExportPDFForm` exports through the `_do_export` hook.
+  Added `_default_annexes` and `_annex_from_term` hooks in `ElementsAnnexesMixin`.
+  [sgeulette]
+- `DownloadAnnexesBatchActionForm.do_zip` sets the Zip response headers once the
+  Zip file is generated so the redirect done when zipping raises `LargeZipFile`
+  is not served as `application/zip`.  `ExportZipForm` also manages `LargeZipFile`
+  and displays an error instead of failing.
+  [gbastien]
+- Zip logic shared by `DownloadAnnexesBatchActionForm` and `ExportZipForm` moved to
+  `ZipAnnexesMixin`, so `ExportZipForm` gets the `_max_total_size`, `_zip_filename`,
+  `_unique_zip_path` and `zipfiles` hooks.  `_total_size` and `do_zip` now take
+  the `annexes` parameter, `do_zip` manages `LargeZipFile` and returns `None`
+  in this case.  Added `_check_max_total_size(annexes)` that displays an error
+  when max total size is exceeded.
+  [gbastien]
+- Max total size check shared by `ZipAnnexesMixin` and `ExportPDFBatchActionForm`
+  moved to `MaxTotalSizeMixin` (`_max_total_size`, `_total_size(annexes)` and
+  `_check_max_total_size(annexes)`), the displayed error is defined by
+  `too_large_error_msg`.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)

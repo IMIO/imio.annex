@@ -3,12 +3,18 @@
 from AccessControl import Unauthorized
 from imio.annex.browser.views import DownloadElementsAnnexesBatchActionForm
 from imio.annex.browser.views import ExportPDFBatchActionForm
+from imio.annex.browser.views import LARGE_ZIP_FILE_MESSAGE
 from imio.annex.tests.base import BaseTestCase
 from plone import api
+from Products.statusmessages.interfaces import IStatusMessage
 from PyPDF2 import PdfFileReader
 
 import io
 import zipfile
+
+
+def _raise_large_zip_file(*args):
+    raise zipfile.LargeZipFile
 
 
 class TestExportPDFForm(BaseTestCase):
@@ -73,6 +79,58 @@ class TestExportPDFForm(BaseTestCase):
         self.assertEqual(
             self.request.RESPONSE.getHeader('content-disposition'),
             'attachment;filename=export_pdf_folder.pdf')
+
+
+class TestExportZipForm(BaseTestCase):
+    """Test imio.annex.browser.views.ExportZipForm."""
+
+    def setUp(self):
+        super(TestExportZipForm, self).setUp()
+        self.annex1 = self._add_annex(title=u'Annex 1')
+        self.annex2 = self._add_annex(title=u'Annex 2')
+        self.txt_annex = self._add_annex(title=u'Text annex', annex_file=self.file_txt)
+        self.form = self.folder.restrictedTraverse('@@export-zip-form')
+
+    def _zip_names(self, data):
+        return sorted(zipfile.ZipFile(io.BytesIO(data)).namelist())
+
+    def test_fields(self):
+        """Every annex is selectable, two_sided is useless for a Zip file."""
+        self.form.update()
+        self.assertEqual(list(self.form.fields.keys()), ['elements'])
+        self.assertEqual([term.token for term in self.form.widgets['elements'].terms],
+                         [self.annex1.getId(), self.annex2.getId(), self.txt_annex.getId()])
+
+    def test_handleApply(self):
+        """Selected annexes are zipped, same filenames are made unique."""
+        self.request['form.widgets.elements'] = [self.annex1.getId(), self.annex2.getId(),
+                                                 self.txt_annex.getId()]
+        self.form.update()
+        res = self.form.handleApply(self.form, None)
+        self.assertEqual(self._zip_names(res), [u'file-1.pdf', u'file.pdf', u'file.txt'])
+        self.assertEqual(self.form.render(), res)
+        self.assertEqual(self.request.RESPONSE.getHeader('content-disposition'),
+                         'attachment;filename=folder.zip')
+
+    def test__do_export_max_total_size(self):
+        """Nothing is exported when the total size is exceeded."""
+        self.form.update()
+        self.form.MAX_TOTAL_SIZE = self.annex1.file.size
+        self.assertIsNotNone(self.form._do_export({'elements': [self.annex1.getId()]}))
+        del self.request.other['zip_file_content']
+        self.assertIsNone(self.form._do_export({'elements': [self.annex1.getId(),
+                                                             self.annex2.getId()]}))
+        self.assertNotIn('zip_file_content', self.request)
+
+    def test__do_export_large_zip_file(self):
+        """Nothing is exported and an error is displayed when zipping
+           raises LargeZipFile."""
+        self.form.update()
+        self.form._zip_path = _raise_large_zip_file
+        self.assertIsNone(self.form._do_export({'elements': [self.annex1.getId()]}))
+        self.assertNotIn('zip_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [LARGE_ZIP_FILE_MESSAGE])
 
 
 class TestExportPDFBatchActionForm(BaseTestCase):
@@ -167,6 +225,8 @@ class TestExportPDFBatchActionForm(BaseTestCase):
         self.assertTrue(form.do_apply)
         self.assertIsNone(form._apply())
         self.assertNotIn('pdf_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [u'concatenate_annexes_pdf_too_large_error'])
         self.assertEqual(
             self._num_pages(form._apply(annexes=[self.annex1.UID()])), 1)
 
@@ -260,7 +320,22 @@ class TestDownloadElementsAnnexesBatchActionForm(BaseTestCase):
                    if annex.file.filename == u'file.txt']
         self.assertIsNone(form._apply(annexes=[annex.UID() for annex in form.annexes]))
         self.assertNotIn('zip_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [u'download_annexes_zip_too_large_error'])
         self.assertEqual(self._zip_names(form._apply(annexes=txt_uid)), [u'file.txt'])
+
+    def test__apply_large_zip_file(self):
+        """When zipping raises LargeZipFile, the user is redirected with
+           an error, the response is not served as a Zip file."""
+        form = self._form([self.folder.UID(), self.folder2.UID()])
+        form._zip_path = _raise_large_zip_file
+        form._apply()
+        self.assertNotIn('zip_file_content', self.request)
+        self.assertNotEqual(self.request.RESPONSE.getHeader('content-type'), 'application/zip')
+        self.assertIsNone(self.request.RESPONSE.getHeader('content-disposition'))
+        self.assertEqual(self.request.RESPONSE.getHeader('location'), self.portal.absolute_url())
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [LARGE_ZIP_FILE_MESSAGE])
 
     def test__zip_path_element_name(self):
         """_zip_folder_name and _zip_filename_prefix may be overridden,

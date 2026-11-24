@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-10-09 12:43+0000\n"
+"POT-Creation-Date: 2026-11-21 08:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,12 +14,12 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.annex\n"
 
-#: ../vocabularies.py
-msgid " [only previewable]"
-msgstr ""
-
 #: ../browser/views.py
 msgid " [PDF required]"
+msgstr ""
+
+#: ../vocabularies.py
+msgid " [only previewable]"
 msgstr ""
 
 #: ../columns.py:87
@@ -34,11 +34,19 @@ msgstr ""
 msgid "Annex"
 msgstr ""
 
-#: ../browser/views.py:235
+#: ../browser/views.py:336
+msgid "Annexes by folder?"
+msgstr ""
+
+#: ../browser/views.py:243
+msgid "Annexes to download"
+msgstr ""
+
+#: ../browser/views.py:423
 msgid "Annexes to export"
 msgstr ""
 
-#: ../browser/views.py:385
+#: ../browser/views.py:612
 msgid "Apply"
 msgstr ""
 
@@ -46,16 +54,24 @@ msgstr ""
 msgid "Apply the first category on all elements"
 msgstr ""
 
-#: ../browser/views.py:432
+#: ../browser/views.py:663
 msgid "Cancel"
 msgstr ""
 
-#: ../browser/views.py:371
+#: ../browser/views.py:598
 msgid "Elements to export in PDF"
 msgstr ""
 
-#: ../browser/views.py:361
+#: ../browser/views.py:716
+msgid "Elements to export in Zip"
+msgstr ""
+
+#: ../browser/views.py:588
 msgid "Export PDF"
+msgstr ""
+
+#: ../browser/views.py:708
+msgid "Export Zip"
 msgstr ""
 
 #: ../content/annex.py:52
@@ -66,7 +82,7 @@ msgstr ""
 msgid "Installs the imio.annex add-on."
 msgstr ""
 
-#: ../browser/views.py:297
+#: ../browser/views.py:524
 msgid "Nothing to export."
 msgstr ""
 
@@ -74,7 +90,7 @@ msgstr ""
 msgid "Scan metadata (fields to_sign/signed hidden)"
 msgstr ""
 
-#: ../browser/views.py:207
+#: ../browser/views.py:449
 msgid "These elements will not be exported:"
 msgstr ""
 
@@ -82,28 +98,8 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: ../browser/views.py:240
+#: ../browser/views.py:478
 msgid "Two-sided?"
-msgstr ""
-
-#: ../browser/views.py:319
-msgid "concatenate_annexes_pdf_read_error"
-msgstr ""
-
-#: ../browser/views.py:304
-msgid "concatenate_annexes_pdf_too_large_error"
-msgstr ""
-
-#: ../browser/views.py:241
-msgid "descr_two_sided"
-msgstr ""
-
-#: ../browser/views.py:362
-msgid "export_pdf_descr"
-msgstr ""
-
-#: ../profiles.zcml:16
-msgid "imio.annex"
 msgstr ""
 
 #. Default: "None."
@@ -111,15 +107,30 @@ msgstr ""
 msgid "checkbox_widget_no_values"
 msgstr ""
 
-msgid "Annexes by folder?"
+#: ../browser/views.py:546
+msgid "concatenate_annexes_pdf_read_error"
 msgstr ""
 
+#: ../browser/views.py:531
+msgid "concatenate_annexes_pdf_too_large_error"
+msgstr ""
+
+#: ../browser/views.py:337
 msgid "descr_annexes_by_folder"
 msgstr ""
 
-msgid "Annexes to download"
+#: ../browser/views.py:479
+msgid "descr_two_sided"
 msgstr ""
 
-#. Default: "Error while downloading the Zip file, size of selected annexes is ${total_size} but the maximum size is ${max_total_size}!"
+#: ../browser/views.py:358
 msgid "download_annexes_zip_too_large_error"
+msgstr ""
+
+#: ../browser/views.py:589
+msgid "export_pdf_descr"
+msgstr ""
+
+#: ../profiles.zcml:16
+msgid "imio.annex"
 msgstr ""
