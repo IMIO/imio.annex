@@ -31,6 +31,10 @@ import re
 import zipfile
 
 
+# message displayed when zipping raises zipfile.LargeZipFile
+LARGE_ZIP_FILE_MESSAGE = "Too much annexes to zip, try selecting fewer annexes..."
+
+
 def zip_annexes(annexes, zip_path):
     """Return the Zip binary content of p_annexes, p_zip_path(annex) gives the
        (unique) path of an annex in the Zip file.
@@ -207,17 +211,17 @@ class DownloadAnnexesBatchActionForm(BaseBatchActionForm):
         try:
             return self.do_zip()
         except zipfile.LargeZipFile:
-            message = "Too much annexes to zip, try selecting fewer annexes..."
-            api.portal.show_message(message, self.request, type="error")
+            api.portal.show_message(LARGE_ZIP_FILE_MESSAGE, self.request, type="error")
             return self.request.response.redirect(self.context.absolute_url())
 
     def do_zip(self):
-        """ Zip annexes returned by self._get_annexes"""
+        """Zip annexes returned by self._get_annexes, response headers are set
+           once the Zip file is generated so a failure is not served as a Zip."""
+        zipped_content = self.zipfiles(self.annexes)
         self.request.response.setHeader('Content-Type', 'application/zip')
         self.request.response.setHeader(
             'Content-disposition', 'attachment;filename=%s'
             % self._zip_filename())
-        zipped_content = self.zipfiles(self.annexes)
         self.request.set('zip_file_content', zipped_content)
         return zipped_content
 
@@ -735,8 +739,12 @@ class ExportZipForm(ExportPDFForm):
                 type="error")
             return
         used_paths = set()
-        zipped_content = zip_annexes(
-            annexes, lambda annex: unique_zip_path(self._zip_path(annex), used_paths))
+        try:
+            zipped_content = zip_annexes(
+                annexes, lambda annex: unique_zip_path(self._zip_path(annex), used_paths))
+        except zipfile.LargeZipFile:
+            api.portal.show_message(LARGE_ZIP_FILE_MESSAGE, request=self.request, type="error")
+            return
         self.request.set('zip_file_content', zipped_content)
         return zipped_content
 

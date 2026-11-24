@@ -3,12 +3,18 @@
 from AccessControl import Unauthorized
 from imio.annex.browser.views import DownloadElementsAnnexesBatchActionForm
 from imio.annex.browser.views import ExportPDFBatchActionForm
+from imio.annex.browser.views import LARGE_ZIP_FILE_MESSAGE
 from imio.annex.tests.base import BaseTestCase
 from plone import api
+from Products.statusmessages.interfaces import IStatusMessage
 from PyPDF2 import PdfFileReader
 
 import io
 import zipfile
+
+
+def _raise_large_zip_file(*args):
+    raise zipfile.LargeZipFile
 
 
 class TestExportPDFForm(BaseTestCase):
@@ -115,6 +121,16 @@ class TestExportZipForm(BaseTestCase):
         self.assertIsNone(self.form._do_export({'elements': [self.annex1.getId(),
                                                              self.annex2.getId()]}))
         self.assertNotIn('zip_file_content', self.request)
+
+    def test__do_export_large_zip_file(self):
+        """Nothing is exported and an error is displayed when zipping
+           raises LargeZipFile."""
+        self.form.update()
+        self.form._zip_path = _raise_large_zip_file
+        self.assertIsNone(self.form._do_export({'elements': [self.annex1.getId()]}))
+        self.assertNotIn('zip_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [LARGE_ZIP_FILE_MESSAGE])
 
 
 class TestExportPDFBatchActionForm(BaseTestCase):
@@ -303,6 +319,19 @@ class TestDownloadElementsAnnexesBatchActionForm(BaseTestCase):
         self.assertIsNone(form._apply(annexes=[annex.UID() for annex in form.annexes]))
         self.assertNotIn('zip_file_content', self.request)
         self.assertEqual(self._zip_names(form._apply(annexes=txt_uid)), [u'file.txt'])
+
+    def test__apply_large_zip_file(self):
+        """When zipping raises LargeZipFile, the user is redirected with
+           an error, the response is not served as a Zip file."""
+        form = self._form([self.folder.UID(), self.folder2.UID()])
+        form._zip_path = _raise_large_zip_file
+        form._apply()
+        self.assertNotIn('zip_file_content', self.request)
+        self.assertNotEqual(self.request.RESPONSE.getHeader('content-type'), 'application/zip')
+        self.assertIsNone(self.request.RESPONSE.getHeader('content-disposition'))
+        self.assertEqual(self.request.RESPONSE.getHeader('location'), self.portal.absolute_url())
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [LARGE_ZIP_FILE_MESSAGE])
 
     def test__zip_path_element_name(self):
         """_zip_folder_name and _zip_filename_prefix may be overridden,

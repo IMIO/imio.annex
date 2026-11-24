@@ -23,6 +23,11 @@ Changelog
   `ExportPDFForm` exports through the `_do_export` hook.
   Added `_default_annexes` and `_annex_from_term` hooks in `ElementsAnnexesMixin`.
   [sgeulette]
+- `DownloadAnnexesBatchActionForm.do_zip` sets the Zip response headers once the
+  Zip file is generated so the redirect done when zipping raises `LargeZipFile`
+  is not served as `application/zip`.  `ExportZipForm` also manages `LargeZipFile`
+  and displays an error instead of failing.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)
