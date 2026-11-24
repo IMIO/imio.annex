@@ -77,13 +77,13 @@ def unique_zip_path(path, used_paths):
     return unique_path
 
 
-class ZipAnnexesMixin(object):
-    """Download annexes as a Zip file, shared by the batch actions and
-       the ExportZipForm.  do_zip stores the Zip file content in the request,
-       it is then returned by render."""
+class MaxTotalSizeMixin(object):
+    """Make sure total file size of annexes to export does not exceed
+       MAX_TOTAL_SIZE (in bytes), that subclasses must define."""
 
-    # gives a human readable size of "250.0 Mb"
-    MAX_TOTAL_SIZE = 262144000
+    # error displayed when max total size is exceeded,
+    # mapping receives "total_size" and "max_total_size"
+    too_large_error_msg = None
 
     def _max_total_size(self):
         """ """
@@ -95,18 +95,29 @@ class ZipAnnexesMixin(object):
 
     def _check_max_total_size(self, annexes):
         """Return True if total size of p_annexes does not exceed
-           the max total size, otherwise display an error and return False."""
+           the max total size, otherwise display too_large_error_msg
+           and return False."""
         total_size = self._total_size(annexes)
         if total_size <= self._max_total_size():
             return True
         api.portal.show_message(
-            _("download_annexes_zip_too_large_error",
+            _(self.too_large_error_msg,
               mapping={'total_size': calculate_filesize(total_size),
                        'max_total_size': calculate_filesize(
                            self._max_total_size())}),
             request=self.request,
             type="error")
         return False
+
+
+class ZipAnnexesMixin(MaxTotalSizeMixin):
+    """Download annexes as a Zip file, shared by the batch actions and
+       the ExportZipForm.  do_zip stores the Zip file content in the request,
+       it is then returned by render."""
+
+    # gives a human readable size of "250.0 Mb"
+    MAX_TOTAL_SIZE = 262144000
+    too_large_error_msg = _("download_annexes_zip_too_large_error")
 
     def _zip_filename(self):
         """The name of the generated Zip file."""
@@ -420,7 +431,7 @@ class DownloadElementsAnnexesBatchActionForm(ElementsAnnexesMixin,
         return path
 
 
-class ExportPDFBatchActionForm(ElementsAnnexesMixin, BaseBatchActionForm):
+class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatchActionForm):
     """Concatenate annexes of selected elements into a single PDF.
        This is meant to be used on a dashboard of elements containing annexes,
        selected elements (brains) are the elements containing the annexes.
@@ -434,15 +445,12 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, BaseBatchActionForm):
     apply_button_title = _CEBA('Download')
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
+    too_large_error_msg = _("concatenate_annexes_pdf_too_large_error")
     # set to True to exclude selected elements with _check_element and display it
     CHECK_ELEMENTS = False
     # vocabulary used to list the annexes of every selected element
     annexes_vocabulary = u"imio.annex.export_pdf_elements"
     annexes_field_title = _(u'Annexes to export')
-
-    def _max_total_size(self):
-        """ """
-        return self.MAX_TOTAL_SIZE
 
     @property
     def description(self):
@@ -507,15 +515,6 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, BaseBatchActionForm):
         """Annexes are concatenated in the selected order."""
         self.widgets['annexes'].sortable = True
 
-    def _total_size(self, annexes):
-        """ """
-        total = 0
-        for annex in annexes:
-            primary_field = IPrimaryFieldInfo(annex)
-            size = primary_field.value.size
-            total += size
-        return total
-
     def _error_obj_title(self, obj):
         """ """
         return obj.Title()
@@ -543,15 +542,7 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, BaseBatchActionForm):
                 request=self.request)
             return
         # can not generate if total size too large
-        total_size = self._total_size(annexes)
-        if total_size > self._max_total_size():
-            api.portal.show_message(
-                _("concatenate_annexes_pdf_too_large_error",
-                  mapping={'total_size': calculate_filesize(total_size),
-                           'max_total_size': calculate_filesize(
-                           self._max_total_size())}),
-                request=self.request,
-                type="error")
+        if not self._check_max_total_size(annexes):
             return
         # create unique PDF file
         output_writer = PdfFileWriter()

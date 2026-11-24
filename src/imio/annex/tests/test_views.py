@@ -225,6 +225,8 @@ class TestExportPDFBatchActionForm(BaseTestCase):
         self.assertTrue(form.do_apply)
         self.assertIsNone(form._apply())
         self.assertNotIn('pdf_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [u'concatenate_annexes_pdf_too_large_error'])
         self.assertEqual(
             self._num_pages(form._apply(annexes=[self.annex1.UID()])), 1)
 
@@ -318,6 +320,8 @@ class TestDownloadElementsAnnexesBatchActionForm(BaseTestCase):
                    if annex.file.filename == u'file.txt']
         self.assertIsNone(form._apply(annexes=[annex.UID() for annex in form.annexes]))
         self.assertNotIn('zip_file_content', self.request)
+        self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
+                         [u'download_annexes_zip_too_large_error'])
         self.assertEqual(self._zip_names(form._apply(annexes=txt_uid)), [u'file.txt'])
 
     def test__apply_large_zip_file(self):

@@ -35,6 +35,11 @@ Changelog
   in this case.  Added `_check_max_total_size(annexes)` that displays an error
   when max total size is exceeded.
   [gbastien]
+- Max total size check shared by `ZipAnnexesMixin` and `ExportPDFBatchActionForm`
+  moved to `MaxTotalSizeMixin` (`_max_total_size`, `_total_size(annexes)` and
+  `_check_max_total_size(annexes)`), the displayed error is defined by
+  `too_large_error_msg`.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)
