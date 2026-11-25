@@ -46,10 +46,6 @@ msgstr ""
 msgid "Annexes to export"
 msgstr ""
 
-#: ../browser/views.py:612
-msgid "Apply"
-msgstr ""
-
 #: ../quickupload/templates/quick_upload.pt:28
 msgid "Apply the first category on all elements"
 msgstr ""

@@ -46,10 +46,6 @@ msgstr "Annexes à télécharger"
 msgid "Annexes to export"
 msgstr "Annexes à exporter"
 
-#: ../browser/views.py:612
-msgid "Apply"
-msgstr "Appliquer"
-
 #: ../quickupload/templates/quick_upload.pt:28
 msgid "Apply the first category on all elements"
 msgstr "Appliquer la première catégorie à l'ensemble des éléments"
@@ -122,7 +118,7 @@ msgstr "Erreur lors du téléchargement du fichier Zip, la taille des annexes s�
 
 #: ../browser/views.py:589
 msgid "export_pdf_descr"
-msgstr "Cette action permet de grouper des documents PDF dans un PDF unique téléchargeable. Dans la liste des annexes, les annexes grisées ne peuvent pas être sélectionnées pour la raison indiquée entre crochets."
+msgstr "Cette action permet d'exporter des documents dans un fichier PDF unique. Choisissez ci-dessous les documents à exporter ; vous pouvez les réordonner par glisser-déposer, ils seront exportés dans cet ordre. Les documents grisés ne peuvent pas être sélectionnés pour la raison indiquée entre crochets. Lorsque vous cliquez sur « Télécharger », veuillez patienter quelques secondes, le temps que le fichier PDF soit généré."
 
 #: ../browser/views.py:546
 msgid "export_pdf_read_error"

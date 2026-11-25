@@ -54,6 +54,16 @@ Changelog
   removed the misleading "accept pop-ups" sentence from the Zip download
   description, the file is downloaded without opening a new window.
   [gbastien]
+- Fixed `export_pdf_descr` French translation (`ExportPDFForm`), use "export"
+  wording, selectable elements are documents (not only annexes), explained that
+  they may be reordered by drag and drop and that generating the PDF may take a
+  few seconds, like for `export_pdf_batch_action_descr`.
+  [gbastien]
+- `ExportPDFForm` (and so `ExportZipForm`) button `apply_export_pdf` (`Apply`)
+  is renamed to `download_export_pdf` (`Download`, `collective.eeafaceted.batchactions`
+  domain) like for `ExportPDFBatchActionForm`, so the button id is now
+  `form-buttons-download_export_pdf`.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)

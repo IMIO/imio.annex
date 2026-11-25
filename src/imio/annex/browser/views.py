@@ -618,7 +618,7 @@ class ExportPDFForm(z3c_form.Form):
         self.fields["elements"].widgetFactory = OrderableCheckBoxFieldWidget
         self.fields["two_sided"].widgetFactory = RadioFieldWidget
 
-    @button.buttonAndHandler(_('Apply'), name='apply_export_pdf')
+    @button.buttonAndHandler(_CEBA('Download'), name='download_export_pdf')
     def handleApply(self, action):
         self._check_auth()
         data, errors = self.extractData()
