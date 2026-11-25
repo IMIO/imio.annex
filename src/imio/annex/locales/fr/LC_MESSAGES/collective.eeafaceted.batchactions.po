@@ -28,7 +28,7 @@ msgstr "<p style=\"color: red;\">Certains éléments sélectionnés ne sont pas 
 
 #. Default: "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
 msgid "<p>This will download the selected elements as a Zip file.</p><p>The total file size is <b>${total_size}</b>, when clicking on \"${button_title}\", you will have a spinner, wait until the Zip file is available.</p>"
-msgstr "<p>La taille du fichier Zip est de <b>${total_size}</b>, lorsque vous cliquez sur \"${button_title}\", <b>veuillez patienter quelques secondes pour que le fichier Zip soit disponible</b>, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.</p>"""
+msgstr "<p>La taille du fichier Zip est de <b>${total_size}</b>. Lorsque vous cliquez sur « ${button_title} », <b>veuillez patienter quelques secondes pour que le fichier Zip soit disponible</b>.</p>"
 
 #. Default: "Download"
 msgid "Download"
@@ -38,9 +38,9 @@ msgstr "Télécharger"
 msgid "export-pdf-batch-action-but"
 msgstr "Exporter les annexes en PDF"
 
-#. Default: "<p>This will export selected PDF annexes of selected elements as one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less annexes and download it separately.<p>"
+#. Default: "<p>This will export selected PDF annexes of selected elements as one single PDF file with a limit of <strong>${max_size}</strong>. If the selected annexes are too large you will have a message, in this case select fewer annexes.</p>"
 msgid "export_pdf_batch_action_descr"
-msgstr "<p class='discreet'>Cette action permet de grouper des documents PDF dans un PDF unique. Choisissez ci-dessous les annexes des éléments sélectionnés à exporter dans un fichier PDF unique, vous pouvez les réordonner par glisser-déposer. La taille maximum du fichier exporté est de <strong>${max_size}</strong>. Si le PDF exporté est trop volumineux, vous aurez un message, sélectionnez alors moins d'éléments à exporter. Lorsque vous cliquez sur \"Télécharger\", veuillez patienter quelques secondes pour que le fichier PDF soit disponible, si votre navigateur vous le demande, vous devez accepter les fenêtres pop-ups.<p>"
+msgstr "<p class='discreet'>Cette action permet d'exporter des annexes dans un fichier PDF unique. Choisissez ci-dessous les annexes des éléments sélectionnés à exporter ; vous pouvez les réordonner par glisser-déposer, elles seront exportées dans cet ordre. Les annexes grisées ne peuvent pas être sélectionnées pour la raison indiquée entre crochets. La taille totale des annexes sélectionnées est limitée à <strong>${max_size}</strong> ; au-delà, un message vous en avertira et vous devrez en sélectionner moins. Lorsque vous cliquez sur « Télécharger », veuillez patienter quelques secondes, le temps que le fichier PDF soit généré.</p>"
 
 #. Default: "Download as Zip file"
 msgid "download-annexes-batch-action-but"

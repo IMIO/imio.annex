@@ -37,7 +37,7 @@ msgstr ""
 msgid "export-pdf-batch-action-but"
 msgstr ""
 
-#. Default: "<p>This will export selected PDF annexes of selected elements as one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less annexes and download it separately.<p>"
+#. Default: "<p>This will export selected PDF annexes of selected elements as one single PDF file with a limit of <strong>${max_size}</strong>. If the selected annexes are too large you will have a message, in this case select fewer annexes.</p>"
 msgid "export_pdf_batch_action_descr"
 msgstr ""
 

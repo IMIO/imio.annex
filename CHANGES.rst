@@ -49,6 +49,11 @@ Changelog
   `_check_max_total_size(annexes)`), the displayed error is defined by
   `too_large_error_msg`.
   [gbastien]
+- Fixed `export_pdf_batch_action_descr` French translation (wrong closing `<p>`
+  tag, size limit is about selected annexes, greyed annexes explained) and
+  removed the misleading "accept pop-ups" sentence from the Zip download
+  description, the file is downloaded without opening a new window.
+  [gbastien]
 
 
 2.28.0 (2026-11-16)
