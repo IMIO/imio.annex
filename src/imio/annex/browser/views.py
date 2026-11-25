@@ -432,7 +432,7 @@ class DownloadElementsAnnexesBatchActionForm(ElementsAnnexesMixin,
 
 
 class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatchActionForm):
-    """Concatenate annexes of selected elements into a single PDF.
+    """Export annexes of selected elements as a single PDF.
        This is meant to be used on a dashboard of elements containing annexes,
        selected elements (brains) are the elements containing the annexes.
        Field "annexes" lists the annexes of selected elements, using the
@@ -440,12 +440,12 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
        export, annexes that may not be exported (not PDF, only previewable)
        are disabled."""
 
-    label = _CEBA("concatenate-annexes-batch-action-but")
+    label = _CEBA("export-pdf-batch-action-but")
     button_with_icon = True
     apply_button_title = _CEBA('Download')
     # gives a human readable size of "75.0 Mb"
     MAX_TOTAL_SIZE = 78643200
-    too_large_error_msg = _("concatenate_annexes_pdf_too_large_error")
+    too_large_error_msg = _("export_pdf_too_large_error")
     # set to True to exclude selected elements with _check_element and display it
     CHECK_ELEMENTS = False
     # vocabulary used to list the annexes of every selected element
@@ -459,7 +459,7 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
         descr = translate(descr, domain=descr.domain, context=self.request)
         readable_max_size = calculate_filesize(self._max_total_size())
         descr += translate(
-            'concatenate_annexes_batch_action_descr',
+            'export_pdf_batch_action_descr',
             mapping={'max_size': readable_max_size, },
             domain="collective.eeafaceted.batchactions",
             context=self.request)
@@ -512,7 +512,7 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
             self.do_apply = False
 
     def _update_widgets(self):
-        """Annexes are concatenated in the selected order."""
+        """Annexes are exported in the selected order."""
         self.widgets['annexes'].sortable = True
 
     def _error_obj_title(self, obj):
@@ -530,8 +530,8 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
         return annex.file.data
 
     def _apply(self, **data):
-        """Concatenate selected annexes, in the selected order, if "annexes"
-           not given, every selectable annexes are concatenated."""
+        """Export selected annexes as a single PDF, in the selected order, if "annexes"
+           not given, every selectable annexes are exported."""
         annexes = self.annexes
         if data.get('annexes') is not None:
             annexes = self._selected_annexes(data['annexes'])
@@ -552,7 +552,7 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
                     PdfFileReader(BytesIO(self._annex_content(annex)), strict=False))
             except PdfReadError as exc:
                 api.portal.show_message(
-                    _("concatenate_annexes_pdf_read_error",
+                    _("export_pdf_read_error",
                       mapping={'annex_title': safe_unicode(annex.Title()),
                                'obj_title': safe_unicode(
                           self._error_obj_title(annex.aq_inner.aq_parent))}),
@@ -560,7 +560,7 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
                     type="error")
                 logger.exception(exc)
                 self.request.set(
-                    'concatenate_annexes_item_pdf_error_url', annex.aq_inner.aq_parent.absolute_url())
+                    'export_pdf_error_url', annex.aq_inner.aq_parent.absolute_url())
                 return
             if data.get('two_sided') and \
                output_writer.getNumPages() % 2 != 0 and \
@@ -582,12 +582,12 @@ class ExportPDFBatchActionForm(ElementsAnnexesMixin, MaxTotalSizeMixin, BaseBatc
             return pdf_file_content.read()
         elif self.request.RESPONSE.status == 204:
             # return something so the faceted is refrehsed
-            return self.request.get('concatenate_annexes_pdf_error_url')
+            return self.request.get('export_pdf_error_url')
         return super(ExportPDFBatchActionForm, self).render()
 
 
 class ExportPDFForm(z3c_form.Form):
-    """Concatenate selected elements of context into a single PDF."""
+    """Export selected elements of context as a single PDF."""
 
     # name of the vocabulary listing the selectable elements, subclasses may change it
     vocabulary = u"imio.annex.export_pdf_elements"

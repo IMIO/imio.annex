@@ -109,7 +109,7 @@ ContainedAnnexesVocabularyFactory = ContainedAnnexesVocabulary()
 
 
 class ExportPDFElementsVocabulary(ContainedAnnexesVocabulary):
-    """Annexes that may be concatenated into a single PDF,
+    """Annexes that may be exported as a single PDF,
        every non PDF annex is disabled."""
 
     def _check_disable_term(self, context, annex_info, categories_vocab, term):

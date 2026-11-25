@@ -34,11 +34,11 @@ msgid "download-annexes-batch-action-but"
 msgstr ""
 
 #. Default: "Export PDF"
-msgid "concatenate-annexes-batch-action-but"
+msgid "export-pdf-batch-action-but"
 msgstr ""
 
-#. Default: "<p>This will concatenate selected PDF annexes of selected elements into one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less annexes and download it separately.<p>"
-msgid "concatenate_annexes_batch_action_descr"
+#. Default: "<p>This will export selected PDF annexes of selected elements as one single PDF file with a limit of <strong>${max_size}</strong>. If your PDF file is too large you will have a message, in this case select less annexes and download it separately.<p>"
+msgid "export_pdf_batch_action_descr"
 msgstr ""
 
 #. Default: "Download"

@@ -33,7 +33,7 @@ class TestExportPDFForm(BaseTestCase):
         return PdfFileReader(res, strict=False).getNumPages()
 
     def test_handleApply(self):
-        """Selected annexes are concatenated in a single PDF."""
+        """Selected annexes are exported as a single PDF."""
         self.request['form.widgets.elements'] = [self.annex1.getId(),
                                                  self.annex2.getId()]
         self.form.update()
@@ -226,7 +226,7 @@ class TestExportPDFBatchActionForm(BaseTestCase):
         self.assertIsNone(form._apply())
         self.assertNotIn('pdf_file_content', self.request)
         self.assertEqual([msg.message for msg in IStatusMessage(self.request).show()],
-                         [u'concatenate_annexes_pdf_too_large_error'])
+                         [u'export_pdf_too_large_error'])
         self.assertEqual(
             self._num_pages(form._apply(annexes=[self.annex1.UID()])), 1)
 

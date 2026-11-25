@@ -26,7 +26,7 @@
     <!-- Export annexes of selected elements as a single PDF batch action (dashboard) -->
     <!--browser:page
         for="collective.eeafaceted.batchactions.interfaces.IBatchActionsMarker"
-        name="concatenate-annexes-batch-action"
+        name="export-pdf-batch-action"
         class="imio.annex.browser.views.ExportPDFBatchActionForm"
         permission="zope2.View" /-->
 
