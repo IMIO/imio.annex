@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.29.0 (unreleased)
+2.29.0 (2026-11-26)
 -------------------
 
 - Renamed `ConcatenateAnnexesBatchActionForm` to `ExportPDFBatchActionForm`
