@@ -5,7 +5,12 @@ Changelog
 2.29.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Monkeypatched `Products.CMFCore.WorkflowTool.WorkflowTool._reindexWorkflowVariables`
+  to do nothing for an element without workflow (annexes, `File`, `Image`, ...),
+  when an element is added, it was doing a complete reindex (every indexes and
+  metadata) right before the complete index of the element so every element
+  without workflow was catalogued 2 times when added.
+  [gbastien]
 
 
 2.29.0 (2026-11-26)

@@ -68,6 +68,13 @@
     replacement=".patch.jobrunner_queue_it"
     preserveOriginal="true" />
 
+  <monkey:patch
+    description="Do not completely reindex an element without workflow when it is added as it is completely indexed right after"
+    class="Products.CMFCore.WorkflowTool.WorkflowTool"
+    original="_reindexWorkflowVariables"
+    replacement=".patch.reindex_workflow_variables"
+    preserveOriginal="true" />
+
   <!-- behaviors -->
   <plone:behavior zcml:condition="installed collective.dms.scanbehavior"
        title="Scan metadata (fields to_sign/signed hidden)"
