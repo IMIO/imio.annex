@@ -62,13 +62,11 @@ jobs:
       - name: Install system packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y libjpeg8-dev libbz2-dev liblzma-dev libreadline-dev
+          sudo apt-get install -y libjpeg8-dev libbz2-dev liblzma-dev
       - name: Set up pyenv and Python
         uses: "gabrielfalcao/pyenv-action@v18"
         with:
           default: "${{ matrix.python }}"
-          # coveralls needs Python 3
-          versions: 3.8.16
       - name: Setup Env
         run: |
           pip install --upgrade pip
@@ -87,6 +85,11 @@ jobs:
       - name: test coverage
         run: |
           coverage run bin/test -t !robot
+      # coveralls needs Python 3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
       - name: Publish to Coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
