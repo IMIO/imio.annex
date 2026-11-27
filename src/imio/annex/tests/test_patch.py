@@ -88,9 +88,12 @@ class TestPatch(BaseTestCase):
             finally:
                 WorkflowTool._reindexWorkflowVariables = patched
             with_patch = self._create_elements(portal_type, 50)
+            # % of difference with the patch compared to without the patch
+            diffs = [(w - wo) * 100.0 / wo for w, wo in zip(with_patch, without)]
             logger.info(
                 'Created 50 {0}: '
                 'without the patch {1[0]:.2f}s and catalogued {1[1]} times in {1[2]:.2f}s, '
-                'with the patch {2[0]:.2f}s and catalogued {2[1]} times in {2[2]:.2f}s'.format(
-                    portal_type, without, with_patch))
+                'with the patch {2[0]:.2f}s ({3[0]:+.0f}%) and catalogued {2[1]} times '
+                '({3[1]:+.0f}%) in {2[2]:.2f}s ({3[2]:+.0f}%)'.format(
+                    portal_type, without, with_patch, diffs))
             self.assertLess(with_patch[1], without[1])
